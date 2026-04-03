@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `createGeometraHostLayoutSyncRaf` (split/stacked resize coalescing).
+ * Post-build checks for `createGeometraHostLayoutSyncRaf` (split/stacked resize coalescing):
+ * rAF coalescing, optional synthetic Geometra `resize`, cancel/destroy semantics.
  * Imports `dist/layout-sync.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -94,8 +95,71 @@ function testDestroyedSkipsWorkInRaf() {
   assert.equal(syncCount, 0)
 }
 
+/** Real window resize path: coalesce Three resize without synthetic Geometra `resize`. */
+function testCoalescesRafWithoutNotify() {
+  const win = createMockWindow()
+  let syncCount = 0
+  let dispatchCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => false,
+    syncLayout: () => {
+      syncCount += 1
+    },
+    dispatchGeometraResize: () => {
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(false)
+  layoutSync.schedule(false)
+  assert.equal(syncCount, 0)
+  win.flushAnimationFrame()
+  assert.equal(syncCount, 1)
+  assert.equal(dispatchCount, 0)
+}
+
+/** Observer + window in one frame: any `true` in the burst still yields a single dispatch. */
+function testMixedNotifyCoalescesToSingleDispatch() {
+  const win = createMockWindow()
+  let dispatchCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => false,
+    syncLayout: () => {},
+    dispatchGeometraResize: () => {
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(false)
+  layoutSync.schedule(true)
+  win.flushAnimationFrame()
+  assert.equal(dispatchCount, 1)
+}
+
+/** After cancel, a new scheduled frame with notify can still dispatch (pending flag was cleared). */
+function testNotifyAfterCancel() {
+  const win = createMockWindow()
+  let dispatchCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => false,
+    syncLayout: () => {},
+    dispatchGeometraResize: () => {
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(true)
+  layoutSync.cancel()
+  layoutSync.schedule(true)
+  win.flushAnimationFrame()
+  assert.equal(dispatchCount, 1)
+}
+
 testCoalescesRafAndNotify()
 testCancelClearsPendingGeometraNotify()
 testDestroyedSkipsWorkInRaf()
+testCoalescesRafWithoutNotify()
+testMixedNotifyCoalescesToSingleDispatch()
+testNotifyAfterCancel()
 
 console.log('verify-layout-sync: ok')
