@@ -173,11 +173,20 @@ export function createThreeGeometraSplitHost(
 
   resizeThree()
 
-  const geometraHandle = createBrowserCanvasClient({
-    ...browserOptions,
-    canvas: geometraCanvas,
-    window: win,
-  })
+  const geometraHandle = (() => {
+    try {
+      return createBrowserCanvasClient({
+        ...browserOptions,
+        canvas: geometraCanvas,
+        window: win,
+      })
+    } catch (err) {
+      win.removeEventListener('resize', onWindowResize)
+      glRenderer.dispose()
+      root.remove()
+      throw err
+    }
+  })()
 
   let geometraResizeRafId: number | undefined
   const triggerGeometraResize = () => {
