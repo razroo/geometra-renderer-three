@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `resolveHostDevicePixelRatio` (internal util), `resizeGeometraThreePerspectiveView`,
+ * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreePerspectiveView`,
  * `setWebGLDrawingBufferSize`, `syncGeometraThreePerspectiveFromBuffer`, and `createGeometraThreeSceneBasics`
  * using lightweight mocks /
  * Node `three` (no WebGL).
@@ -13,14 +13,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
-const utilsHref = pathToFileURL(path.join(root, 'dist', 'utils.js')).href
 const {
   resizeGeometraThreePerspectiveView,
+  resolveHostDevicePixelRatio,
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
   createGeometraThreeSceneBasics,
 } = await import(indexHref)
-const { resolveHostDevicePixelRatio } = await import(utilsHref)
 
 function testResolveHostDevicePixelRatio() {
   assert.equal(resolveHostDevicePixelRatio(2, undefined), 2)

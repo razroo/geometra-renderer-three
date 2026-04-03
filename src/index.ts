@@ -13,6 +13,7 @@ export {
 } from './stacked-host.js'
 export {
   resizeGeometraThreePerspectiveView,
+  resolveHostDevicePixelRatio,
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
 } from './utils.js'

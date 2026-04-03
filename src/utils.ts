@@ -1,8 +1,10 @@
 import type { PerspectiveCamera, WebGLRenderer } from 'three'
 
 /**
- * Device pixel ratio for split/stacked hosts: full `window.devicePixelRatio`, optionally capped.
- * Not re-exported from the package entry — hosts only.
+ * Device pixel ratio for split/stacked hosts and custom renderers: full raw ratio, optionally capped.
+ * Use with {@link resizeGeometraThreePerspectiveView} or {@link setWebGLDrawingBufferSize} so headless
+ * or offscreen setups match the same `maxDevicePixelRatio` behavior as {@link createThreeGeometraSplitHost}
+ * and {@link createThreeGeometraStackedHost}.
  */
 export function resolveHostDevicePixelRatio(
   rawDevicePixelRatio: number,
