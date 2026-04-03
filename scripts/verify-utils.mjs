@@ -2,7 +2,7 @@
 /**
  * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreeDrawingBufferView`,
  * `resizeGeometraThreePerspectiveView`, `setWebGLDrawingBufferSize`,
- * `syncGeometraThreePerspectiveFromBuffer`, and `createGeometraThreeSceneBasics`
+ * `syncGeometraThreePerspectiveFromBuffer`, `normalizeGeometraLayoutPixels`, and `createGeometraThreeSceneBasics`
  * using lightweight mocks /
  * Node `three` (no WebGL).
  * Run after `npm run build` (see `release:gate`).
@@ -15,6 +15,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
 const {
+  normalizeGeometraLayoutPixels,
   resizeGeometraThreeDrawingBufferView,
   resizeGeometraThreePerspectiveView,
   resolveHostDevicePixelRatio,
@@ -22,6 +23,13 @@ const {
   syncGeometraThreePerspectiveFromBuffer,
   createGeometraThreeSceneBasics,
 } = await import(indexHref)
+
+function testNormalizeGeometraLayoutPixels() {
+  assert.equal(normalizeGeometraLayoutPixels(100.9), 100)
+  assert.equal(normalizeGeometraLayoutPixels(0.9), 1)
+  assert.equal(normalizeGeometraLayoutPixels(0), 1)
+  assert.equal(normalizeGeometraLayoutPixels(Number.NaN), 1)
+}
 
 function testResolveHostDevicePixelRatio() {
   assert.equal(resolveHostDevicePixelRatio(2, undefined), 2)
@@ -206,6 +214,7 @@ function testCreateGeometraThreeSceneBasicsCustomOptions() {
   assert.equal(camera.position.z, 3)
 }
 
+testNormalizeGeometraLayoutPixels()
 testResolveHostDevicePixelRatio()
 testResizeGeometraThreePerspectiveView()
 testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()
