@@ -64,6 +64,7 @@ export interface ThreeGeometraStackedHostOptions
   /**
    * Called every frame before `renderer.render`.
    * If you call {@link ThreeRuntimeContext.destroy} here, teardown runs and this frame’s `render` is skipped.
+   * If this callback throws, the host is fully torn down and the error is rethrown (same as {@link onThreeReady}).
    */
   onThreeFrame?: (ctx: ThreeFrameContext) => void
 }
@@ -305,7 +306,12 @@ export function createThreeGeometraStackedHost(
     rafId = win.requestAnimationFrame(loop)
     const delta = clock.getDelta()
     const elapsed = clock.elapsedTime
-    onThreeFrame?.({ ...ctxBase, clock, delta, elapsed })
+    try {
+      onThreeFrame?.({ ...ctxBase, clock, delta, elapsed })
+    } catch (err) {
+      destroy()
+      throw err
+    }
     if (destroyed) return
     glRenderer.render(scene, camera)
   }
