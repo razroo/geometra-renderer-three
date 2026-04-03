@@ -11,6 +11,7 @@ import {
   createGeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'
+import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
 import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 /** Corner anchor for the Geometra HUD overlay (CSS `position: absolute` on the host). */
@@ -203,30 +204,17 @@ export function createThreeGeometraStackedHost(
   }
 
   let destroyed = false
-  let layoutSyncRafId: number | undefined
-  let pendingGeometraResizeNotify = false
 
-  /**
-   * At most one drawing-buffer resize per animation frame. Optionally dispatches a synthetic `window`
-   * `resize` for Geometra when layout changed without a real window resize; skipped for real `window`
-   * `resize` so the thin client is not notified twice.
-   */
-  const scheduleLayoutSync = (notifyGeometra: boolean) => {
-    if (notifyGeometra) pendingGeometraResizeNotify = true
-    if (layoutSyncRafId !== undefined) return
-    layoutSyncRafId = win.requestAnimationFrame(() => {
-      layoutSyncRafId = undefined
-      if (destroyed) return
-      resizeThree()
-      if (pendingGeometraResizeNotify) {
-        pendingGeometraResizeNotify = false
-        win.dispatchEvent(new Event('resize'))
-      }
-    })
-  }
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => destroyed,
+    syncLayout: resizeThree,
+    dispatchGeometraResize: () => {
+      win.dispatchEvent(new Event('resize'))
+    },
+  })
 
   const onWindowResize = () => {
-    scheduleLayoutSync(false)
+    layoutSync.schedule(false)
   }
   win.addEventListener('resize', onWindowResize, { passive: true })
 
@@ -248,12 +236,12 @@ export function createThreeGeometraStackedHost(
   })()
 
   const roRoot = new ResizeObserver(() => {
-    scheduleLayoutSync(true)
+    layoutSync.schedule(true)
   })
   roRoot.observe(root)
 
   const roHud = new ResizeObserver(() => {
-    scheduleLayoutSync(true)
+    layoutSync.schedule(true)
   })
   roHud.observe(geometraHud)
 
@@ -266,10 +254,7 @@ export function createThreeGeometraStackedHost(
       win.cancelAnimationFrame(rafId)
       rafId = undefined
     }
-    if (layoutSyncRafId !== undefined) {
-      win.cancelAnimationFrame(layoutSyncRafId)
-      layoutSyncRafId = undefined
-    }
+    layoutSync.cancel()
     win.removeEventListener('resize', onWindowResize)
     roRoot.disconnect()
     roHud.disconnect()

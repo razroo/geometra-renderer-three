@@ -10,6 +10,7 @@ import {
   createGeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'
+import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
 import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 export interface ThreeGeometraSplitHostOptions
@@ -185,31 +186,17 @@ export function createThreeGeometraSplitHost(
   }
 
   let destroyed = false
-  let layoutSyncRafId: number | undefined
-  let pendingGeometraResizeNotify = false
 
-  /**
-   * At most one drawing-buffer resize per animation frame (avoids duplicate `setSize` when both flex
-   * panes notify). Optionally dispatches a synthetic `window` `resize` for Geometra when layout changed
-   * without a real window resize (panel-only); skipped for real `window` `resize` so the thin client is
-   * not notified twice.
-   */
-  const scheduleLayoutSync = (notifyGeometra: boolean) => {
-    if (notifyGeometra) pendingGeometraResizeNotify = true
-    if (layoutSyncRafId !== undefined) return
-    layoutSyncRafId = win.requestAnimationFrame(() => {
-      layoutSyncRafId = undefined
-      if (destroyed) return
-      resizeThree()
-      if (pendingGeometraResizeNotify) {
-        pendingGeometraResizeNotify = false
-        win.dispatchEvent(new Event('resize'))
-      }
-    })
-  }
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => destroyed,
+    syncLayout: resizeThree,
+    dispatchGeometraResize: () => {
+      win.dispatchEvent(new Event('resize'))
+    },
+  })
 
   const onWindowResize = () => {
-    scheduleLayoutSync(false)
+    layoutSync.schedule(false)
   }
   win.addEventListener('resize', onWindowResize, { passive: true })
 
@@ -231,7 +218,7 @@ export function createThreeGeometraSplitHost(
   })()
 
   const roContainer = new ResizeObserver(() => {
-    scheduleLayoutSync(true)
+    layoutSync.schedule(true)
   })
   roContainer.observe(threePanel)
   roContainer.observe(geometraPanel)
@@ -245,10 +232,7 @@ export function createThreeGeometraSplitHost(
       win.cancelAnimationFrame(rafId)
       rafId = undefined
     }
-    if (layoutSyncRafId !== undefined) {
-      win.cancelAnimationFrame(layoutSyncRafId)
-      layoutSyncRafId = undefined
-    }
+    layoutSync.cancel()
     win.removeEventListener('resize', onWindowResize)
     roContainer.disconnect()
     geometraHandle.destroy()
