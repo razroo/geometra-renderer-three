@@ -24,7 +24,8 @@ export interface ThreeGeometraSplitHostOptions extends Omit<BrowserCanvasClientO
   cameraPosition?: THREE.Vector3Tuple
   /**
    * Called once after scene, camera, and renderer are created.
-   * Add meshes, lights, controls, etc.
+   * Add meshes, lights, controls, etc. Call `ctx.destroy()` to tear down immediately; the render loop
+   * will not start if the host is already destroyed.
    */
   onThreeReady?: (ctx: ThreeRuntimeContext) => void
   /**
@@ -39,6 +40,8 @@ export interface ThreeRuntimeContext {
   scene: THREE.Scene
   camera: THREE.PerspectiveCamera
   threeCanvas: HTMLCanvasElement
+  /** Same as `ThreeGeometraSplitHostHandle.destroy` — idempotent full teardown. */
+  destroy(): void
 }
 
 export interface ThreeFrameContext extends ThreeRuntimeContext {
@@ -189,37 +192,44 @@ export function createThreeGeometraSplitHost(
   roContainer.observe(threePanel)
   roContainer.observe(geometraPanel)
 
-  const ctxBase: ThreeRuntimeContext = {
-    renderer: glRenderer,
-    scene,
-    camera,
-    threeCanvas,
-  }
-
-  onThreeReady?.(ctxBase)
-
-  let raf = 0
+  let rafId: number | undefined
   let destroyed = false
-
-  const loop = () => {
-    if (destroyed) return
-    raf = win.requestAnimationFrame(loop)
-    const delta = clock.getDelta()
-    const elapsed = clock.elapsedTime
-    onThreeFrame?.({ ...ctxBase, clock, delta, elapsed })
-    glRenderer.render(scene, camera)
-  }
-  raf = win.requestAnimationFrame(loop)
 
   const destroy = () => {
     if (destroyed) return
     destroyed = true
-    win.cancelAnimationFrame(raf)
+    if (rafId !== undefined) {
+      win.cancelAnimationFrame(rafId)
+      rafId = undefined
+    }
     win.removeEventListener('resize', onWindowResize)
     roContainer.disconnect()
     geometraHandle.destroy()
     glRenderer.dispose()
     root.remove()
+  }
+
+  const ctxBase: ThreeRuntimeContext = {
+    renderer: glRenderer,
+    scene,
+    camera,
+    threeCanvas,
+    destroy,
+  }
+
+  onThreeReady?.(ctxBase)
+
+  const loop = () => {
+    if (destroyed) return
+    rafId = win.requestAnimationFrame(loop)
+    const delta = clock.getDelta()
+    const elapsed = clock.elapsedTime
+    onThreeFrame?.({ ...ctxBase, clock, delta, elapsed })
+    glRenderer.render(scene, camera)
+  }
+
+  if (!destroyed) {
+    rafId = win.requestAnimationFrame(loop)
   }
 
   return {
