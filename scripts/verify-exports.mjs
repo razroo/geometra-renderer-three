@@ -13,6 +13,7 @@ const mod = await import(indexHref)
 const expectedFunctions = [
   'createThreeGeometraSplitHost',
   'createThreeGeometraStackedHost',
+  'createGeometraHostWebGLRendererParams',
   'createGeometraThreeSceneBasics',
   'normalizeGeometraLayoutPixels',
   'resizeGeometraThreeDrawingBufferView',

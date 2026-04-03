@@ -52,6 +52,19 @@ export const GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS = {
 } as const satisfies Omit<WebGLRendererParameters, 'canvas'>
 
 /**
+ * Full {@link WebGLRendererParameters} for `new WebGLRenderer(...)`, with the same flags as
+ * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost} plus your `canvas`.
+ *
+ * Use in headless GL, offscreen canvas, or custom hosts so constructor input stays aligned with
+ * those packages without copying {@link GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS} at every call site.
+ */
+export function createGeometraHostWebGLRendererParams(
+  canvas: NonNullable<WebGLRendererParameters['canvas']>,
+): WebGLRendererParameters {
+  return { canvas, ...GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS }
+}
+
+/**
  * Create a scene, perspective camera, and clock with the same defaults as
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *

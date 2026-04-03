@@ -4,7 +4,7 @@
  * `resizeGeometraThreePerspectiveView` (including non-finite `pixelRatio`), `setWebGLDrawingBufferSize`,
  * `syncGeometraThreePerspectiveFromBuffer`, `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
- * `createGeometraThreeSceneBasics`
+ * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`
  * using lightweight mocks /
  * Node `three` (no WebGL).
  * Run after `npm run build` (see `release:gate`).
@@ -19,6 +19,7 @@ const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
 const {
   GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
+  createGeometraHostWebGLRendererParams,
   normalizeGeometraLayoutPixels,
   resizeGeometraThreeDrawingBufferView,
   resizeGeometraThreePerspectiveView,
@@ -219,6 +220,14 @@ function testGeometraHostWebglRendererOptions() {
   assert.equal(GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS.alpha, false)
 }
 
+function testCreateGeometraHostWebGLRendererParams() {
+  const canvas = {}
+  const params = createGeometraHostWebGLRendererParams(canvas)
+  assert.equal(params.canvas, canvas)
+  assert.equal(params.antialias, GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS.antialias)
+  assert.equal(params.alpha, GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS.alpha)
+}
+
 function testGeometraThreeHostSceneDefaultsMatchBasics() {
   const { scene, camera } = createGeometraThreeSceneBasics()
 
@@ -278,6 +287,7 @@ testSyncGeometraThreePerspectiveFromBuffer()
 testSetWebGLDrawingBufferSize()
 testResizeGeometraThreeDrawingBufferView()
 testGeometraHostWebglRendererOptions()
+testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
