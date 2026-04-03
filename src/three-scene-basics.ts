@@ -22,6 +22,20 @@ export interface GeometraThreeSceneBasicsOptions {
 }
 
 /**
+ * Scene and camera defaults shared by {@link createThreeGeometraSplitHost},
+ * {@link createThreeGeometraStackedHost}, and {@link createGeometraThreeSceneBasics}.
+ * Use in headless or custom renderer setups so numbers stay aligned with those hosts
+ * without copying literals from the README.
+ */
+export const GEOMETRA_THREE_HOST_SCENE_DEFAULTS: Required<GeometraThreeSceneBasicsOptions> = {
+  threeBackground: 0x000000,
+  cameraFov: 50,
+  cameraNear: 0.1,
+  cameraFar: 2000,
+  cameraPosition: [0, 0, 5],
+}
+
+/**
  * Create a scene, perspective camera, and clock with the same defaults as
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *
@@ -34,12 +48,12 @@ export function createGeometraThreeSceneBasics(
   options: GeometraThreeSceneBasicsOptions = {},
 ): GeometraThreeSceneBasics {
   const {
-    threeBackground = 0x000000,
-    cameraFov = 50,
-    cameraNear = 0.1,
-    cameraFar = 2000,
-    cameraPosition = [0, 0, 5],
-  } = options
+    threeBackground,
+    cameraFov,
+    cameraNear,
+    cameraFar,
+    cameraPosition,
+  } = { ...GEOMETRA_THREE_HOST_SCENE_DEFAULTS, ...options }
 
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(threeBackground)

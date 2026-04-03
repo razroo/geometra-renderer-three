@@ -4,7 +4,11 @@ import {
   type BrowserCanvasClientHandle,
   type BrowserCanvasClientOptions,
 } from '@geometra/renderer-canvas'
-import { createGeometraThreeSceneBasics, type GeometraThreeSceneBasicsOptions } from './three-scene-basics.js'
+import {
+  GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
+  createGeometraThreeSceneBasics,
+  type GeometraThreeSceneBasicsOptions,
+} from './three-scene-basics.js'
 import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 export interface ThreeGeometraSplitHostOptions
@@ -103,11 +107,11 @@ export function createThreeGeometraSplitHost(
     geometraWidth = 420,
     geometraOnLeft = false,
     maxDevicePixelRatio,
-    threeBackground = 0x000000,
-    cameraFov = 50,
-    cameraNear = 0.1,
-    cameraFar = 2000,
-    cameraPosition = [0, 0, 5],
+    threeBackground = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.threeBackground,
+    cameraFov = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraFov,
+    cameraNear = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraNear,
+    cameraFar = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraFar,
+    cameraPosition = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraPosition,
     onThreeReady,
     onThreeFrame,
     window: providedWindow,

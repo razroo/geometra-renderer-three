@@ -2,7 +2,8 @@
 /**
  * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreeDrawingBufferView`,
  * `resizeGeometraThreePerspectiveView`, `setWebGLDrawingBufferSize`,
- * `syncGeometraThreePerspectiveFromBuffer`, `normalizeGeometraLayoutPixels`, and `createGeometraThreeSceneBasics`
+ * `syncGeometraThreePerspectiveFromBuffer`, `normalizeGeometraLayoutPixels`,
+ * `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and `createGeometraThreeSceneBasics`
  * using lightweight mocks /
  * Node `three` (no WebGL).
  * Run after `npm run build` (see `release:gate`).
@@ -15,6 +16,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
 const {
+  GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
   normalizeGeometraLayoutPixels,
   resizeGeometraThreeDrawingBufferView,
   resizeGeometraThreePerspectiveView,
@@ -184,6 +186,19 @@ function testResizeGeometraThreeDrawingBufferView() {
   assert.equal(camera.aspect, 2)
 }
 
+function testGeometraThreeHostSceneDefaultsMatchBasics() {
+  const { scene, camera } = createGeometraThreeSceneBasics()
+
+  assert.equal(scene.background.getHex(), GEOMETRA_THREE_HOST_SCENE_DEFAULTS.threeBackground)
+  assert.equal(camera.fov, GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraFov)
+  assert.equal(camera.near, GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraNear)
+  assert.equal(camera.far, GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraFar)
+  assert.deepEqual(
+    [camera.position.x, camera.position.y, camera.position.z],
+    [...GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraPosition],
+  )
+}
+
 function testCreateGeometraThreeSceneBasicsDefaults() {
   const { scene, camera, clock } = createGeometraThreeSceneBasics()
 
@@ -228,6 +243,7 @@ testResizeGeometraThreePerspectiveViewSanitizesNonFiniteInputs()
 testSyncGeometraThreePerspectiveFromBuffer()
 testSetWebGLDrawingBufferSize()
 testResizeGeometraThreeDrawingBufferView()
+testGeometraThreeHostSceneDefaultsMatchBasics()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
 

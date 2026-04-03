@@ -27,6 +27,15 @@ if (missingFns.length) {
   process.exit(1)
 }
 
+const expectedObjects = ['GEOMETRA_THREE_HOST_SCENE_DEFAULTS']
+const missingObjs = expectedObjects.filter(
+  (name) => mod[name] === null || typeof mod[name] !== 'object',
+)
+if (missingObjs.length) {
+  console.error('verify-exports: missing object exports:', missingObjs.join(', '))
+  process.exit(1)
+}
+
 const expectedStrings = ['GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT']
 const missingStr = expectedStrings.filter((name) => typeof mod[name] !== 'string')
 if (missingStr.length) {
@@ -34,7 +43,7 @@ if (missingStr.length) {
   process.exit(1)
 }
 
-const expected = [...expectedFunctions, ...expectedStrings]
+const expected = [...expectedFunctions, ...expectedObjects, ...expectedStrings]
 const extra = Object.keys(mod).filter((k) => !expected.includes(k))
 if (extra.length) {
   console.error('verify-exports: unexpected extra exports:', extra.join(', '))
