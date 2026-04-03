@@ -34,7 +34,8 @@ export interface ThreeGeometraSplitHostOptions
   onThreeReady?: (ctx: ThreeRuntimeContext) => void
   /**
    * Called every frame before `renderer.render`.
-   * Use for animations; return nothing.
+   * Use for animations; return nothing. If you call {@link ThreeRuntimeContext.destroy} here, teardown
+   * runs and this frame’s `render` is skipped (avoids rendering after WebGL dispose).
    */
   onThreeFrame?: (ctx: ThreeFrameContext) => void
 }
@@ -258,6 +259,7 @@ export function createThreeGeometraSplitHost(
     const delta = clock.getDelta()
     const elapsed = clock.elapsedTime
     onThreeFrame?.({ ...ctxBase, clock, delta, elapsed })
+    if (destroyed) return
     glRenderer.render(scene, camera)
   }
 

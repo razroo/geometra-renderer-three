@@ -46,6 +46,7 @@ export interface ThreeGeometraStackedHostOptions
   onThreeReady?: (ctx: ThreeRuntimeContext) => void
   /**
    * Called every frame before `renderer.render`.
+   * If you call {@link ThreeRuntimeContext.destroy} here, teardown runs and this frame’s `render` is skipped.
    */
   onThreeFrame?: (ctx: ThreeFrameContext) => void
 }
@@ -284,6 +285,7 @@ export function createThreeGeometraStackedHost(
     const delta = clock.getDelta()
     const elapsed = clock.elapsedTime
     onThreeFrame?.({ ...ctxBase, clock, delta, elapsed })
+    if (destroyed) return
     glRenderer.render(scene, camera)
   }
 
