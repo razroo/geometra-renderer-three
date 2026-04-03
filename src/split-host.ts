@@ -82,6 +82,9 @@ function fullSizeCanvas(canvas: HTMLCanvasElement): void {
  * This is the recommended **hybrid** layout: 3D stays in Three; chrome and data panes stay in Geometra’s protocol.
  * Geometra’s client still uses `resizeTarget: window` by default; when only the Geometra column changes size,
  * a `ResizeObserver` dispatches a synthetic `resize` on `window` so layout width/height track the panel.
+ *
+ * The Three.js pane listens to `window` `resize` as well so `devicePixelRatio` updates (zoom / display changes)
+ * refresh the WebGL drawing buffer without relying on panel `ResizeObserver` alone.
  */
 export function createThreeGeometraSplitHost(
   options: ThreeGeometraSplitHostOptions,
@@ -143,8 +146,6 @@ export function createThreeGeometraSplitHost(
     antialias: true,
     alpha: false,
   })
-  glRenderer.setPixelRatio(win.devicePixelRatio || 1)
-
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(threeBackground)
 
@@ -154,12 +155,18 @@ export function createThreeGeometraSplitHost(
   const clock = new THREE.Clock()
 
   const resizeThree = () => {
+    glRenderer.setPixelRatio(win.devicePixelRatio || 1)
     const w = Math.max(1, Math.floor(threePanel.clientWidth))
     const h = Math.max(1, Math.floor(threePanel.clientHeight))
     camera.aspect = w / h
     camera.updateProjectionMatrix()
     glRenderer.setSize(w, h, false)
   }
+
+  const onWindowResize = () => {
+    resizeThree()
+  }
+  win.addEventListener('resize', onWindowResize, { passive: true })
 
   resizeThree()
 
@@ -208,12 +215,11 @@ export function createThreeGeometraSplitHost(
     if (destroyed) return
     destroyed = true
     win.cancelAnimationFrame(raf)
+    win.removeEventListener('resize', onWindowResize)
     roContainer.disconnect()
     geometraHandle.destroy()
     glRenderer.dispose()
-    if (root.parentNode === container) {
-      container.removeChild(root)
-    }
+    root.remove()
   }
 
   return {
