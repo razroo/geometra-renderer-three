@@ -14,8 +14,15 @@ import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
 import { coerceHostNonNegativeCssPx } from './host-css-coerce.js'
 import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
+/**
+ * Every {@link createBrowserCanvasClient} option except `canvas`, which split/stacked hosts create
+ * internally. Includes `url`, `binaryFraming`, optional explicit `window` for tests/iframes, and
+ * the rest of {@link BrowserCanvasClientOptions}.
+ */
+export type GeometraHostBrowserCanvasClientOptions = Omit<BrowserCanvasClientOptions, 'canvas'>
+
 export interface ThreeGeometraSplitHostOptions
-  extends Omit<BrowserCanvasClientOptions, 'canvas'>,
+  extends GeometraHostBrowserCanvasClientOptions,
     GeometraThreeSceneBasicsOptions {
   /** Host element; a flex row is appended as a child (existing children are left untouched). */
   container: HTMLElement

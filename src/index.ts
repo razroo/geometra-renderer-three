@@ -1,5 +1,6 @@
 export {
   createThreeGeometraSplitHost,
+  type GeometraHostBrowserCanvasClientOptions,
   type ThreeGeometraSplitHostHandle,
   type ThreeGeometraSplitHostOptions,
   type ThreeFrameContext,

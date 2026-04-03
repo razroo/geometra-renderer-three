@@ -2,9 +2,12 @@ import * as THREE from 'three'
 import {
   createBrowserCanvasClient,
   type BrowserCanvasClientHandle,
-  type BrowserCanvasClientOptions,
 } from '@geometra/renderer-canvas'
-import type { ThreeFrameContext, ThreeRuntimeContext } from './split-host.js'
+import type {
+  GeometraHostBrowserCanvasClientOptions,
+  ThreeFrameContext,
+  ThreeRuntimeContext,
+} from './split-host.js'
 import {
   GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
@@ -19,7 +22,7 @@ import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from 
 export type GeometraHudPlacement = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
 
 export interface ThreeGeometraStackedHostOptions
-  extends Omit<BrowserCanvasClientOptions, 'canvas'>,
+  extends GeometraHostBrowserCanvasClientOptions,
     GeometraThreeSceneBasicsOptions {
   /** Host element; a full-size stacking context is appended (existing children are left untouched). */
   container: HTMLElement
