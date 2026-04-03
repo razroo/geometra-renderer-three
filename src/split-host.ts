@@ -5,7 +5,7 @@ import {
   type BrowserCanvasClientOptions,
 } from '@geometra/renderer-canvas'
 import { createGeometraThreeSceneBasics, type GeometraThreeSceneBasicsOptions } from './three-scene-basics.js'
-import { resizeGeometraThreePerspectiveView } from './utils.js'
+import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 export interface ThreeGeometraSplitHostOptions
   extends Omit<BrowserCanvasClientOptions, 'canvas'>,
@@ -16,6 +16,11 @@ export interface ThreeGeometraSplitHostOptions
   geometraWidth?: number
   /** When true, Geometra panel is on the left. Default: false (Three.js left, Geometra right). */
   geometraOnLeft?: boolean
+  /**
+   * Upper bound for `window.devicePixelRatio` when sizing the WebGL drawing buffer (e.g. `2` on retina
+   * to cut memory and fragment cost). When omitted, the full device pixel ratio is used.
+   */
+  maxDevicePixelRatio?: number
   /**
    * Called once after scene, camera, and renderer are created.
    * Add meshes, lights, controls, etc. Call `ctx.destroy()` to tear down immediately; the render loop
@@ -82,7 +87,8 @@ function fullSizeCanvas(canvas: HTMLCanvasElement): void {
  * (coalesced to at most once per animation frame when both panes notify in the same frame).
  *
  * The Three.js pane listens to `window` `resize` as well so `devicePixelRatio` updates (zoom / display changes)
- * refresh the WebGL drawing buffer without relying on panel `ResizeObserver` alone.
+ * refresh the WebGL drawing buffer without relying on panel `ResizeObserver` alone. Optional
+ * {@link ThreeGeometraSplitHostOptions.maxDevicePixelRatio} caps the ratio used for the WebGL buffer.
  *
  * Pass through {@link BrowserCanvasClientOptions} from `@geometra/renderer-canvas` / `@geometra/client`
  * (for example `binaryFraming`, `onError`, `onFrameMetrics`, `onData` for JSON side-channels on the same
@@ -95,6 +101,7 @@ export function createThreeGeometraSplitHost(
     container,
     geometraWidth = 420,
     geometraOnLeft = false,
+    maxDevicePixelRatio,
     threeBackground = 0x000000,
     cameraFov = 50,
     cameraNear = 0.1,
@@ -162,7 +169,7 @@ export function createThreeGeometraSplitHost(
       camera,
       threePanel.clientWidth,
       threePanel.clientHeight,
-      win.devicePixelRatio || 1,
+      resolveHostDevicePixelRatio(win.devicePixelRatio || 1, maxDevicePixelRatio),
     )
   }
 

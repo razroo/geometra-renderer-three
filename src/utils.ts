@@ -1,6 +1,25 @@
 import type { PerspectiveCamera, WebGLRenderer } from 'three'
 
 /**
+ * Device pixel ratio for split/stacked hosts: full `window.devicePixelRatio`, optionally capped.
+ * Not re-exported from the package entry — hosts only.
+ */
+export function resolveHostDevicePixelRatio(
+  rawDevicePixelRatio: number,
+  maxDevicePixelRatio?: number,
+): number {
+  const raw = rawDevicePixelRatio > 0 && Number.isFinite(rawDevicePixelRatio) ? rawDevicePixelRatio : 1
+  if (
+    maxDevicePixelRatio === undefined ||
+    !Number.isFinite(maxDevicePixelRatio) ||
+    maxDevicePixelRatio <= 0
+  ) {
+    return raw
+  }
+  return Math.min(raw, maxDevicePixelRatio)
+}
+
+/**
  * Resize drawing buffer to match CSS pixel size × device pixel ratio.
  * Use when you manage your own canvas layout (no `renderer.setSize`).
  */

@@ -67,6 +67,10 @@ Use `geometraHudPointerEvents` (CSS `pointer-events`, default `'auto'`) when you
 
 `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` each forward all [`createBrowserCanvasClient`](https://github.com/razroo/geometra/tree/main/packages/renderer-canvas) options except `canvas` (the host creates the Geometra canvas for you).
 
+### WebGL device pixel ratio cap
+
+Both `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` accept optional `maxDevicePixelRatio` (for example `2`) to limit the Three.js drawing buffer on high-DPR displays and reduce GPU memory use. When omitted, the full `window.devicePixelRatio` is used.
+
 ### Geometra resize
 
 The Geometra thin client listens to `window` resize by default. When only the Geometra column changes size, this host dispatches a synthetic `window` `resize` after layout so server layout width/height stay in sync.

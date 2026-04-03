@@ -6,7 +6,7 @@ import {
 } from '@geometra/renderer-canvas'
 import type { ThreeFrameContext, ThreeRuntimeContext } from './split-host.js'
 import { createGeometraThreeSceneBasics, type GeometraThreeSceneBasicsOptions } from './three-scene-basics.js'
-import { resizeGeometraThreePerspectiveView } from './utils.js'
+import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 /** Corner anchor for the Geometra HUD overlay (CSS `position: absolute` on the host). */
 export type GeometraHudPlacement = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
@@ -29,6 +29,11 @@ export interface ThreeGeometraStackedHostOptions
    * Default: `'auto'`.
    */
   geometraHudPointerEvents?: string
+  /**
+   * Upper bound for `window.devicePixelRatio` when sizing the WebGL drawing buffer (e.g. `2` on retina
+   * to cut memory and fragment cost). When omitted, the full device pixel ratio is used.
+   */
+  maxDevicePixelRatio?: number
   /**
    * Called once after scene, camera, and renderer are created.
    * Call `ctx.destroy()` to tear down immediately; the render loop will not start if the host is already destroyed.
@@ -100,7 +105,8 @@ function applyHudPlacement(
  * Geometra’s client still uses `resizeTarget: window` by default; when only the HUD box changes size,
  * a coalesced synthetic `resize` is dispatched on `window` (same pattern as {@link createThreeGeometraSplitHost}).
  * The Three.js layer listens to `window` `resize` for `devicePixelRatio` changes and uses the host `root` size
- * for the drawing buffer.
+ * for the drawing buffer. Optional {@link ThreeGeometraStackedHostOptions.maxDevicePixelRatio} caps the ratio
+ * used for the WebGL buffer.
  */
 export function createThreeGeometraStackedHost(
   options: ThreeGeometraStackedHostOptions,
@@ -112,6 +118,7 @@ export function createThreeGeometraStackedHost(
     geometraHudPlacement = 'bottom-right',
     geometraHudMargin = 12,
     geometraHudPointerEvents = 'auto',
+    maxDevicePixelRatio,
     threeBackground = 0x000000,
     cameraFov = 50,
     cameraNear = 0.1,
@@ -183,7 +190,7 @@ export function createThreeGeometraStackedHost(
       camera,
       root.clientWidth,
       root.clientHeight,
-      win.devicePixelRatio || 1,
+      resolveHostDevicePixelRatio(win.devicePixelRatio || 1, maxDevicePixelRatio),
     )
   }
 
