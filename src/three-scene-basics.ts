@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import type { WebGLRendererParameters } from 'three'
 
 /** Scene, camera, and clock bundle returned by {@link createGeometraThreeSceneBasics}. */
 export interface GeometraThreeSceneBasics {
@@ -39,13 +40,16 @@ export const GEOMETRA_THREE_HOST_SCENE_DEFAULTS: Required<GeometraThreeSceneBasi
  * `WebGLRenderer` constructor options (excluding `canvas`) used by
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *
+ * Typed as {@link WebGLRendererParameters} minus `canvas` so custom renderers stay compatible with
+ * Three’s constructor surface when you extend or mirror these flags.
+ *
  * Spread into your own `new WebGLRenderer({ canvas, ...GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS })` when
  * you manage the renderer (headless GL, offscreen canvas, tests) so flags stay aligned with those hosts.
  */
 export const GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS = {
   antialias: true,
   alpha: false,
-} as const
+} as const satisfies Omit<WebGLRendererParameters, 'canvas'>
 
 /**
  * Create a scene, perspective camera, and clock with the same defaults as
