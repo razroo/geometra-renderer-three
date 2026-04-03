@@ -85,7 +85,8 @@ function fullSizeCanvas(canvas: HTMLCanvasElement): void {
  * refresh the WebGL drawing buffer without relying on panel `ResizeObserver` alone.
  *
  * Pass through {@link BrowserCanvasClientOptions} from `@geometra/renderer-canvas` / `@geometra/client`
- * (for example `binaryFraming`, `onError`, `onFrameMetrics`).
+ * (for example `binaryFraming`, `onError`, `onFrameMetrics`, `onData` for JSON side-channels on the same
+ * socket as layout; channel names are defined by your app and the Geometra server).
  */
 export function createThreeGeometraSplitHost(
   options: ThreeGeometraSplitHostOptions,
