@@ -37,6 +37,7 @@ export interface ThreeGeometraStackedHostOptions
   /**
    * Called once after scene, camera, and renderer are created.
    * Call `ctx.destroy()` to tear down immediately; the render loop will not start if the host is already destroyed.
+   * If this callback throws, the host is fully torn down and the error is rethrown.
    */
   onThreeReady?: (ctx: ThreeRuntimeContext) => void
   /**
@@ -266,7 +267,12 @@ export function createThreeGeometraStackedHost(
     destroy,
   }
 
-  onThreeReady?.(ctxBase)
+  try {
+    onThreeReady?.(ctxBase)
+  } catch (err) {
+    destroy()
+    throw err
+  }
 
   const loop = () => {
     if (destroyed) return

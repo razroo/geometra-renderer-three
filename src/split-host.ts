@@ -24,7 +24,8 @@ export interface ThreeGeometraSplitHostOptions
   /**
    * Called once after scene, camera, and renderer are created.
    * Add meshes, lights, controls, etc. Call `ctx.destroy()` to tear down immediately; the render loop
-   * will not start if the host is already destroyed.
+   * will not start if the host is already destroyed. If this callback throws, the host is fully torn
+   * down and the error is rethrown.
    */
   onThreeReady?: (ctx: ThreeRuntimeContext) => void
   /**
@@ -240,7 +241,12 @@ export function createThreeGeometraSplitHost(
     destroy,
   }
 
-  onThreeReady?.(ctxBase)
+  try {
+    onThreeReady?.(ctxBase)
+  } catch (err) {
+    destroy()
+    throw err
+  }
 
   const loop = () => {
     if (destroyed) return
