@@ -84,7 +84,8 @@ function fullSizeCanvas(canvas: HTMLCanvasElement): void {
  *
  * This is the recommended **hybrid** layout: 3D stays in Three; chrome and data panes stay in Geometra’s protocol.
  * Geometra’s client still uses `resizeTarget: window` by default; when only the Geometra column changes size,
- * a `ResizeObserver` dispatches a synthetic `resize` on `window` so layout width/height track the panel.
+ * a `ResizeObserver` dispatches a synthetic `resize` on `window` so layout width/height track the panel
+ * (coalesced to at most once per animation frame when both panes notify in the same frame).
  *
  * The Three.js pane listens to `window` `resize` as well so `devicePixelRatio` updates (zoom / display changes)
  * refresh the WebGL drawing buffer without relying on panel `ResizeObserver` alone.
@@ -179,8 +180,11 @@ export function createThreeGeometraSplitHost(
     window: win,
   })
 
+  let geometraResizeRafId: number | undefined
   const triggerGeometraResize = () => {
-    win.requestAnimationFrame(() => {
+    if (geometraResizeRafId !== undefined) return
+    geometraResizeRafId = win.requestAnimationFrame(() => {
+      geometraResizeRafId = undefined
       win.dispatchEvent(new Event('resize'))
     })
   }
@@ -201,6 +205,10 @@ export function createThreeGeometraSplitHost(
     if (rafId !== undefined) {
       win.cancelAnimationFrame(rafId)
       rafId = undefined
+    }
+    if (geometraResizeRafId !== undefined) {
+      win.cancelAnimationFrame(geometraResizeRafId)
+      geometraResizeRafId = undefined
     }
     win.removeEventListener('resize', onWindowResize)
     roContainer.disconnect()
