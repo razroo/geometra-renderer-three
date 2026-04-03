@@ -5,6 +5,7 @@ import {
   type BrowserCanvasClientOptions,
 } from '@geometra/renderer-canvas'
 import { createGeometraThreeSceneBasics, type GeometraThreeSceneBasicsOptions } from './three-scene-basics.js'
+import { resizeGeometraThreePerspectiveView } from './utils.js'
 
 export interface ThreeGeometraSplitHostOptions
   extends Omit<BrowserCanvasClientOptions, 'canvas'>,
@@ -83,8 +84,8 @@ function fullSizeCanvas(canvas: HTMLCanvasElement): void {
  * The Three.js pane listens to `window` `resize` as well so `devicePixelRatio` updates (zoom / display changes)
  * refresh the WebGL drawing buffer without relying on panel `ResizeObserver` alone.
  *
- * Pass through {@link BrowserCanvasClientOptions} such as `onData` to receive JSON side-channel messages
- * on the same WebSocket as layout (e.g. tracker snapshots on {@link GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT} from `@geometra/client`).
+ * Pass through {@link BrowserCanvasClientOptions} from `@geometra/renderer-canvas` / `@geometra/client`
+ * (for example `binaryFraming`, `onError`, `onFrameMetrics`).
  */
 export function createThreeGeometraSplitHost(
   options: ThreeGeometraSplitHostOptions,
@@ -155,12 +156,13 @@ export function createThreeGeometraSplitHost(
   })
 
   const resizeThree = () => {
-    glRenderer.setPixelRatio(win.devicePixelRatio || 1)
-    const w = Math.max(1, Math.floor(threePanel.clientWidth))
-    const h = Math.max(1, Math.floor(threePanel.clientHeight))
-    camera.aspect = w / h
-    camera.updateProjectionMatrix()
-    glRenderer.setSize(w, h, false)
+    resizeGeometraThreePerspectiveView(
+      glRenderer,
+      camera,
+      threePanel.clientWidth,
+      threePanel.clientHeight,
+      win.devicePixelRatio || 1,
+    )
   }
 
   const onWindowResize = () => {

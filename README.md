@@ -73,7 +73,7 @@ The Geometra thin client listens to `window` resize by default. When only the Ge
 
 ### Shared scene / camera defaults (headless-friendly)
 
-`createGeometraThreeSceneBasics` builds a `Scene`, `PerspectiveCamera`, and `Clock` with the same defaults as the split and stacked hosts. Pair it with your own `WebGLRenderer` (or a headless GL context) and `setWebGLDrawingBufferSize` when you are not using a host factory.
+`createGeometraThreeSceneBasics` builds a `Scene`, `PerspectiveCamera`, and `Clock` with the same defaults as the split and stacked hosts. Pair it with your own `WebGLRenderer` (or a headless GL context) and `resizeGeometraThreePerspectiveView` so buffer size and camera aspect match those hosts, or use `setWebGLDrawingBufferSize` alone when you already manage aspect and `setPixelRatio` yourself.
 
 ## Roadmap (not in v0)
 

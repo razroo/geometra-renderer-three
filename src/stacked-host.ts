@@ -6,6 +6,7 @@ import {
 } from '@geometra/renderer-canvas'
 import type { ThreeFrameContext, ThreeRuntimeContext } from './split-host.js'
 import { createGeometraThreeSceneBasics, type GeometraThreeSceneBasicsOptions } from './three-scene-basics.js'
+import { resizeGeometraThreePerspectiveView } from './utils.js'
 
 /** Corner anchor for the Geometra HUD overlay (CSS `position: absolute` on the host). */
 export type GeometraHudPlacement = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
@@ -177,12 +178,13 @@ export function createThreeGeometraStackedHost(
   })
 
   const resizeThree = () => {
-    glRenderer.setPixelRatio(win.devicePixelRatio || 1)
-    const w = Math.max(1, Math.floor(root.clientWidth))
-    const h = Math.max(1, Math.floor(root.clientHeight))
-    camera.aspect = w / h
-    camera.updateProjectionMatrix()
-    glRenderer.setSize(w, h, false)
+    resizeGeometraThreePerspectiveView(
+      glRenderer,
+      camera,
+      root.clientWidth,
+      root.clientHeight,
+      win.devicePixelRatio || 1,
+    )
   }
 
   const onWindowResize = () => {
