@@ -11,6 +11,7 @@ import {
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'
 import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
+import { coerceHostNonNegativeCssPx } from './host-css-coerce.js'
 import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 export interface ThreeGeometraSplitHostOptions
@@ -18,7 +19,10 @@ export interface ThreeGeometraSplitHostOptions
     GeometraThreeSceneBasicsOptions {
   /** Host element; a flex row is appended as a child (existing children are left untouched). */
   container: HTMLElement
-  /** Geometra column width in CSS pixels. Default: 420. */
+  /**
+   * Geometra column width in CSS pixels. Default: 420.
+   * Non-finite or negative values fall back to the default so layout does not emit invalid `px` styles.
+   */
   geometraWidth?: number
   /** When true, Geometra panel is on the left. Default: false (Three.js left, Geometra right). */
   geometraOnLeft?: boolean
@@ -112,7 +116,7 @@ export function createThreeGeometraSplitHost(
 ): ThreeGeometraSplitHostHandle {
   const {
     container,
-    geometraWidth = 420,
+    geometraWidth: geometraWidthOpt = 420,
     geometraOnLeft = false,
     maxDevicePixelRatio,
     threeBackground = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.threeBackground,
@@ -125,6 +129,8 @@ export function createThreeGeometraSplitHost(
     window: providedWindow,
     ...browserOptions
   } = options
+
+  const geometraWidth = coerceHostNonNegativeCssPx(geometraWidthOpt, 420)
 
   const doc = container.ownerDocument
   const win = providedWindow ?? doc.defaultView

@@ -12,6 +12,7 @@ import {
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'
 import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
+import { coerceHostNonNegativeCssPx } from './host-css-coerce.js'
 import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 /** Corner anchor for the Geometra HUD overlay (CSS `position: absolute` on the host). */
@@ -22,13 +23,22 @@ export interface ThreeGeometraStackedHostOptions
     GeometraThreeSceneBasicsOptions {
   /** Host element; a full-size stacking context is appended (existing children are left untouched). */
   container: HTMLElement
-  /** HUD width in CSS pixels. Default: 420. */
+  /**
+   * HUD width in CSS pixels. Default: 420.
+   * Non-finite or negative values fall back to the default so layout does not emit invalid `px` styles.
+   */
   geometraHudWidth?: number
-  /** HUD height in CSS pixels. Default: 320. */
+  /**
+   * HUD height in CSS pixels. Default: 320.
+   * Non-finite or negative values fall back to the default.
+   */
   geometraHudHeight?: number
   /** HUD corner. Default: `bottom-right`. */
   geometraHudPlacement?: GeometraHudPlacement
-  /** Inset from the chosen corner in CSS pixels. Default: 12. */
+  /**
+   * Inset from the chosen corner in CSS pixels. Default: 12.
+   * Non-finite or negative values fall back to the default.
+   */
   geometraHudMargin?: number
   /**
    * CSS `pointer-events` on the HUD wrapper (e.g. `'none'` so input falls through to the WebGL canvas).
@@ -129,10 +139,10 @@ export function createThreeGeometraStackedHost(
 ): ThreeGeometraStackedHostHandle {
   const {
     container,
-    geometraHudWidth = 420,
-    geometraHudHeight = 320,
+    geometraHudWidth: geometraHudWidthOpt = 420,
+    geometraHudHeight: geometraHudHeightOpt = 320,
     geometraHudPlacement = 'bottom-right',
-    geometraHudMargin = 12,
+    geometraHudMargin: geometraHudMarginOpt = 12,
     geometraHudPointerEvents = 'auto',
     geometraHudZIndex = 1,
     maxDevicePixelRatio,
@@ -146,6 +156,10 @@ export function createThreeGeometraStackedHost(
     window: providedWindow,
     ...browserOptions
   } = options
+
+  const geometraHudWidth = coerceHostNonNegativeCssPx(geometraHudWidthOpt, 420)
+  const geometraHudHeight = coerceHostNonNegativeCssPx(geometraHudHeightOpt, 320)
+  const geometraHudMargin = coerceHostNonNegativeCssPx(geometraHudMarginOpt, 12)
 
   const doc = container.ownerDocument
   const win = providedWindow ?? doc.defaultView

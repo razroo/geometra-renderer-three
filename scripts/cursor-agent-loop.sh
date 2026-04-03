@@ -16,7 +16,8 @@ fi
 #   - rg 'TODO|FIXME|HACK' src for concrete hooks.
 #   - When changing public API or types, keep README examples and package.json
 #     peer ranges coherent with https://github.com/razroo/geometra (renderer-canvas, client, core).
-#   - When editing host options defaults (split-host.ts / stacked-host.ts), align README prose
+#   - When editing host options defaults or CSS pixel coercion (split-host.ts, stacked-host.ts,
+#     host-css-coerce.ts), align README prose
 #     and examples so readers are not misled (explicit example values vs documented defaults).
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, verify-utils.mjs, then
 #     verify-layout-sync.mjs (dist/layout-sync.js rAF coalescer; factory is also a public export).
