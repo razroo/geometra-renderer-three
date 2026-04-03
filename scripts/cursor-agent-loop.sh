@@ -16,6 +16,8 @@ fi
 #   - rg 'TODO|FIXME|HACK' src for concrete hooks.
 #   - When changing public API or types, keep README examples and package.json
 #     peer ranges coherent with https://github.com/razroo/geometra renderer packages.
+#   - npm run release:gate runs tsc --noEmit, build, then scripts/verify-exports.mjs
+#     (Node import of dist/index.js); update that script if exports change.
 #
 # Prerequisites:
 #   - Cursor Agent CLI: https://cursor.com/install (`agent` on PATH)

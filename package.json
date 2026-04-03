@@ -33,7 +33,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "check": "tsc --noEmit -p tsconfig.json",
-    "release:gate": "npm run check && npm run build",
+    "verify:exports": "node scripts/verify-exports.mjs",
+    "release:gate": "npm run check && npm run build && npm run verify:exports",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build"
   },
