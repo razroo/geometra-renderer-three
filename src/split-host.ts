@@ -210,6 +210,7 @@ export function createThreeGeometraSplitHost(
         window: win,
       })
     } catch (err) {
+      layoutSync.cancel()
       win.removeEventListener('resize', onWindowResize)
       glRenderer.dispose()
       root.remove()
