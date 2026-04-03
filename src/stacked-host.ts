@@ -20,6 +20,11 @@ export interface ThreeGeometraStackedHostOptions extends Omit<BrowserCanvasClien
   geometraHudPlacement?: GeometraHudPlacement
   /** Inset from the chosen corner in CSS pixels. Default: 12. */
   geometraHudMargin?: number
+  /**
+   * CSS `pointer-events` on the HUD wrapper (e.g. `'none'` so input falls through to the WebGL canvas).
+   * Default: `'auto'`.
+   */
+  geometraHudPointerEvents?: string
   /** Clear color for the Three.js scene. Default: `0x000000`. */
   threeBackground?: THREE.ColorRepresentation
   /** Perspective camera FOV in degrees. Default: 50. */
@@ -95,7 +100,8 @@ function applyHudPlacement(
  * Stacked host: full-viewport Three.js `WebGLRenderer` with a positioned Geometra canvas **HUD** on top.
  *
  * Pointer routing follows normal hit-testing: events hit the Geometra canvas where it overlaps the WebGL layer
- * (`z-index` above the Three canvas); elsewhere, the Three canvas receives input.
+ * (`z-index` above the Three canvas); elsewhere, the Three canvas receives input. Override with
+ * {@link ThreeGeometraStackedHostOptions.geometraHudPointerEvents} (e.g. `'none'` for a click-through HUD).
  *
  * Geometra’s client still uses `resizeTarget: window` by default; when only the HUD box changes size,
  * a coalesced synthetic `resize` is dispatched on `window` (same pattern as {@link createThreeGeometraSplitHost}).
@@ -111,6 +117,7 @@ export function createThreeGeometraStackedHost(
     geometraHudHeight = 320,
     geometraHudPlacement = 'bottom-right',
     geometraHudMargin = 12,
+    geometraHudPointerEvents = 'auto',
     threeBackground = 0x000000,
     cameraFov = 50,
     cameraNear = 0.1,
@@ -155,6 +162,7 @@ export function createThreeGeometraStackedHost(
   geometraHud.style.minWidth = '0'
   geometraHud.style.minHeight = '0'
   geometraHud.style.overflow = 'hidden'
+  geometraHud.style.pointerEvents = geometraHudPointerEvents
   applyHudPlacement(geometraHud, geometraHudPlacement, geometraHudMargin)
   root.appendChild(geometraHud)
 
