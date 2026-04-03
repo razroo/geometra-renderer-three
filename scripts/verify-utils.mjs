@@ -74,6 +74,33 @@ function testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize() {
   assert.equal(camera.aspect, 1)
 }
 
+function testResizeGeometraThreePerspectiveViewSanitizesNonFiniteInputs() {
+  const log = []
+  const renderer = {
+    setPixelRatio(pr) {
+      log.push(['setPixelRatio', pr])
+    },
+    setSize(w, h, updateStyle) {
+      log.push(['setSize', w, h, updateStyle])
+    },
+  }
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+
+  resizeGeometraThreePerspectiveView(renderer, camera, Number.NaN, Number.POSITIVE_INFINITY, 0)
+
+  assert.deepEqual(log, [
+    ['setPixelRatio', 1],
+    ['updateProjectionMatrix'],
+    ['setSize', 1, 1, false],
+  ])
+  assert.equal(camera.aspect, 1)
+}
+
 function testSyncGeometraThreePerspectiveFromBuffer() {
   const camera = {
     aspect: 1,
@@ -84,6 +111,9 @@ function testSyncGeometraThreePerspectiveFromBuffer() {
   assert.equal(camera.aspect, 2)
 
   syncGeometraThreePerspectiveFromBuffer(camera, 0, 0)
+  assert.equal(camera.aspect, 1)
+
+  syncGeometraThreePerspectiveFromBuffer(camera, Number.NaN, Number.POSITIVE_INFINITY)
   assert.equal(camera.aspect, 1)
 }
 
@@ -101,6 +131,10 @@ function testSetWebGLDrawingBufferSize() {
   log.length = 0
   setWebGLDrawingBufferSize(renderer, 0.2, 0.2, 2)
   assert.deepEqual(log, [['setDrawingBufferSize', 1, 1, 2]])
+
+  log.length = 0
+  setWebGLDrawingBufferSize(renderer, Number.NaN, 50, Number.NaN)
+  assert.deepEqual(log, [['setDrawingBufferSize', 1, 50, 1]])
 }
 
 function testCreateGeometraThreeSceneBasicsDefaults() {
@@ -142,6 +176,7 @@ function testCreateGeometraThreeSceneBasicsCustomOptions() {
 testResolveHostDevicePixelRatio()
 testResizeGeometraThreePerspectiveView()
 testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()
+testResizeGeometraThreePerspectiveViewSanitizesNonFiniteInputs()
 testSyncGeometraThreePerspectiveFromBuffer()
 testSetWebGLDrawingBufferSize()
 testCreateGeometraThreeSceneBasicsDefaults()
