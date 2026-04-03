@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Post-build smoke check: ensure the published ESM entry exports the expected functions only.
+ * Post-build smoke check: ensure the published ESM entry exports the expected public API.
  * Run after `npm run build` (see `release:gate`). Keeps tooling minimal vs a full test runner.
  */
 import path from 'node:path'
