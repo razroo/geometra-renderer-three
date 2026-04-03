@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreeDrawingBufferView`,
- * `resizeGeometraThreePerspectiveView` (including non-finite `pixelRatio`), `setWebGLDrawingBufferSize`,
+ * `resizeGeometraThreePerspectiveView` (including non-finite `pixelRatio` and negative CSS sizes),
+ * `setWebGLDrawingBufferSize`,
  * `syncGeometraThreePerspectiveFromBuffer`, `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`
@@ -119,6 +120,23 @@ function testResizeGeometraThreePerspectiveViewSanitizesNonFiniteInputs() {
     ['updateProjectionMatrix'],
     ['setSize', 1, 1, false],
   ])
+  assert.equal(camera.aspect, 1)
+}
+
+function testResizeGeometraThreePerspectiveViewNegativeCssClampsToMinLayoutPixels() {
+  const renderer = {
+    setPixelRatio() {},
+    setSize(w, h) {
+      assert.equal(w, 1)
+      assert.equal(h, 1)
+    },
+  }
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {},
+  }
+
+  resizeGeometraThreePerspectiveView(renderer, camera, -100, -0.5, 1)
   assert.equal(camera.aspect, 1)
 }
 
@@ -282,6 +300,7 @@ testResolveHostDevicePixelRatio()
 testResizeGeometraThreePerspectiveView()
 testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()
 testResizeGeometraThreePerspectiveViewSanitizesNonFiniteInputs()
+testResizeGeometraThreePerspectiveViewNegativeCssClampsToMinLayoutPixels()
 testResizeGeometraThreePerspectiveViewSanitizesNonFinitePixelRatio()
 testSyncGeometraThreePerspectiveFromBuffer()
 testSetWebGLDrawingBufferSize()

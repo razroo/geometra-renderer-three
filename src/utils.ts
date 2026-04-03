@@ -88,7 +88,9 @@ export function resizeGeometraThreeDrawingBufferView(
  *
  * Use with {@link createGeometraThreeSceneBasics} when you own the `WebGLRenderer` (headless GL,
  * offscreen canvas, tests) but want buffer dimensions and projection to stay aligned with those hosts.
- * Non-finite CSS sizes fall back to 1; non-finite or non-positive `pixelRatio` becomes 1.
+ * Non-finite or non-positive CSS sizes (including negative values) normalize to at least 1 layout
+ * pixel each, matching {@link normalizeGeometraLayoutPixels}; non-finite or non-positive `pixelRatio`
+ * becomes 1.
  */
 export function resizeGeometraThreePerspectiveView(
   renderer: WebGLRenderer,
