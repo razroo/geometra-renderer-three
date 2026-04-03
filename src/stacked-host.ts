@@ -36,6 +36,11 @@ export interface ThreeGeometraStackedHostOptions
    */
   geometraHudPointerEvents?: string
   /**
+   * CSS `z-index` on the HUD wrapper when you stack other siblings in {@link ThreeGeometraStackedHostOptions.container}
+   * or need a fixed order above the WebGL layer (Three canvas uses `0`). Default: `1`.
+   */
+  geometraHudZIndex?: string | number
+  /**
    * Upper bound for `window.devicePixelRatio` when sizing the WebGL drawing buffer (e.g. `2` on retina
    * to cut memory and fragment cost). When omitted, the full device pixel ratio is used.
    */
@@ -107,8 +112,9 @@ function applyHudPlacement(
  * Stacked host: full-viewport Three.js `WebGLRenderer` with a positioned Geometra canvas **HUD** on top.
  *
  * Pointer routing follows normal hit-testing: events hit the Geometra canvas where it overlaps the WebGL layer
- * (`z-index` above the Three canvas); elsewhere, the Three canvas receives input. Override with
- * {@link ThreeGeometraStackedHostOptions.geometraHudPointerEvents} (e.g. `'none'` for a click-through HUD).
+ * (HUD `z-index` above the Three canvas, which uses `0`); elsewhere, the Three canvas receives input. Override with
+ * {@link ThreeGeometraStackedHostOptions.geometraHudPointerEvents} (e.g. `'none'` for a click-through HUD) or
+ * {@link ThreeGeometraStackedHostOptions.geometraHudZIndex} when you add other positioned siblings.
  *
  * Geometra’s client still uses `resizeTarget: window` by default; when only the HUD box changes size,
  * a coalesced synthetic `resize` is dispatched on `window` (same pattern as {@link createThreeGeometraSplitHost}).
@@ -128,6 +134,7 @@ export function createThreeGeometraStackedHost(
     geometraHudPlacement = 'bottom-right',
     geometraHudMargin = 12,
     geometraHudPointerEvents = 'auto',
+    geometraHudZIndex = 1,
     maxDevicePixelRatio,
     threeBackground = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.threeBackground,
     cameraFov = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.cameraFov,
@@ -167,7 +174,7 @@ export function createThreeGeometraStackedHost(
 
   const geometraHud = doc.createElement('div')
   geometraHud.style.position = 'absolute'
-  geometraHud.style.zIndex = '1'
+  geometraHud.style.zIndex = String(geometraHudZIndex)
   geometraHud.style.width = `${geometraHudWidth}px`
   geometraHud.style.height = `${geometraHudHeight}px`
   geometraHud.style.minWidth = '0'
