@@ -18,7 +18,7 @@ fi
 #     peer ranges coherent with https://github.com/razroo/geometra renderer packages.
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, then verify-utils.mjs
 #     (Node imports dist/index.js; mocks + three for scene-basics); update those scripts if exports
-#     or resize / scene-basics helpers change.
+#     or resize / buffer-sync / scene-basics helpers change.
 #
 # Prerequisites:
 #   - Cursor Agent CLI: https://cursor.com/install (`agent` on PATH)

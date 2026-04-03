@@ -11,7 +11,11 @@ export {
   type ThreeGeometraStackedHostHandle,
   type ThreeGeometraStackedHostOptions,
 } from './stacked-host.js'
-export { resizeGeometraThreePerspectiveView, setWebGLDrawingBufferSize } from './utils.js'
+export {
+  resizeGeometraThreePerspectiveView,
+  setWebGLDrawingBufferSize,
+  syncGeometraThreePerspectiveFromBuffer,
+} from './utils.js'
 export {
   createGeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,

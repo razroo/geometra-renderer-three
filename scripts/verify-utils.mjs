@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `resizeGeometraThreePerspectiveView`, `setWebGLDrawingBufferSize`, and
- * `createGeometraThreeSceneBasics` using lightweight mocks / Node `three` (no WebGL).
+ * Post-build checks for `resizeGeometraThreePerspectiveView`, `setWebGLDrawingBufferSize`,
+ * `syncGeometraThreePerspectiveFromBuffer`, and `createGeometraThreeSceneBasics` using lightweight mocks /
+ * Node `three` (no WebGL).
  * Run after `npm run build` (see `release:gate`).
  */
 import assert from 'node:assert/strict'
@@ -14,6 +15,7 @@ const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
 const {
   resizeGeometraThreePerspectiveView,
   setWebGLDrawingBufferSize,
+  syncGeometraThreePerspectiveFromBuffer,
   createGeometraThreeSceneBasics,
 } = await import(indexHref)
 
@@ -58,6 +60,19 @@ function testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize() {
   assert.equal(camera.aspect, 100 / 50)
 
   resizeGeometraThreePerspectiveView(renderer, camera, 0, 0, 1)
+  assert.equal(camera.aspect, 1)
+}
+
+function testSyncGeometraThreePerspectiveFromBuffer() {
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {},
+  }
+
+  syncGeometraThreePerspectiveFromBuffer(camera, 800, 400)
+  assert.equal(camera.aspect, 2)
+
+  syncGeometraThreePerspectiveFromBuffer(camera, 0, 0)
   assert.equal(camera.aspect, 1)
 }
 
@@ -115,6 +130,7 @@ function testCreateGeometraThreeSceneBasicsCustomOptions() {
 
 testResizeGeometraThreePerspectiveView()
 testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()
+testSyncGeometraThreePerspectiveFromBuffer()
 testSetWebGLDrawingBufferSize()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()

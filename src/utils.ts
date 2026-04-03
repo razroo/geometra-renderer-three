@@ -37,3 +37,21 @@ export function resizeGeometraThreePerspectiveView(
   camera.updateProjectionMatrix()
   renderer.setSize(w, h, false)
 }
+
+/**
+ * Update perspective projection from **drawing-buffer** pixel dimensions (physical pixels), not CSS size.
+ *
+ * Use when you size WebGL with {@link setWebGLDrawingBufferSize} or `renderer.setDrawingBufferSize` directly
+ * (headless GL, offscreen canvas, tests) and still want the same aspect handling as
+ * {@link resizeGeometraThreePerspectiveView}. Does not touch the renderer — only the camera.
+ */
+export function syncGeometraThreePerspectiveFromBuffer(
+  camera: PerspectiveCamera,
+  drawingBufferWidth: number,
+  drawingBufferHeight: number,
+): void {
+  const w = Math.max(1, Math.floor(drawingBufferWidth))
+  const h = Math.max(1, Math.floor(drawingBufferHeight))
+  camera.aspect = w / h
+  camera.updateProjectionMatrix()
+}

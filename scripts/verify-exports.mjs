@@ -16,6 +16,7 @@ const expectedFunctions = [
   'createGeometraThreeSceneBasics',
   'resizeGeometraThreePerspectiveView',
   'setWebGLDrawingBufferSize',
+  'syncGeometraThreePerspectiveFromBuffer',
 ]
 const missingFns = expectedFunctions.filter((name) => typeof mod[name] !== 'function')
 if (missingFns.length) {
