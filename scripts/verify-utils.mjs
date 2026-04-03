@@ -3,7 +3,8 @@
  * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreeDrawingBufferView`,
  * `resizeGeometraThreePerspectiveView` (including non-finite `pixelRatio` and negative CSS sizes),
  * `setWebGLDrawingBufferSize`,
- * `syncGeometraThreePerspectiveFromBuffer`, `normalizeGeometraLayoutPixels`,
+ * `syncGeometraThreePerspectiveFromBuffer`, `geometraHostPerspectiveAspectFromCss`,
+ * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`
  * using lightweight mocks /
@@ -28,6 +29,7 @@ const {
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
   createGeometraThreeSceneBasics,
+  geometraHostPerspectiveAspectFromCss,
 } = await import(indexHref)
 
 function testNormalizeGeometraLayoutPixels() {
@@ -35,6 +37,13 @@ function testNormalizeGeometraLayoutPixels() {
   assert.equal(normalizeGeometraLayoutPixels(0.9), 1)
   assert.equal(normalizeGeometraLayoutPixels(0), 1)
   assert.equal(normalizeGeometraLayoutPixels(Number.NaN), 1)
+}
+
+function testGeometraHostPerspectiveAspectFromCss() {
+  assert.equal(geometraHostPerspectiveAspectFromCss(800, 400), 2)
+  assert.equal(geometraHostPerspectiveAspectFromCss(100.9, 50.1), 100 / 50)
+  assert.equal(geometraHostPerspectiveAspectFromCss(0, 0), 1)
+  assert.equal(geometraHostPerspectiveAspectFromCss(Number.NaN, Number.POSITIVE_INFINITY), 1)
 }
 
 function testResolveHostDevicePixelRatio() {
@@ -296,6 +305,7 @@ function testCreateGeometraThreeSceneBasicsCustomOptions() {
 }
 
 testNormalizeGeometraLayoutPixels()
+testGeometraHostPerspectiveAspectFromCss()
 testResolveHostDevicePixelRatio()
 testResizeGeometraThreePerspectiveView()
 testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()

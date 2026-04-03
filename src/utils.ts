@@ -19,6 +19,32 @@ export function normalizeGeometraLayoutPixels(n: number): number {
   return normalizeLayoutPixels(n)
 }
 
+function normalizedCssLayoutDimensions(
+  cssWidth: number,
+  cssHeight: number,
+): { w: number; h: number } {
+  return {
+    w: normalizeLayoutPixels(cssWidth),
+    h: normalizeLayoutPixels(cssHeight),
+  }
+}
+
+/**
+ * Perspective `aspect` value for the same CSS layout → camera path as
+ * {@link resizeGeometraThreePerspectiveView} and the built-in split/stacked hosts
+ * (`setPixelRatio` + `setSize` with layout pixels, not raw drawing-buffer dimensions).
+ *
+ * Use in headless or custom renderers when you resize the drawing buffer yourself but want
+ * projection to stay aligned with {@link createThreeGeometraSplitHost} /
+ * {@link createThreeGeometraStackedHost}. For buffer-sized projection, use
+ * {@link syncGeometraThreePerspectiveFromBuffer} instead — flooring differs when width and height
+ * are scaled to physical pixels separately.
+ */
+export function geometraHostPerspectiveAspectFromCss(cssWidth: number, cssHeight: number): number {
+  const { w, h } = normalizedCssLayoutDimensions(cssWidth, cssHeight)
+  return w / h
+}
+
 /**
  * Device pixel ratio for split/stacked hosts and custom renderers: full raw ratio, optionally capped.
  * Use with {@link resizeGeometraThreePerspectiveView} or {@link setWebGLDrawingBufferSize} so headless
@@ -101,8 +127,7 @@ export function resizeGeometraThreePerspectiveView(
 ): void {
   const pr = pixelRatio > 0 && Number.isFinite(pixelRatio) ? pixelRatio : 1
   renderer.setPixelRatio(pr)
-  const w = normalizeLayoutPixels(cssWidth)
-  const h = normalizeLayoutPixels(cssHeight)
+  const { w, h } = normalizedCssLayoutDimensions(cssWidth, cssHeight)
   camera.aspect = w / h
   camera.updateProjectionMatrix()
   renderer.setSize(w, h, false)

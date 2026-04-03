@@ -23,7 +23,8 @@ fi
 #     verify-layout-sync.mjs, verify-host-css-coerce.mjs (dist/host-css-coerce.js; coerceHostNonNegativeCssPx
 #     is also re-exported from dist/index.js for custom layouts).
 #     Update those scripts if exports or
-#     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization / scene-basics /
+#     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
+#     geometraHostPerspectiveAspectFromCss / scene-basics /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
 #     createGeometraHostWebGLRendererParams / host sizing helpers / layout-sync behavior change.
 #
