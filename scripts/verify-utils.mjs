@@ -38,6 +38,12 @@ function testResolveHostDevicePixelRatio() {
   assert.equal(resolveHostDevicePixelRatio(2, 0), 2)
   assert.equal(resolveHostDevicePixelRatio(2, Number.NaN), 2)
   assert.equal(resolveHostDevicePixelRatio(Number.NaN, 2), 1)
+  // Invalid raw DPR falls back to 1 (matches split/stacked: win.devicePixelRatio || 1).
+  assert.equal(resolveHostDevicePixelRatio(0, undefined), 1)
+  assert.equal(resolveHostDevicePixelRatio(-1, undefined), 1)
+  assert.equal(resolveHostDevicePixelRatio(Number.POSITIVE_INFINITY, undefined), 1)
+  // Non-finite cap is ignored (same branch as undefined cap).
+  assert.equal(resolveHostDevicePixelRatio(2, Number.POSITIVE_INFINITY), 2)
 }
 
 function testResizeGeometraThreePerspectiveView() {
