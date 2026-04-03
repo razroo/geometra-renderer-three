@@ -1,7 +1,11 @@
 /**
- * Internal: one `requestAnimationFrame` coalescer shared by split and stacked hosts so paired
- * `ResizeObserver` notifications do not run `renderer.setSize` twice, and optional synthetic
- * `window` `resize` for Geometra stays aligned with that same tick.
+ * One `requestAnimationFrame` coalescer for hybrid Three + Geometra hosts: paired
+ * `ResizeObserver` notifications run WebGL buffer sync at most once per frame, and an optional
+ * synthetic `window` `resize` can fire on the same tick so the Geometra thin client picks up
+ * layout size without double work on real window resizes.
+ *
+ * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost} use this
+ * internally; export is for custom layouts that need the same behavior.
  */
 
 export interface GeometraHostLayoutSyncRaf {
@@ -23,6 +27,12 @@ export interface GeometraHostLayoutSyncRafOptions {
   dispatchGeometraResize: () => void
 }
 
+/**
+ * Build a layout sync coalescer bound to `win` (typically the Geometra client’s `window` option).
+ * Call {@link GeometraHostLayoutSyncRaf.schedule} from `ResizeObserver` callbacks with
+ * `notifyGeometra: true` when Geometra’s canvas layout changed without a browser `resize`, and
+ * from real `window` `resize` handlers with `notifyGeometra: false`.
+ */
 export function createGeometraHostLayoutSyncRaf(
   win: Window,
   options: GeometraHostLayoutSyncRafOptions,

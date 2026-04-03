@@ -19,7 +19,8 @@ fi
 #   - When editing host options defaults (split-host.ts / stacked-host.ts), align README prose
 #     and examples so readers are not misled (explicit example values vs documented defaults).
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, verify-utils.mjs, then
-#     verify-layout-sync.mjs (dist/layout-sync.js rAF coalescer). Update those scripts if exports or
+#     verify-layout-sync.mjs (dist/layout-sync.js rAF coalescer; factory is also a public export).
+#     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization / scene-basics /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
 #     createGeometraHostWebGLRendererParams / host sizing helpers / layout-sync behavior change.
