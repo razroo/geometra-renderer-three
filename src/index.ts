@@ -32,6 +32,7 @@ export {
   type GeometraHostLayoutSyncRaf,
   type GeometraHostLayoutSyncRafOptions,
 } from './layout-sync.js'
+export { coerceHostNonNegativeCssPx } from './host-css-coerce.js'
 
 /** Re-export for hybrid apps using {@link createThreeGeometraSplitHost} with `onData`. */
 export { GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT } from '@geometra/client'

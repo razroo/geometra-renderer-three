@@ -20,7 +20,8 @@ fi
 #     host-css-coerce.ts), align README prose
 #     and examples so readers are not misled (explicit example values vs documented defaults).
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, verify-utils.mjs,
-#     verify-layout-sync.mjs, verify-host-css-coerce.mjs (dist/host-css-coerce.js).
+#     verify-layout-sync.mjs, verify-host-css-coerce.mjs (dist/host-css-coerce.js; coerceHostNonNegativeCssPx
+#     is also re-exported from dist/index.js for custom layouts).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization / scene-basics /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
