@@ -15,7 +15,9 @@ fi
 #   - README.md "Roadmap (not in v0)" and body for shipped scope vs next steps.
 #   - rg 'TODO|FIXME|HACK' src for concrete hooks.
 #   - When changing public API or types, keep README examples and package.json
-#     peer ranges coherent with https://github.com/razroo/geometra renderer packages.
+#     peer ranges coherent with https://github.com/razroo/geometra (renderer-canvas, client, core).
+#   - When editing host options defaults (split-host.ts / stacked-host.ts), align README prose
+#     and examples so readers are not misled (explicit example values vs documented defaults).
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, verify-utils.mjs, then
 #     verify-layout-sync.mjs (dist/layout-sync.js rAF coalescer). Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization / scene-basics /

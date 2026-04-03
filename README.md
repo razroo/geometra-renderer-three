@@ -63,6 +63,8 @@ const stacked = createThreeGeometraStackedHost({
 stacked.destroy()
 ```
 
+If you omit sizing and placement options, the HUD uses **defaults** that match `createThreeGeometraStackedHost` in code: width **420** CSS px, height **320** CSS px, placement **`bottom-right`**, corner margin **12** CSS px.
+
 Use `geometraHudPointerEvents` (CSS `pointer-events`, default `'auto'`) when you want the HUD to ignore input — for example `'none'` so pointer events reach the full-viewport Three.js canvas underneath.
 
 `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` each forward all [`createBrowserCanvasClient`](https://github.com/razroo/geometra/tree/main/packages/renderer-canvas) options except `canvas` (the host creates the Geometra canvas for you).
