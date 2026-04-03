@@ -4,6 +4,8 @@
 
 This package ships the **split-view host** pattern (Three.js pane + Geometra pane) as one bootstrap, plus small WebGL sizing utilities.
 
+For the long-term goal — Three.js and Geometra in one **native**, protocol-first, DOM-free space — see [docs/GEOMETRA_NATIVE_SPACE.md](docs/GEOMETRA_NATIVE_SPACE.md). To drive the Cursor Agent CLI in a loop (like the main Geometra repo), use [`scripts/cursor-agent-loop.sh`](scripts/cursor-agent-loop.sh) after installing the [`agent` CLI](https://cursor.com/install); each iteration should pass `npm run release:gate`.
+
 ## Install
 
 Peer dependencies (your app must install them):

@@ -1,0 +1,25 @@
+# Geometra native space
+
+This repository is part of a longer arc: **bring Three.js-style 3D rendering fully into [Geometra](https://github.com/razroo/geometra)’s native world**, not as a sidecar that only happens to sit next to a canvas.
+
+## North star
+
+**The client is the server. The server is the client.**
+
+Geometra is a **DOM-free** frontend framework built on the **Textura** layout engine. The same **JSON geometry protocol** powers both sides: layout, paint, and interaction are described as data, not as a browser document tree. **Human and AI interaction are native on both sides** — no privileged “only humans get the real UI” path.
+
+There is **no browser layout engine** and **no DOM** in that model: only **computed geometry** flowing straight to **render targets** (canvas, WebGL, or future targets).
+
+## Why this matters for agents
+
+AI agents interact with the system **directly via the same JSON protocol** the client uses. That means **no browser middleman**, **no scraping**, and **no fragile automation hacks**. Agents can move orders of magnitude faster because they skip the entire DOM/CSS/layout/render pipeline that exists only for human-facing browsers.
+
+The same idea extends to **multiple client/server roles**: several logical instances can run **inside a single client** when the architecture treats peers symmetrically.
+
+This package (`@geometra/renderer-three`) is a practical step along that path: **Three.js alongside** Geometra’s streamed canvas today, with room to grow toward **headless Three**, **protocol-level scene description**, and **full parity** between what runs in a tab and what runs in a headless agent session.
+
+---
+
+*Geometra native space: one protocol, any render target, symmetric peers — layout and graphics as data, end to end.*
+
+In one line: **this is singularity tech** — the same machine-readable geometry that humans see is what agents drive, at full speed, with no browser-shaped middle layer.
