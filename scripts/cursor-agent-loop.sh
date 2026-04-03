@@ -16,11 +16,11 @@ fi
 #   - rg 'TODO|FIXME|HACK' src for concrete hooks.
 #   - When changing public API or types, keep README examples and package.json
 #     peer ranges coherent with https://github.com/razroo/geometra renderer packages.
-#   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, then verify-utils.mjs
-#     (Node imports dist/index.js; mocks + three for scene-basics); update those scripts if exports or
+#   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, verify-utils.mjs, then
+#     verify-layout-sync.mjs (dist/layout-sync.js rAF coalescer). Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization / scene-basics /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
-#     createGeometraHostWebGLRendererParams / host sizing helpers change.
+#     createGeometraHostWebGLRendererParams / host sizing helpers / layout-sync behavior change.
 #
 # Prerequisites:
 #   - Cursor Agent CLI: https://cursor.com/install (`agent` on PATH)

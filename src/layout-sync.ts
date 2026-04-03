@@ -51,6 +51,7 @@ export function createGeometraHostLayoutSyncRaf(
       win.cancelAnimationFrame(layoutSyncRafId)
       layoutSyncRafId = undefined
     }
+    pendingGeometraResizeNotify = false
   }
 
   return { schedule, cancel }
