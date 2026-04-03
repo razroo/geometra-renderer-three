@@ -20,6 +20,7 @@ export {
 } from './utils.js'
 export {
   createGeometraThreeSceneBasics,
+  type GeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'
 

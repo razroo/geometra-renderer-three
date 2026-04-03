@@ -1,5 +1,12 @@
 import * as THREE from 'three'
 
+/** Scene, camera, and clock bundle returned by {@link createGeometraThreeSceneBasics}. */
+export interface GeometraThreeSceneBasics {
+  scene: THREE.Scene
+  camera: THREE.PerspectiveCamera
+  clock: THREE.Clock
+}
+
 /** Options shared by split/stacked hosts and {@link createGeometraThreeSceneBasics}. */
 export interface GeometraThreeSceneBasicsOptions {
   /** Clear color for the Three.js scene. Default: `0x000000`. */
@@ -20,14 +27,12 @@ export interface GeometraThreeSceneBasicsOptions {
  *
  * Use this when you want Three.js state aligned with those hosts but manage your own
  * `WebGLRenderer` (for example headless GL, offscreen canvas, or custom render targets).
+ *
+ * @returns A {@link GeometraThreeSceneBasics} value aligned with split/stacked host defaults.
  */
 export function createGeometraThreeSceneBasics(
   options: GeometraThreeSceneBasicsOptions = {},
-): {
-  scene: THREE.Scene
-  camera: THREE.PerspectiveCamera
-  clock: THREE.Clock
-} {
+): GeometraThreeSceneBasics {
   const {
     threeBackground = 0x000000,
     cameraFov = 50,
