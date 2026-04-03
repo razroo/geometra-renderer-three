@@ -12,3 +12,10 @@ export {
   type ThreeGeometraStackedHostOptions,
 } from './stacked-host.js'
 export { setWebGLDrawingBufferSize } from './utils.js'
+export {
+  createGeometraThreeSceneBasics,
+  type GeometraThreeSceneBasicsOptions,
+} from './three-scene-basics.js'
+
+/** Re-export for hybrid apps using {@link createThreeGeometraSplitHost} with `onData`. */
+export { GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT } from '@geometra/client'

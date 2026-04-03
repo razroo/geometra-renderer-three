@@ -4,24 +4,17 @@ import {
   type BrowserCanvasClientHandle,
   type BrowserCanvasClientOptions,
 } from '@geometra/renderer-canvas'
+import { createGeometraThreeSceneBasics, type GeometraThreeSceneBasicsOptions } from './three-scene-basics.js'
 
-export interface ThreeGeometraSplitHostOptions extends Omit<BrowserCanvasClientOptions, 'canvas'> {
+export interface ThreeGeometraSplitHostOptions
+  extends Omit<BrowserCanvasClientOptions, 'canvas'>,
+    GeometraThreeSceneBasicsOptions {
   /** Host element; a flex row is appended as a child (existing children are left untouched). */
   container: HTMLElement
   /** Geometra column width in CSS pixels. Default: 420. */
   geometraWidth?: number
   /** When true, Geometra panel is on the left. Default: false (Three.js left, Geometra right). */
   geometraOnLeft?: boolean
-  /** Clear color for the Three.js scene. Default: `0x000000`. */
-  threeBackground?: THREE.ColorRepresentation
-  /** Perspective camera FOV in degrees. Default: 50. */
-  cameraFov?: number
-  /** Near plane. Default: 0.1. */
-  cameraNear?: number
-  /** Far plane. Default: 2000. */
-  cameraFar?: number
-  /** Initial camera position. Default: `(0, 0, 5)`. */
-  cameraPosition?: THREE.Vector3Tuple
   /**
    * Called once after scene, camera, and renderer are created.
    * Add meshes, lights, controls, etc. Call `ctx.destroy()` to tear down immediately; the render loop
@@ -89,6 +82,9 @@ function fullSizeCanvas(canvas: HTMLCanvasElement): void {
  *
  * The Three.js pane listens to `window` `resize` as well so `devicePixelRatio` updates (zoom / display changes)
  * refresh the WebGL drawing buffer without relying on panel `ResizeObserver` alone.
+ *
+ * Pass through {@link BrowserCanvasClientOptions} such as `onData` to receive JSON side-channel messages
+ * on the same WebSocket as layout (e.g. tracker snapshots on {@link GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT} from `@geometra/client`).
  */
 export function createThreeGeometraSplitHost(
   options: ThreeGeometraSplitHostOptions,
@@ -150,13 +146,13 @@ export function createThreeGeometraSplitHost(
     antialias: true,
     alpha: false,
   })
-  const scene = new THREE.Scene()
-  scene.background = new THREE.Color(threeBackground)
-
-  const camera = new THREE.PerspectiveCamera(cameraFov, 1, cameraNear, cameraFar)
-  camera.position.set(cameraPosition[0]!, cameraPosition[1]!, cameraPosition[2]!)
-
-  const clock = new THREE.Clock()
+  const { scene, camera, clock } = createGeometraThreeSceneBasics({
+    threeBackground,
+    cameraFov,
+    cameraNear,
+    cameraFar,
+    cameraPosition,
+  })
 
   const resizeThree = () => {
     glRenderer.setPixelRatio(win.devicePixelRatio || 1)

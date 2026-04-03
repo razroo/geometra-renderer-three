@@ -5,11 +5,14 @@ import {
   type BrowserCanvasClientOptions,
 } from '@geometra/renderer-canvas'
 import type { ThreeFrameContext, ThreeRuntimeContext } from './split-host.js'
+import { createGeometraThreeSceneBasics, type GeometraThreeSceneBasicsOptions } from './three-scene-basics.js'
 
 /** Corner anchor for the Geometra HUD overlay (CSS `position: absolute` on the host). */
 export type GeometraHudPlacement = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
 
-export interface ThreeGeometraStackedHostOptions extends Omit<BrowserCanvasClientOptions, 'canvas'> {
+export interface ThreeGeometraStackedHostOptions
+  extends Omit<BrowserCanvasClientOptions, 'canvas'>,
+    GeometraThreeSceneBasicsOptions {
   /** Host element; a full-size stacking context is appended (existing children are left untouched). */
   container: HTMLElement
   /** HUD width in CSS pixels. Default: 420. */
@@ -25,16 +28,6 @@ export interface ThreeGeometraStackedHostOptions extends Omit<BrowserCanvasClien
    * Default: `'auto'`.
    */
   geometraHudPointerEvents?: string
-  /** Clear color for the Three.js scene. Default: `0x000000`. */
-  threeBackground?: THREE.ColorRepresentation
-  /** Perspective camera FOV in degrees. Default: 50. */
-  cameraFov?: number
-  /** Near plane. Default: 0.1. */
-  cameraNear?: number
-  /** Far plane. Default: 2000. */
-  cameraFar?: number
-  /** Initial camera position. Default: `(0, 0, 5)`. */
-  cameraPosition?: THREE.Vector3Tuple
   /**
    * Called once after scene, camera, and renderer are created.
    * Call `ctx.destroy()` to tear down immediately; the render loop will not start if the host is already destroyed.
@@ -175,13 +168,13 @@ export function createThreeGeometraStackedHost(
     antialias: true,
     alpha: false,
   })
-  const scene = new THREE.Scene()
-  scene.background = new THREE.Color(threeBackground)
-
-  const camera = new THREE.PerspectiveCamera(cameraFov, 1, cameraNear, cameraFar)
-  camera.position.set(cameraPosition[0]!, cameraPosition[1]!, cameraPosition[2]!)
-
-  const clock = new THREE.Clock()
+  const { scene, camera, clock } = createGeometraThreeSceneBasics({
+    threeBackground,
+    cameraFov,
+    cameraNear,
+    cameraFar,
+    cameraPosition,
+  })
 
   const resizeThree = () => {
     glRenderer.setPixelRatio(win.devicePixelRatio || 1)

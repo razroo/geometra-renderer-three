@@ -71,11 +71,15 @@ Use `geometraHudPointerEvents` (CSS `pointer-events`, default `'auto'`) when you
 
 The Geometra thin client listens to `window` resize by default. When only the Geometra column changes size, this host dispatches a synthetic `window` `resize` after layout so server layout width/height stay in sync.
 
+### Shared scene / camera defaults (headless-friendly)
+
+`createGeometraThreeSceneBasics` builds a `Scene`, `PerspectiveCamera`, and `Clock` with the same defaults as the split and stacked hosts. Pair it with your own `WebGLRenderer` (or a headless GL context) and `setWebGLDrawingBufferSize` when you are not using a host factory.
+
 ## Roadmap (not in v0)
 
 - Optional **scene-graph extension** to the GEOM protocol (headless + WebGL from the same JSON).
 - **Stacked** overlay: v0 ships a corner HUD layout; richer stacking (custom regions, explicit `pointer-events` policies) may follow.
-- **Node / headless Three** helpers for parity with “AI talks the same protocol” stories.
+- **Node / headless Three** helpers for parity with “AI talks the same protocol” stories (`createGeometraThreeSceneBasics` is a small shared baseline; richer helpers may follow).
 
 ## Releasing (GitHub + npm)
 
