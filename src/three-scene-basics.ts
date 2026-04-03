@@ -36,6 +36,18 @@ export const GEOMETRA_THREE_HOST_SCENE_DEFAULTS: Required<GeometraThreeSceneBasi
 }
 
 /**
+ * `WebGLRenderer` constructor options (excluding `canvas`) used by
+ * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
+ *
+ * Spread into your own `new WebGLRenderer({ canvas, ...GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS })` when
+ * you manage the renderer (headless GL, offscreen canvas, tests) so flags stay aligned with those hosts.
+ */
+export const GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS = {
+  antialias: true,
+  alpha: false,
+} as const
+
+/**
  * Create a scene, perspective camera, and clock with the same defaults as
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *

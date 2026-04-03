@@ -19,7 +19,7 @@ fi
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, then verify-utils.mjs
 #     (Node imports dist/index.js; mocks + three for scene-basics); update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization / scene-basics /
-#     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / host sizing helpers change.
+#     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS / host sizing helpers change.
 #
 # Prerequisites:
 #   - Cursor Agent CLI: https://cursor.com/install (`agent` on PATH)

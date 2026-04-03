@@ -6,6 +6,7 @@ import {
 } from '@geometra/renderer-canvas'
 import type { ThreeFrameContext, ThreeRuntimeContext } from './split-host.js'
 import {
+  GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
   createGeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,
@@ -179,8 +180,7 @@ export function createThreeGeometraStackedHost(
 
   const glRenderer = new THREE.WebGLRenderer({
     canvas: threeCanvas,
-    antialias: true,
-    alpha: false,
+    ...GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
   })
   const { scene, camera, clock } = createGeometraThreeSceneBasics({
     threeBackground,

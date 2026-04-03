@@ -27,7 +27,10 @@ if (missingFns.length) {
   process.exit(1)
 }
 
-const expectedObjects = ['GEOMETRA_THREE_HOST_SCENE_DEFAULTS']
+const expectedObjects = [
+  'GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS',
+  'GEOMETRA_THREE_HOST_SCENE_DEFAULTS',
+]
 const missingObjs = expectedObjects.filter(
   (name) => mod[name] === null || typeof mod[name] !== 'object',
 )

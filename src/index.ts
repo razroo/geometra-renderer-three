@@ -20,6 +20,7 @@ export {
   syncGeometraThreePerspectiveFromBuffer,
 } from './utils.js'
 export {
+  GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
   createGeometraThreeSceneBasics,
   type GeometraThreeSceneBasics,
