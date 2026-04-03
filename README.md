@@ -51,6 +51,31 @@ The Geometra thin client listens to `window` resize by default. When only the Ge
 - **Stacked** overlay (full-viewport WebGL + partial Geometra HUD) with explicit pointer routing.
 - **Node / headless Three** helpers for parity with “AI talks the same protocol” stories.
 
+## Releasing (GitHub + npm)
+
+Same pattern as [`geometra-auth`](https://github.com/razroo/geometra-auth): publishing runs when a **GitHub Release is published**, not on every tag push.
+
+1. **Repository secret:** add **`NPM_TOKEN`** (automation token with publish rights for `@geometra/renderer-three`) under **Settings → Secrets and variables → Actions**.
+
+2. **Version:** set `"version"` in `package.json` to the release you want (e.g. `0.2.0`), commit, and push to `main`.
+
+3. **Tag** must match that version with a `v` prefix:
+
+   ```bash
+   git tag v0.2.0
+   git push origin v0.2.0
+   ```
+
+4. **Create the GitHub release** (triggers [`.github/workflows/release.yml`](.github/workflows/release.yml)):
+
+   ```bash
+   gh release create v0.2.0 --repo razroo/geometra-renderer-three --title "v0.2.0" --generate-notes
+   ```
+
+   Or publish a **draft** release from the web UI, then **Publish release** when ready.
+
+The workflow checks that `v$TAG` matches `package.json`, runs `npm ci` / `npm run build`, then **`npm publish --provenance --access public`**.
+
 ## License
 
 MIT
