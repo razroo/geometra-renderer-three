@@ -12,6 +12,8 @@ function normalizeLayoutPixels(n: number): number {
  * {@link createThreeGeometraStackedHost} use for CSS layout sizes and drawing-buffer dimensions.
  *
  * Use in custom or headless `WebGLRenderer` setups so width/height math stays aligned with those hosts.
+ *
+ * @returns A positive integer width or height in layout pixels (at least 1).
  */
 export function normalizeGeometraLayoutPixels(n: number): number {
   return normalizeLayoutPixels(n)
@@ -22,6 +24,8 @@ export function normalizeGeometraLayoutPixels(n: number): number {
  * Use with {@link resizeGeometraThreePerspectiveView} or {@link setWebGLDrawingBufferSize} so headless
  * or offscreen setups match the same `maxDevicePixelRatio` behavior as {@link createThreeGeometraSplitHost}
  * and {@link createThreeGeometraStackedHost}.
+ *
+ * @returns A finite positive ratio, capped when `maxDevicePixelRatio` is a finite positive number.
  */
 export function resolveHostDevicePixelRatio(
   rawDevicePixelRatio: number,
