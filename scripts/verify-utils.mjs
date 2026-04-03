@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreePerspectiveView`,
- * `setWebGLDrawingBufferSize`, `syncGeometraThreePerspectiveFromBuffer`, and `createGeometraThreeSceneBasics`
+ * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreeDrawingBufferView`,
+ * `resizeGeometraThreePerspectiveView`, `setWebGLDrawingBufferSize`,
+ * `syncGeometraThreePerspectiveFromBuffer`, and `createGeometraThreeSceneBasics`
  * using lightweight mocks /
  * Node `three` (no WebGL).
  * Run after `npm run build` (see `release:gate`).
@@ -14,6 +15,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
 const {
+  resizeGeometraThreeDrawingBufferView,
   resizeGeometraThreePerspectiveView,
   resolveHostDevicePixelRatio,
   setWebGLDrawingBufferSize,
@@ -119,9 +121,13 @@ function testSyncGeometraThreePerspectiveFromBuffer() {
 
 function testSetWebGLDrawingBufferSize() {
   const log = []
+  const dom = { width: 0, height: 0 }
   const renderer = {
+    domElement: dom,
     setDrawingBufferSize(w, h, pr) {
       log.push(['setDrawingBufferSize', w, h, pr])
+      dom.width = w
+      dom.height = h
     },
   }
 
@@ -135,6 +141,33 @@ function testSetWebGLDrawingBufferSize() {
   log.length = 0
   setWebGLDrawingBufferSize(renderer, Number.NaN, 50, Number.NaN)
   assert.deepEqual(log, [['setDrawingBufferSize', 1, 50, 1]])
+}
+
+function testResizeGeometraThreeDrawingBufferView() {
+  const dom = { width: 0, height: 0 }
+  const log = []
+  const renderer = {
+    domElement: dom,
+    setDrawingBufferSize(w, h, pr) {
+      log.push(['setDrawingBufferSize', w, h, pr])
+      dom.width = w
+      dom.height = h
+    },
+  }
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+
+  resizeGeometraThreeDrawingBufferView(renderer, camera, 100, 50, 2)
+
+  assert.deepEqual(log, [
+    ['setDrawingBufferSize', 200, 100, 2],
+    ['updateProjectionMatrix'],
+  ])
+  assert.equal(camera.aspect, 2)
 }
 
 function testCreateGeometraThreeSceneBasicsDefaults() {
@@ -179,6 +212,7 @@ testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()
 testResizeGeometraThreePerspectiveViewSanitizesNonFiniteInputs()
 testSyncGeometraThreePerspectiveFromBuffer()
 testSetWebGLDrawingBufferSize()
+testResizeGeometraThreeDrawingBufferView()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
 

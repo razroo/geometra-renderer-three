@@ -12,6 +12,7 @@ export {
   type ThreeGeometraStackedHostOptions,
 } from './stacked-host.js'
 export {
+  resizeGeometraThreeDrawingBufferView,
   resizeGeometraThreePerspectiveView,
   resolveHostDevicePixelRatio,
   setWebGLDrawingBufferSize,

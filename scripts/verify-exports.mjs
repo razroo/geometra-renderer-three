@@ -14,6 +14,7 @@ const expectedFunctions = [
   'createThreeGeometraSplitHost',
   'createThreeGeometraStackedHost',
   'createGeometraThreeSceneBasics',
+  'resizeGeometraThreeDrawingBufferView',
   'resizeGeometraThreePerspectiveView',
   'resolveHostDevicePixelRatio',
   'setWebGLDrawingBufferSize',

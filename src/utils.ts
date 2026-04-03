@@ -48,6 +48,27 @@ export function setWebGLDrawingBufferSize(
 }
 
 /**
+ * Size the WebGL drawing buffer from CSS layout × pixel ratio and update the perspective camera aspect
+ * to match, in one step.
+ *
+ * Use this on the **drawing-buffer** path (with {@link setWebGLDrawingBufferSize}) instead of
+ * {@link resizeGeometraThreePerspectiveView} when you do not use `setPixelRatio` + `setSize` on the
+ * renderer — for example headless GL, offscreen canvas, or custom buffer management. Equivalent to calling
+ * {@link setWebGLDrawingBufferSize} then {@link syncGeometraThreePerspectiveFromBuffer} with the
+ * resulting buffer dimensions (read from {@link WebGLRenderer.domElement} after resize).
+ */
+export function resizeGeometraThreeDrawingBufferView(
+  renderer: WebGLRenderer,
+  camera: PerspectiveCamera,
+  cssWidth: number,
+  cssHeight: number,
+  pixelRatio?: number,
+): void {
+  setWebGLDrawingBufferSize(renderer, cssWidth, cssHeight, pixelRatio)
+  syncGeometraThreePerspectiveFromBuffer(camera, renderer.domElement.width, renderer.domElement.height)
+}
+
+/**
  * Apply the same CSS-size → aspect ratio → WebGL buffer sizing path as
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *
