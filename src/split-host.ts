@@ -175,7 +175,7 @@ export function createThreeGeometraSplitHost(
     })
   }
 
-  const roContainer = new win.ResizeObserver(() => {
+  const roContainer = new ResizeObserver(() => {
     resizeThree()
     triggerGeometraResize()
   })

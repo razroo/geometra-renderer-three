@@ -1,6 +1,6 @@
 {
   "name": "@geometra/renderer-three",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Three.js render target helpers for Geometra — stack WebGL with the geometry-streamed canvas client",
   "license": "MIT",
   "type": "module",
@@ -33,6 +33,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "check": "tsc --noEmit -p tsconfig.json",
+    "release:gate": "npm run check && npm run build",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build"
   },
@@ -41,9 +42,15 @@
     "three": ">=0.160.0 <0.180.0"
   },
   "devDependencies": {
+    "@geometra/client": "^1.2.1",
     "@geometra/renderer-canvas": "^1.2.1",
     "@types/three": "^0.170.0",
     "three": "^0.170.0",
     "typescript": "^6.0.2"
+  },
+  "overrides": {
+    "@geometra/renderer-canvas": {
+      "@geometra/client": "^1.2.1"
+    }
   }
 }
