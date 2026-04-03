@@ -2,7 +2,7 @@
 
 **Three.js helpers alongside Geometra** — not a replacement for `@geometra/renderer-canvas`. Geometra’s WebSocket geometry protocol still drives the 2D canvas; Three.js owns WebGL for meshes, scenes, and cameras.
 
-This package ships the **split-view host** pattern (Three.js pane + Geometra pane) as one bootstrap, plus small WebGL sizing utilities.
+This package ships the **split-view host** pattern (Three.js pane + Geometra pane) and a **stacked HUD** host (full-viewport WebGL + corner Geometra overlay) as bootstrap helpers, plus small WebGL sizing utilities.
 
 For the long-term goal — Three.js and Geometra in one **native**, protocol-first, DOM-free space — see [docs/GEOMETRA_NATIVE_SPACE.md](docs/GEOMETRA_NATIVE_SPACE.md). To drive the Cursor Agent CLI in a loop (like the main Geometra repo), use [`scripts/cursor-agent-loop.sh`](scripts/cursor-agent-loop.sh) after installing the [`agent` CLI](https://cursor.com/install); each iteration should pass `npm run release:gate`.
 
@@ -41,7 +41,29 @@ const host = createThreeGeometraSplitHost({
 host.destroy()
 ```
 
-`createThreeGeometraSplitHost` forwards all [`createBrowserCanvasClient`](https://github.com/razroo/geometra/tree/main/packages/renderer-canvas) options except `canvas` (it creates the Geometra canvas for you).
+### Stacked HUD (WebGL + overlay)
+
+```ts
+import * as THREE from 'three'
+import { createThreeGeometraStackedHost } from '@geometra/renderer-three'
+
+const stacked = createThreeGeometraStackedHost({
+  container: document.getElementById('app')!,
+  geometraHudWidth: 400,
+  geometraHudHeight: 280,
+  geometraHudPlacement: 'bottom-right',
+  geometraHudMargin: 16,
+  url: 'ws://localhost:8080/geometra-ws',
+  binaryFraming: true,
+  onThreeReady: ({ scene, camera }) => {
+    scene.add(new THREE.AmbientLight(0xffffff, 0.55))
+    camera.position.set(0, 1.5, 6)
+  },
+})
+stacked.destroy()
+```
+
+`createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` each forward all [`createBrowserCanvasClient`](https://github.com/razroo/geometra/tree/main/packages/renderer-canvas) options except `canvas` (the host creates the Geometra canvas for you).
 
 ### Geometra resize
 
@@ -50,7 +72,7 @@ The Geometra thin client listens to `window` resize by default. When only the Ge
 ## Roadmap (not in v0)
 
 - Optional **scene-graph extension** to the GEOM protocol (headless + WebGL from the same JSON).
-- **Stacked** overlay (full-viewport WebGL + partial Geometra HUD) with explicit pointer routing.
+- **Stacked** overlay: v0 ships a corner HUD layout; richer stacking (custom regions, explicit `pointer-events` policies) may follow.
 - **Node / headless Three** helpers for parity with “AI talks the same protocol” stories.
 
 ## Releasing (GitHub + npm)

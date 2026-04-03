@@ -10,7 +10,11 @@ const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
 const mod = await import(indexHref)
 
-const expected = ['createThreeGeometraSplitHost', 'setWebGLDrawingBufferSize']
+const expected = [
+  'createThreeGeometraSplitHost',
+  'createThreeGeometraStackedHost',
+  'setWebGLDrawingBufferSize',
+]
 const missing = expected.filter((name) => typeof mod[name] !== 'function')
 if (missing.length) {
   console.error('verify-exports: missing or non-function exports:', missing.join(', '))
