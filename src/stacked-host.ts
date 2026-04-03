@@ -111,6 +111,8 @@ function applyHudPlacement(
  *
  * Geometra’s client still uses `resizeTarget: window` by default; when only the HUD box changes size,
  * a coalesced synthetic `resize` is dispatched on `window` (same pattern as {@link createThreeGeometraSplitHost}).
+ * `ResizeObserver` callbacks and real `window` `resize` share one rAF-coalesced Three.js buffer pass; the
+ * synthetic `resize` is emitted only from observer-driven layout changes, not from real window resizes.
  * The Three.js layer listens to `window` `resize` for `devicePixelRatio` changes and uses the host `root` size
  * for the drawing buffer. Optional {@link ThreeGeometraStackedHostOptions.maxDevicePixelRatio} caps the ratio
  * used for the WebGL buffer.
@@ -200,8 +202,31 @@ export function createThreeGeometraStackedHost(
     )
   }
 
+  let destroyed = false
+  let layoutSyncRafId: number | undefined
+  let pendingGeometraResizeNotify = false
+
+  /**
+   * At most one drawing-buffer resize per animation frame. Optionally dispatches a synthetic `window`
+   * `resize` for Geometra when layout changed without a real window resize; skipped for real `window`
+   * `resize` so the thin client is not notified twice.
+   */
+  const scheduleLayoutSync = (notifyGeometra: boolean) => {
+    if (notifyGeometra) pendingGeometraResizeNotify = true
+    if (layoutSyncRafId !== undefined) return
+    layoutSyncRafId = win.requestAnimationFrame(() => {
+      layoutSyncRafId = undefined
+      if (destroyed) return
+      resizeThree()
+      if (pendingGeometraResizeNotify) {
+        pendingGeometraResizeNotify = false
+        win.dispatchEvent(new Event('resize'))
+      }
+    })
+  }
+
   const onWindowResize = () => {
-    resizeThree()
+    scheduleLayoutSync(false)
   }
   win.addEventListener('resize', onWindowResize, { passive: true })
 
@@ -222,28 +247,17 @@ export function createThreeGeometraStackedHost(
     }
   })()
 
-  let geometraResizeRafId: number | undefined
-  const triggerGeometraResize = () => {
-    if (geometraResizeRafId !== undefined) return
-    geometraResizeRafId = win.requestAnimationFrame(() => {
-      geometraResizeRafId = undefined
-      win.dispatchEvent(new Event('resize'))
-    })
-  }
-
   const roRoot = new ResizeObserver(() => {
-    resizeThree()
-    triggerGeometraResize()
+    scheduleLayoutSync(true)
   })
   roRoot.observe(root)
 
   const roHud = new ResizeObserver(() => {
-    triggerGeometraResize()
+    scheduleLayoutSync(true)
   })
   roHud.observe(geometraHud)
 
   let rafId: number | undefined
-  let destroyed = false
 
   const destroy = () => {
     if (destroyed) return
@@ -252,9 +266,9 @@ export function createThreeGeometraStackedHost(
       win.cancelAnimationFrame(rafId)
       rafId = undefined
     }
-    if (geometraResizeRafId !== undefined) {
-      win.cancelAnimationFrame(geometraResizeRafId)
-      geometraResizeRafId = undefined
+    if (layoutSyncRafId !== undefined) {
+      win.cancelAnimationFrame(layoutSyncRafId)
+      layoutSyncRafId = undefined
     }
     win.removeEventListener('resize', onWindowResize)
     roRoot.disconnect()

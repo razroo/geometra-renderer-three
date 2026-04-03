@@ -73,7 +73,7 @@ Both `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` accept 
 
 ### Geometra resize
 
-The Geometra thin client listens to `window` resize by default. When only the Geometra column changes size, this host dispatches a synthetic `window` `resize` after layout so server layout width/height stay in sync.
+The Geometra thin client listens to `window` resize by default. When only the Geometra column or HUD changes size, this host dispatches a synthetic `window` `resize` after layout so server layout width/height stay in sync. That path shares one `requestAnimationFrame` coalescer with the Three.js buffer resize (so paired `ResizeObserver` notifications do not double-call `setSize`), and skips the synthetic event on real window resizes so the client is not notified twice.
 
 ### Shared scene / camera defaults (headless-friendly)
 

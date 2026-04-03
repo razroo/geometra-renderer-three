@@ -90,8 +90,13 @@ function fullSizeCanvas(canvas: HTMLCanvasElement): void {
  *
  * This is the recommended **hybrid** layout: 3D stays in Three; chrome and data panes stay in Geometra’s protocol.
  * Geometra’s client still uses `resizeTarget: window` by default; when only the Geometra column changes size,
- * a `ResizeObserver` dispatches a synthetic `resize` on `window` so layout width/height track the panel
- * (coalesced to at most once per animation frame when both panes notify in the same frame).
+ * a `ResizeObserver` schedules a synthetic `resize` on `window` so layout width/height track the panel.
+ * Panel-driven updates coalesce to at most **one** animation frame per burst: a single `requestAnimationFrame`
+ * pass runs the Three.js buffer resize and (when needed) that synthetic `resize`, so both flex panes firing
+ * in the same frame do not call `renderer.setSize` twice.
+ *
+ * Real `window` `resize` events schedule the same coalesced Three.js pass **without** an extra synthetic
+ * `resize`, so the thin client is not double-notified when the browser already fired `resize`.
  *
  * The Three.js pane listens to `window` `resize` as well so `devicePixelRatio` updates (zoom / display changes)
  * refresh the WebGL drawing buffer without relying on panel `ResizeObserver` alone. Optional
@@ -179,8 +184,32 @@ export function createThreeGeometraSplitHost(
     )
   }
 
+  let destroyed = false
+  let layoutSyncRafId: number | undefined
+  let pendingGeometraResizeNotify = false
+
+  /**
+   * At most one drawing-buffer resize per animation frame (avoids duplicate `setSize` when both flex
+   * panes notify). Optionally dispatches a synthetic `window` `resize` for Geometra when layout changed
+   * without a real window resize (panel-only); skipped for real `window` `resize` so the thin client is
+   * not notified twice.
+   */
+  const scheduleLayoutSync = (notifyGeometra: boolean) => {
+    if (notifyGeometra) pendingGeometraResizeNotify = true
+    if (layoutSyncRafId !== undefined) return
+    layoutSyncRafId = win.requestAnimationFrame(() => {
+      layoutSyncRafId = undefined
+      if (destroyed) return
+      resizeThree()
+      if (pendingGeometraResizeNotify) {
+        pendingGeometraResizeNotify = false
+        win.dispatchEvent(new Event('resize'))
+      }
+    })
+  }
+
   const onWindowResize = () => {
-    resizeThree()
+    scheduleLayoutSync(false)
   }
   win.addEventListener('resize', onWindowResize, { passive: true })
 
@@ -201,24 +230,13 @@ export function createThreeGeometraSplitHost(
     }
   })()
 
-  let geometraResizeRafId: number | undefined
-  const triggerGeometraResize = () => {
-    if (geometraResizeRafId !== undefined) return
-    geometraResizeRafId = win.requestAnimationFrame(() => {
-      geometraResizeRafId = undefined
-      win.dispatchEvent(new Event('resize'))
-    })
-  }
-
   const roContainer = new ResizeObserver(() => {
-    resizeThree()
-    triggerGeometraResize()
+    scheduleLayoutSync(true)
   })
   roContainer.observe(threePanel)
   roContainer.observe(geometraPanel)
 
   let rafId: number | undefined
-  let destroyed = false
 
   const destroy = () => {
     if (destroyed) return
@@ -227,9 +245,9 @@ export function createThreeGeometraSplitHost(
       win.cancelAnimationFrame(rafId)
       rafId = undefined
     }
-    if (geometraResizeRafId !== undefined) {
-      win.cancelAnimationFrame(geometraResizeRafId)
-      geometraResizeRafId = undefined
+    if (layoutSyncRafId !== undefined) {
+      win.cancelAnimationFrame(layoutSyncRafId)
+      layoutSyncRafId = undefined
     }
     win.removeEventListener('resize', onWindowResize)
     roContainer.disconnect()
