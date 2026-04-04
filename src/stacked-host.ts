@@ -11,6 +11,7 @@ import type {
 import {
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
   createGeometraThreeWebGLWithSceneBasics,
+  disposeGeometraThreeWebGLWithSceneBasics,
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'
 import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
@@ -112,9 +113,10 @@ export interface ThreeGeometraStackedHostHandle {
   clock: THREE.Clock
   geometra: BrowserCanvasClientHandle
   /**
-   * Stops the render loop, calls {@link THREE.Clock.stop} on the host clock (parity with
-   * {@link disposeGeometraThreeWebGLWithSceneBasics}), disconnects observers, disposes WebGL, and tears
-   * down the Geometra client.
+   * Stops the render loop, tears down WebGL via {@link disposeGeometraThreeWebGLWithSceneBasics} (clock stop +
+   * the same renderer registration headless {@link renderGeometraThreeWebGLWithSceneBasicsFrame} /
+   * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} use to skip draws after dispose), disconnects observers,
+   * and tears down the Geometra client.
    */
   destroy(): void
 }
@@ -301,8 +303,7 @@ export function createThreeGeometraStackedHost(
     } catch (err) {
       layoutSync.cancel()
       win.removeEventListener('resize', onWindowResize)
-      clock.stop()
-      glRenderer.dispose()
+      disposeGeometraThreeWebGLWithSceneBasics({ renderer: glRenderer, clock })
       root.remove()
       throw err
     }
@@ -332,8 +333,7 @@ export function createThreeGeometraStackedHost(
     roRoot.disconnect()
     roHud.disconnect()
     geometraHandle.destroy()
-    clock.stop()
-    glRenderer.dispose()
+    disposeGeometraThreeWebGLWithSceneBasics({ renderer: glRenderer, clock })
     root.remove()
   }
 
