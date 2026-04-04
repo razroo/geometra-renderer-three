@@ -39,7 +39,7 @@ fi
 #     parity with host onThreeFrame ordering) /
 #     disposeGeometraThreeWebGLWithSceneBasics /
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
-#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts) /
+#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind` on composites) /
 #     host sizing helpers /
 #     layout-sync behavior change (extend verify-layout-sync.mjs when semantics shift).
 #

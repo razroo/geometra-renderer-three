@@ -89,6 +89,7 @@ export {
   toPlainGeometraThreeSplitHostSnapshotHeadless,
   toPlainGeometraThreeStackedHostSnapshot,
   toPlainGeometraThreeStackedHostSnapshotHeadless,
+  type GeometraHybridHostKind,
   type PlainGeometraSplitHostLayoutOptions,
   type PlainGeometraStackedHostLayoutOptions,
   type PlainGeometraThreeSplitHostSnapshot,

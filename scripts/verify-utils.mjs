@@ -20,6 +20,7 @@
  * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
  * `toPlainGeometraThreeStackedHostSnapshot`, `toPlainGeometraThreeStackedHostSnapshotHeadless`
+ * (composite snapshots include `geometraHybridHostKind`: `'split'` | `'stacked'`)
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -755,6 +756,7 @@ function testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion() {
 function testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge() {
   const layoutSplit = { geometraWidth: 400, geometraOnLeft: true }
   const mergedSplit = {
+    geometraHybridHostKind: 'split',
     ...toPlainGeometraSplitHostLayoutOptions(layoutSplit),
     ...toPlainGeometraThreeHostSnapshot(800, 600, 2, undefined, { cameraFov: 45 }),
   }
@@ -763,6 +765,7 @@ function testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge() {
     mergedSplit,
   )
   const mergedSplitHeadless = {
+    geometraHybridHostKind: 'split',
     ...toPlainGeometraSplitHostLayoutOptions(),
     ...toPlainGeometraThreeHostSnapshotHeadless(640, 360, 2),
   }
@@ -772,6 +775,7 @@ function testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge() {
   )
 
   const mergedStacked = {
+    geometraHybridHostKind: 'stacked',
     ...toPlainGeometraStackedHostLayoutOptions({ geometraHudPlacement: 'top-right' }),
     ...toPlainGeometraThreeHostSnapshot(1920, 1080, 1.25),
   }
@@ -780,6 +784,7 @@ function testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge() {
     mergedStacked,
   )
   const mergedStackedHeadless = {
+    geometraHybridHostKind: 'stacked',
     ...toPlainGeometraStackedHostLayoutOptions(),
     ...toPlainGeometraThreeHostSnapshotHeadless(100, 100),
   }

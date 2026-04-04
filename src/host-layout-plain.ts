@@ -101,22 +101,33 @@ export function toPlainGeometraStackedHostLayoutOptions(
   }
 }
 
+/** Literal tag on composite plain snapshots so JSON consumers can tell hybrid layout without inferring fields. */
+export type GeometraHybridHostKind = 'split' | 'stacked'
+
 /**
  * Split-host layout fields plus {@link PlainGeometraThreeHostSnapshot} in one JSON-friendly object —
  * same coercion as {@link toPlainGeometraSplitHostLayoutOptions} and {@link toPlainGeometraThreeHostSnapshot}.
  *
  * Use for logs, tests, or agent payloads that describe column chrome and Three viewport/scene together.
+ * The `geometraHybridHostKind` field is always `'split'` on values from {@link toPlainGeometraThreeSplitHostSnapshot} /
+ * {@link toPlainGeometraThreeSplitHostSnapshotHeadless}.
  */
 export type PlainGeometraThreeSplitHostSnapshot = PlainGeometraSplitHostLayoutOptions &
-  PlainGeometraThreeHostSnapshot
+  PlainGeometraThreeHostSnapshot & {
+    geometraHybridHostKind: 'split'
+  }
 
 /**
  * Stacked-host HUD layout plus {@link PlainGeometraThreeHostSnapshot} (full-viewport Three sizing, not HUD box size).
  *
  * Same coercion as {@link toPlainGeometraStackedHostLayoutOptions} and {@link toPlainGeometraThreeHostSnapshot}.
+ * The `geometraHybridHostKind` field is always `'stacked'` on values from {@link toPlainGeometraThreeStackedHostSnapshot} /
+ * {@link toPlainGeometraThreeStackedHostSnapshotHeadless}.
  */
 export type PlainGeometraThreeStackedHostSnapshot = PlainGeometraStackedHostLayoutOptions &
-  PlainGeometraThreeHostSnapshot
+  PlainGeometraThreeHostSnapshot & {
+    geometraHybridHostKind: 'stacked'
+  }
 
 /**
  * Merge split layout and host viewport/scene plain fields for stable JSON.
@@ -132,6 +143,7 @@ export function toPlainGeometraThreeSplitHostSnapshot(
   sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
 ): PlainGeometraThreeSplitHostSnapshot {
   return {
+    geometraHybridHostKind: 'split',
     ...toPlainGeometraSplitHostLayoutOptions(layoutOptions),
     ...toPlainGeometraThreeHostSnapshot(
       cssWidth,
@@ -155,6 +167,7 @@ export function toPlainGeometraThreeSplitHostSnapshotHeadless(
   sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
 ): PlainGeometraThreeSplitHostSnapshot {
   return {
+    geometraHybridHostKind: 'split',
     ...toPlainGeometraSplitHostLayoutOptions(layoutOptions),
     ...toPlainGeometraThreeHostSnapshotHeadless(cssWidth, cssHeight, maxDevicePixelRatio, sceneBasicsOptions),
   }
@@ -174,6 +187,7 @@ export function toPlainGeometraThreeStackedHostSnapshot(
   sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
 ): PlainGeometraThreeStackedHostSnapshot {
   return {
+    geometraHybridHostKind: 'stacked',
     ...toPlainGeometraStackedHostLayoutOptions(layoutOptions),
     ...toPlainGeometraThreeHostSnapshot(
       cssWidth,
@@ -196,6 +210,7 @@ export function toPlainGeometraThreeStackedHostSnapshotHeadless(
   sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
 ): PlainGeometraThreeStackedHostSnapshot {
   return {
+    geometraHybridHostKind: 'stacked',
     ...toPlainGeometraStackedHostLayoutOptions(layoutOptions),
     ...toPlainGeometraThreeHostSnapshotHeadless(cssWidth, cssHeight, maxDevicePixelRatio, sceneBasicsOptions),
   }
