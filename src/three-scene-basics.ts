@@ -393,6 +393,20 @@ export function renderGeometraThreeWebGLWithSceneBasicsFrame(
 }
 
 /**
+ * Context passed to `onFrame` in {@link tickGeometraThreeWebGLWithSceneBasicsFrame}: the bundle’s renderer,
+ * scene, camera, and clock plus `delta` / `elapsed` from the same {@link THREE.Clock} read the hosts use
+ * before `onThreeFrame`.
+ */
+export interface GeometraThreeWebGLWithSceneBasicsTickContext {
+  renderer: THREE.WebGLRenderer
+  scene: THREE.Scene
+  camera: THREE.PerspectiveCamera
+  clock: THREE.Clock
+  delta: number
+  elapsed: number
+}
+
+/**
  * Same per-frame ordering as {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}:
  * `clock.getDelta()` / `elapsedTime`, optional callback, then `renderer.render`.
  *
@@ -409,15 +423,6 @@ export function renderGeometraThreeWebGLWithSceneBasicsFrame(
  *
  * @returns `true` if `renderer.render` ran, `false` if `onFrame` returned `false` (draw skipped).
  */
-export interface GeometraThreeWebGLWithSceneBasicsTickContext {
-  renderer: THREE.WebGLRenderer
-  scene: THREE.Scene
-  camera: THREE.PerspectiveCamera
-  clock: THREE.Clock
-  delta: number
-  elapsed: number
-}
-
 export function tickGeometraThreeWebGLWithSceneBasicsFrame(
   bundle: GeometraThreeWebGLWithSceneBasics,
   onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
