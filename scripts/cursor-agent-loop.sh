@@ -20,6 +20,10 @@ fi
 #     host-css-coerce.ts: coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss, coerceGeometraHudPointerEvents,
 #     coerceGeometraHudPlacement), align README prose
 #     and examples so readers are not misled (explicit example values vs documented defaults).
+#   - ResizeObserver wiring: split host observes flex root + threePanel + geometraPanel (not root alone) so
+#     container-driven layout still coalesces; stacked host observes root + geometraHud. Custom layouts should
+#     attach observers to every box whose size affects Three buffer and/or Geometra canvas dimensions, then
+#     call the same layoutSync.schedule(true|false) pattern as the built-in hosts.
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs (including
 #     GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT === geom.tracker.snapshot vs @geometra/client), verify-utils.mjs,
 #     verify-layout-sync.mjs (pre-sync or post-sync isDestroyed clears pending notify without cancel;
