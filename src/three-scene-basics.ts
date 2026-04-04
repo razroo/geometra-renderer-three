@@ -570,3 +570,23 @@ export function resizeTickGeometraThreeWebGLWithSceneBasicsHeadless(
     onFrame,
   )
 }
+
+/**
+ * Resize from {@link PlainGeometraThreeViewSizingState}, then {@link tickGeometraThreeWebGLWithSceneBasicsFrame} —
+ * same as calling those two in sequence (resize before `clock.getDelta()` / `onFrame` / `render`).
+ *
+ * Use in headless GL, tests, or agent loops when viewport JSON is already validated (for example with
+ * {@link isPlainGeometraThreeHostSnapshot}) and you want the same one-step flow as
+ * {@link resizeTickGeometraThreeWebGLWithSceneBasics} without re-supplying raw DPR and `maxDevicePixelRatio` on
+ * every tick.
+ *
+ * @returns Same boolean as {@link tickGeometraThreeWebGLWithSceneBasicsFrame}.
+ */
+export function resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing(
+  bundle: GeometraThreeWebGLWithSceneBasics,
+  sizing: PlainGeometraThreeViewSizingState,
+  onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
+): boolean {
+  resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing(bundle, sizing)
+  return tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, onFrame)
+}

@@ -23,7 +23,7 @@
  * `false`, successful ticks returning `true`, and `onFrame` throwing so `render` is skipped),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
  * `resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing` (matches explicit resize from `toPlainGeometraThreeViewSizingState`),
- * `resizeTickGeometraThreeWebGLWithSceneBasics` / `resizeTickGeometraThreeWebGLWithSceneBasicsHeadless` (resize then tick; headless delegates with raw DPR 1; return `false` when `onFrame` returns `false`),
+ * `resizeTickGeometraThreeWebGLWithSceneBasics` / `resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing` / `resizeTickGeometraThreeWebGLWithSceneBasicsHeadless` (resize then tick; plain-sizing variant matches sequential `resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing` + tick; headless delegates with raw DPR 1; return `false` when `onFrame` returns `false`),
  * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
  * `toPlainGeometraThreeStackedHostSnapshot`, `toPlainGeometraThreeStackedHostSnapshotHeadless`
@@ -67,6 +67,7 @@ const {
   resizeGeometraThreeWebGLWithSceneBasicsViewHeadless,
   resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing,
   resizeTickGeometraThreeWebGLWithSceneBasics,
+  resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing,
   resizeTickGeometraThreeWebGLWithSceneBasicsHeadless,
   toPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshotFromViewSizing,
@@ -957,6 +958,68 @@ function testResizeTickGeometraThreeWebGLWithSceneBasicsParity() {
   assert.deepEqual(combinedLog, [...resizeLog, ...tickLog])
 }
 
+function testResizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizingParity() {
+  const log = []
+  const clock = new THREE.Clock()
+  const scene = {}
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+  const renderer = {
+    setPixelRatio(pr) {
+      log.push(['setPixelRatio', pr])
+    },
+    setSize(w, h, updateStyle) {
+      log.push(['setSize', w, h, updateStyle])
+    },
+    render(s, c) {
+      log.push(['render', s, c])
+    },
+  }
+  const bundle = { renderer, scene, camera, clock }
+
+  const sizing = toPlainGeometraThreeViewSizingState(800, 400, 2, 2)
+
+  assert.equal(
+    resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing(bundle, sizing, () => {
+      log.push('onFrame')
+    }),
+    true,
+  )
+  assert.deepEqual(log, [
+    ['setPixelRatio', 2],
+    ['updateProjectionMatrix'],
+    ['setSize', 800, 400, false],
+    'onFrame',
+    ['render', scene, camera],
+  ])
+
+  log.length = 0
+  assert.equal(
+    resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing(bundle, sizing, () => false),
+    false,
+  )
+  assert.deepEqual(log, [
+    ['setPixelRatio', 2],
+    ['updateProjectionMatrix'],
+    ['setSize', 800, 400, false],
+  ])
+
+  log.length = 0
+  assert.equal(resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing(bundle, sizing), true)
+  const combinedLog = [...log]
+  log.length = 0
+  resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing(bundle, sizing)
+  const resizeLog = [...log]
+  log.length = 0
+  assert.equal(tickGeometraThreeWebGLWithSceneBasicsFrame(bundle), true)
+  const tickLog = [...log]
+  assert.deepEqual(combinedLog, [...resizeLog, ...tickLog])
+}
+
 function testToPlainGeometraSplitHostLayoutOptionsMatchesHostCoercion() {
   const d = GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS
   assert.deepEqual(toPlainGeometraSplitHostLayoutOptions(), {
@@ -1135,6 +1198,7 @@ testResizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizingMatchesExplici
 testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
 testResizeTickGeometraThreeWebGLWithSceneBasicsHeadlessRunsResizeThenTick()
 testResizeTickGeometraThreeWebGLWithSceneBasicsParity()
+testResizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizingParity()
 testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne()
 testToPlainGeometraSplitHostLayoutOptionsMatchesHostCoercion()
 testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion()
