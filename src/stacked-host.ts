@@ -83,6 +83,7 @@ export interface ThreeGeometraStackedHostHandle {
   camera: THREE.PerspectiveCamera
   clock: THREE.Clock
   geometra: BrowserCanvasClientHandle
+  /** Stops the render loop, disconnects observers, disposes WebGL, and tears down the Geometra client. */
   destroy(): void
 }
 

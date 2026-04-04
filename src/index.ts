@@ -1,3 +1,9 @@
+/**
+ * `@geometra/renderer-three` — split/stacked Three.js + Geometra canvas hosts, WebGL sizing helpers
+ * ({@link resizeGeometraThreePerspectiveView}, drawing-buffer paths, DPR capping), shared scene defaults
+ * ({@link createGeometraThreeSceneBasics}), and {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts.
+ */
+
 export {
   createThreeGeometraSplitHost,
   type GeometraHostBrowserCanvasClientOptions,
