@@ -14,8 +14,8 @@
  * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
- * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render`, and
- * `onFrame` throwing so `render` is skipped),
+ * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render` and yield
+ * `false`, successful ticks returning `true`, and `onFrame` throwing so `render` is skipped),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
  * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
@@ -598,11 +598,12 @@ function testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
   }
   const bundle = { renderer, scene, camera, clock }
 
-  tickGeometraThreeWebGLWithSceneBasicsFrame(bundle)
+  assert.equal(tickGeometraThreeWebGLWithSceneBasicsFrame(bundle), true)
   assert.deepEqual(log, [['render', scene, camera]])
 
   log.length = 0
-  tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, (ctx) => {
+  assert.equal(
+    tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, (ctx) => {
     assert.equal(ctx.clock, clock)
     assert.equal(ctx.renderer, renderer)
     assert.equal(ctx.scene, scene)
@@ -610,14 +611,19 @@ function testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
     assert.ok(Number.isFinite(ctx.delta))
     assert.ok(Number.isFinite(ctx.elapsed))
     log.push('onFrame')
-  })
+    }),
+    true,
+  )
   assert.deepEqual(log, ['onFrame', ['render', scene, camera]])
 
   log.length = 0
-  tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, () => {
-    log.push('onFrame')
-    return false
-  })
+  assert.equal(
+    tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, () => {
+      log.push('onFrame')
+      return false
+    }),
+    false,
+  )
   assert.deepEqual(log, ['onFrame'])
 }
 

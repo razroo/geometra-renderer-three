@@ -364,16 +364,18 @@ export function renderGeometraThreeWebGLWithSceneBasicsFrame(
  * Same per-frame ordering as {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}:
  * `clock.getDelta()` / `elapsedTime`, optional callback, then `renderer.render`.
  *
- * If `onFrame` returns **`false`**, `renderer.render` is skipped — parity with calling
- * {@link ThreeRuntimeContext.destroy} from {@link ThreeGeometraSplitHostOptions.onThreeFrame} / stacked host
- * `onThreeFrame` after teardown (avoids rendering after WebGL dispose). `undefined` and other return values
- * still render.
+ * If `onFrame` returns **`false`**, `renderer.render` is skipped and this function returns **`false`** —
+ * parity with calling {@link ThreeRuntimeContext.destroy} from {@link ThreeGeometraSplitHostOptions.onThreeFrame} /
+ * stacked host `onThreeFrame` after teardown (avoids rendering after WebGL dispose). `undefined` and other return
+ * values still render, and the function returns **`true`** when `render` runs.
  *
  * If `onFrame` **throws**, the error propagates and `renderer.render` is not called — same ordering as browser
  * hosts, which run the frame callback before `render`.
  *
  * Use in headless GL, tests, or agent loops when you want {@link THREE.Clock} timing parity with those hosts
  * without duplicating the loop body. Omit the callback to match a tick that only advances the clock and renders.
+ *
+ * @returns `true` if `renderer.render` ran, `false` if `onFrame` returned `false` (draw skipped).
  */
 export interface GeometraThreeWebGLWithSceneBasicsTickContext {
   renderer: THREE.WebGLRenderer
@@ -387,12 +389,13 @@ export interface GeometraThreeWebGLWithSceneBasicsTickContext {
 export function tickGeometraThreeWebGLWithSceneBasicsFrame(
   bundle: GeometraThreeWebGLWithSceneBasics,
   onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
-): void {
+): boolean {
   const { renderer, scene, camera, clock } = bundle
   const delta = clock.getDelta()
   const elapsed = clock.elapsedTime
   if (onFrame?.({ renderer, scene, camera, clock, delta, elapsed }) === false) {
-    return
+    return false
   }
   renderer.render(scene, camera)
+  return true
 }

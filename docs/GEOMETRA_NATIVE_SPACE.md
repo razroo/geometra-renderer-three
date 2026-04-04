@@ -20,7 +20,7 @@ This package (`@geometra/renderer-three`) is a practical step along that path: *
 
 ### What ships in `@geometra/renderer-three` today
 
-Browser **split** and **stacked HUD** hosts wire Three.js and `createBrowserCanvasClient` with shared resize coalescing and Geometra `window` resize notifications. For the same **layout, DPR, camera, and scene numbers** without a DOM host — logs, tests, or agent-side payloads next to the GEOM stream — use the **plain snapshot** helpers (`toPlainGeometraThreeHostSnapshot` / `Headless`, composite split/stacked variants), **headless resize** (`resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`, `createGeometraThreePerspectiveResizeHandlerHeadless`, `resolveHeadlessHostDevicePixelRatio`), and **frame parity** (`tickGeometraThreeWebGLWithSceneBasicsFrame`, matching host `clock` / `onThreeFrame` ordering). The package README lists the full public API.
+Browser **split** and **stacked HUD** hosts wire Three.js and `createBrowserCanvasClient` with shared resize coalescing and Geometra `window` resize notifications. For the same **layout, DPR, camera, and scene numbers** without a DOM host — logs, tests, or agent-side payloads next to the GEOM stream — use the **plain snapshot** helpers (`toPlainGeometraThreeHostSnapshot` / `Headless`, composite split/stacked variants), **headless resize** (`resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`, `createGeometraThreePerspectiveResizeHandlerHeadless`, `resolveHeadlessHostDevicePixelRatio`), and **frame parity** (`tickGeometraThreeWebGLWithSceneBasicsFrame`, matching host `clock` / `onThreeFrame` ordering; returns whether a frame was drawn). The package README lists the full public API.
 
 ---
 
