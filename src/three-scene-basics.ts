@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import type { WebGLRendererParameters } from 'three'
+import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 /** Scene, camera, and clock bundle returned by {@link createGeometraThreeSceneBasics}. */
 export interface GeometraThreeSceneBasics {
@@ -173,4 +174,32 @@ export function disposeGeometraThreeWebGLWithSceneBasics(
   bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer'>,
 ): void {
   bundle.renderer.dispose()
+}
+
+/**
+ * Resize renderer and camera from {@link createGeometraThreeWebGLWithSceneBasics} using the same CSS layout,
+ * {@link resolveHostDevicePixelRatio} capping, and {@link resizeGeometraThreePerspectiveView} path as
+ * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
+ *
+ * Use in headless GL, offscreen canvas, or custom hosts when you already hold the bundle and a layout size
+ * (e.g. from your own layout pass). Pass `rawDevicePixelRatio` from `window.devicePixelRatio` in the browser
+ * or `1` when there is no window.
+ *
+ * Equivalent to calling {@link resizeGeometraThreePerspectiveView} on `bundle.renderer` and `bundle.camera` with
+ * `resolveHostDevicePixelRatio(rawDevicePixelRatio, maxDevicePixelRatio)`.
+ */
+export function resizeGeometraThreeWebGLWithSceneBasicsView(
+  bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer' | 'camera'>,
+  cssWidth: number,
+  cssHeight: number,
+  rawDevicePixelRatio: number,
+  maxDevicePixelRatio?: number,
+): void {
+  resizeGeometraThreePerspectiveView(
+    bundle.renderer,
+    bundle.camera,
+    cssWidth,
+    cssHeight,
+    resolveHostDevicePixelRatio(rawDevicePixelRatio, maxDevicePixelRatio),
+  )
 }

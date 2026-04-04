@@ -8,7 +8,7 @@
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics` (including invalid camera coercion and out-of-range FOV),
- * `disposeGeometraThreeWebGLWithSceneBasics`
+ * `disposeGeometraThreeWebGLWithSceneBasics`, `resizeGeometraThreeWebGLWithSceneBasicsView`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -36,6 +36,7 @@ const {
   createGeometraThreeSceneBasics,
   disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
+  resizeGeometraThreeWebGLWithSceneBasicsView,
 } = await import(indexHref)
 
 function testNormalizeGeometraLayoutPixels() {
@@ -402,6 +403,34 @@ function testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose() {
   assert.equal(disposed, 1)
 }
 
+function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize() {
+  const log = []
+  const renderer = {
+    setPixelRatio(pr) {
+      log.push(['setPixelRatio', pr])
+    },
+    setSize(w, h, updateStyle) {
+      log.push(['setSize', w, h, updateStyle])
+    },
+  }
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+  const bundle = { renderer, camera }
+
+  resizeGeometraThreeWebGLWithSceneBasicsView(bundle, 800, 400, 3, 2)
+
+  assert.deepEqual(log, [
+    ['setPixelRatio', 2],
+    ['updateProjectionMatrix'],
+    ['setSize', 800, 400, false],
+  ])
+  assert.equal(camera.aspect, 2)
+}
+
 testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
 testResolveHostDevicePixelRatio()
@@ -421,5 +450,6 @@ testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
 testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions()
 testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose()
+testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 
 console.log('verify-utils: ok')
