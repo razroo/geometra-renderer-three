@@ -8,7 +8,8 @@
  * `geometraHostPerspectiveAspectFromCss`,
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
- * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics` (including invalid camera coercion and out-of-range FOV),
+ * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`
+ * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `resizeGeometraThreeWebGLWithSceneBasicsView`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
@@ -37,6 +38,7 @@ const {
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
   createGeometraThreeSceneBasics,
+  resolveGeometraThreeSceneBasicsOptions,
   disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
   renderGeometraThreeWebGLWithSceneBasicsFrame,
@@ -339,6 +341,45 @@ function testGeometraThreeHostSceneDefaultsMatchBasics() {
   )
 }
 
+function testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate() {
+  const resolvedEmpty = resolveGeometraThreeSceneBasicsOptions()
+  assert.deepEqual(resolvedEmpty, GEOMETRA_THREE_HOST_SCENE_DEFAULTS)
+
+  const opts = {
+    threeBackground: 0x112233,
+    cameraFov: 40,
+    cameraNear: 0.2,
+    cameraFar: 500,
+    cameraPosition: /** @type {const} */ ([4, 5, 6]),
+  }
+  const resolved = resolveGeometraThreeSceneBasicsOptions(opts)
+  const { camera } = createGeometraThreeSceneBasics(opts)
+  assert.equal(resolved.threeBackground, opts.threeBackground)
+  assert.equal(resolved.cameraFov, camera.fov)
+  assert.equal(resolved.cameraNear, camera.near)
+  assert.equal(resolved.cameraFar, camera.far)
+  assert.deepEqual([...resolved.cameraPosition], [camera.position.x, camera.position.y, camera.position.z])
+}
+
+function testResolveGeometraThreeSceneBasicsOptionsMatchesCoercedCreate() {
+  const d = GEOMETRA_THREE_HOST_SCENE_DEFAULTS
+  const opts = {
+    cameraFov: Number.NaN,
+    cameraNear: -1,
+    cameraFar: 100,
+    cameraPosition: /** @type {const} */ ([Number.NaN, 2, Number.POSITIVE_INFINITY]),
+  }
+  const resolved = resolveGeometraThreeSceneBasicsOptions(opts)
+  const { camera } = createGeometraThreeSceneBasics(opts)
+  assert.equal(resolved.cameraFov, d.cameraFov)
+  assert.equal(resolved.cameraNear, d.cameraNear)
+  assert.equal(resolved.cameraFar, 100)
+  assert.deepEqual(resolved.cameraPosition, [d.cameraPosition[0], 2, d.cameraPosition[2]])
+  assert.equal(camera.fov, resolved.cameraFov)
+  assert.equal(camera.near, resolved.cameraNear)
+  assert.equal(camera.far, resolved.cameraFar)
+}
+
 function testCreateGeometraThreeSceneBasicsDefaults() {
   const { scene, camera, clock } = createGeometraThreeSceneBasics()
 
@@ -473,6 +514,8 @@ testResizeGeometraThreeDrawingBufferView()
 testGeometraHostWebglRendererOptions()
 testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
+testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate()
+testResolveGeometraThreeSceneBasicsOptionsMatchesCoercedCreate()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
 testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions()

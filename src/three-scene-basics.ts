@@ -67,6 +67,27 @@ function coerceGeometraThreeSceneBasicsCamera(
 }
 
 /**
+ * Fully merged and coerced {@link GeometraThreeSceneBasicsOptions} using the same rules as
+ * {@link createGeometraThreeSceneBasics} (and split/stacked hosts).
+ *
+ * Use when you need host-aligned numbers for logging, tests, or agent-side protocol payloads without
+ * constructing a {@link THREE.Scene} or {@link THREE.PerspectiveCamera}.
+ */
+export function resolveGeometraThreeSceneBasicsOptions(
+  options: GeometraThreeSceneBasicsOptions = {},
+): Required<GeometraThreeSceneBasicsOptions> {
+  const merged = { ...GEOMETRA_THREE_HOST_SCENE_DEFAULTS, ...options }
+  const { cameraFov, cameraNear, cameraFar, cameraPosition } = coerceGeometraThreeSceneBasicsCamera(merged)
+  return {
+    threeBackground: merged.threeBackground,
+    cameraFov,
+    cameraNear,
+    cameraFar,
+    cameraPosition,
+  }
+}
+
+/**
  * `WebGLRenderer` constructor options (excluding `canvas`) used by
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *
@@ -123,9 +144,8 @@ export function createGeometraThreeWebGLRenderer(
 export function createGeometraThreeSceneBasics(
   options: GeometraThreeSceneBasicsOptions = {},
 ): GeometraThreeSceneBasics {
-  const merged = { ...GEOMETRA_THREE_HOST_SCENE_DEFAULTS, ...options }
-  const { threeBackground } = merged
-  const { cameraFov, cameraNear, cameraFar, cameraPosition } = coerceGeometraThreeSceneBasicsCamera(merged)
+  const resolved = resolveGeometraThreeSceneBasicsOptions(options)
+  const { threeBackground, cameraFov, cameraNear, cameraFar, cameraPosition } = resolved
 
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(threeBackground)

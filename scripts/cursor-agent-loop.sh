@@ -27,7 +27,8 @@ fi
 #     geometraHostPerspectiveAspectFromCss / createGeometraThreePerspectiveResizeHandler / scene-basics /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
 #     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer /
-#     createGeometraThreeWebGLWithSceneBasics / resizeGeometraThreeWebGLWithSceneBasicsView /
+#     createGeometraThreeWebGLWithSceneBasics / resolveGeometraThreeSceneBasicsOptions /
+#     resizeGeometraThreeWebGLWithSceneBasicsView /
 #     renderGeometraThreeWebGLWithSceneBasicsFrame / disposeGeometraThreeWebGLWithSceneBasics /
 #     host sizing helpers /
 #     layout-sync behavior change.
