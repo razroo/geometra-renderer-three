@@ -31,6 +31,7 @@ const expectedFunctions = [
   'renderGeometraThreeWebGLWithSceneBasicsFrame',
   'resizeGeometraThreeWebGLWithSceneBasicsView',
   'resizeGeometraThreeWebGLWithSceneBasicsViewHeadless',
+  'resizeTickGeometraThreeWebGLWithSceneBasics',
   'resizeTickGeometraThreeWebGLWithSceneBasicsHeadless',
   'geometraHostPerspectiveAspectFromCss',
   'isGeometraHybridHostKind',

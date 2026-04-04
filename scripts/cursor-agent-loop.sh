@@ -43,7 +43,7 @@ fi
 #     (onFrame false skips render and tick returns false; tick returns true when render runs; onFrame throw skips render;
 #     parity with host onThreeFrame ordering) /
 #     disposeGeometraThreeWebGLWithSceneBasics (optional clock → Clock#stop before renderer.dispose) /
-#     resizeTickGeometraThreeWebGLWithSceneBasicsHeadless (headless resize then tick; same as sequential headless resize + tickGeometraThreeWebGLWithSceneBasicsFrame) /
+#     resizeTickGeometraThreeWebGLWithSceneBasics / resizeTickGeometraThreeWebGLWithSceneBasicsHeadless (resize then tick; headless variant delegates with raw DPR 1; same as sequential resize + tickGeometraThreeWebGLWithSceneBasicsFrame) /
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
 #     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot`; three-scene-basics.ts: `isPlainGeometraThreeHostSnapshot`) /
 #     host sizing helpers /

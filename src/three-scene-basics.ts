@@ -485,9 +485,44 @@ export function tickGeometraThreeWebGLWithSceneBasicsFrame(
 }
 
 /**
+ * One-step frame: {@link resizeGeometraThreeWebGLWithSceneBasicsView}, then
+ * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} — same as calling those two in sequence (resize
+ * before `clock.getDelta()` / `onFrame` / `render`).
+ *
+ * Use when you have an explicit raw device pixel ratio (for example `window.devicePixelRatio || 1` from a
+ * provided `window`, or a simulated value in tests and agent loops) and want the same resize + frame
+ * ordering as {@link createThreeGeometraSplitHost} / {@link createThreeGeometraStackedHost} without inlining
+ * both calls.
+ *
+ * For raw DPR **1** without repeating that literal, prefer {@link resizeTickGeometraThreeWebGLWithSceneBasicsHeadless}.
+ *
+ * @returns Same boolean as {@link tickGeometraThreeWebGLWithSceneBasicsFrame}.
+ */
+export function resizeTickGeometraThreeWebGLWithSceneBasics(
+  bundle: GeometraThreeWebGLWithSceneBasics,
+  cssWidth: number,
+  cssHeight: number,
+  rawDevicePixelRatio: number,
+  maxDevicePixelRatio?: number,
+  onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
+): boolean {
+  resizeGeometraThreeWebGLWithSceneBasicsView(
+    bundle,
+    cssWidth,
+    cssHeight,
+    rawDevicePixelRatio,
+    maxDevicePixelRatio,
+  )
+  return tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, onFrame)
+}
+
+/**
  * Headless one-step frame: {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless}, then
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} — same as calling those two in sequence (resize
  * before `clock.getDelta()` / `onFrame` / `render`).
+ *
+ * Equivalent to {@link resizeTickGeometraThreeWebGLWithSceneBasics} with `rawDevicePixelRatio` **1** and
+ * the same optional `maxDevicePixelRatio` / `onFrame` arguments.
  *
  * For Node, headless WebGL, tests, or agent loops that need buffer + camera sync on every tick with raw
  * DPR **1** and the same optional cap as the browser hosts, without repeating the pair at every call site.
@@ -501,6 +536,12 @@ export function resizeTickGeometraThreeWebGLWithSceneBasicsHeadless(
   maxDevicePixelRatio?: number,
   onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
 ): boolean {
-  resizeGeometraThreeWebGLWithSceneBasicsViewHeadless(bundle, cssWidth, cssHeight, maxDevicePixelRatio)
-  return tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, onFrame)
+  return resizeTickGeometraThreeWebGLWithSceneBasics(
+    bundle,
+    cssWidth,
+    cssHeight,
+    1,
+    maxDevicePixelRatio,
+    onFrame,
+  )
 }
