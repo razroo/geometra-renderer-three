@@ -15,7 +15,8 @@
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render`),
- * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`
+ * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
+ * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -55,6 +56,10 @@ const {
   toPlainGeometraThreeHostSnapshotHeadless,
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeViewSizingState,
+  GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS,
+  GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS,
+  toPlainGeometraSplitHostLayoutOptions,
+  toPlainGeometraStackedHostLayoutOptions,
 } = await import(indexHref)
 
 function testNormalizeGeometraLayoutPixels() {
@@ -664,6 +669,54 @@ function testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne() 
   assert.deepEqual(headlessLog, log)
 }
 
+function testToPlainGeometraSplitHostLayoutOptionsMatchesHostCoercion() {
+  const d = GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS
+  assert.deepEqual(toPlainGeometraSplitHostLayoutOptions(), {
+    geometraWidth: d.geometraWidth,
+    geometraOnLeft: false,
+  })
+  assert.deepEqual(
+    toPlainGeometraSplitHostLayoutOptions({ geometraWidth: -1, geometraOnLeft: true }),
+    { geometraWidth: d.geometraWidth, geometraOnLeft: true },
+  )
+  const roundTrip = JSON.parse(JSON.stringify(toPlainGeometraSplitHostLayoutOptions()))
+  assert.equal(roundTrip.geometraWidth, d.geometraWidth)
+  assert.equal(roundTrip.geometraOnLeft, false)
+}
+
+function testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion() {
+  const d = GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS
+  assert.deepEqual(toPlainGeometraStackedHostLayoutOptions(), {
+    geometraHudWidth: d.geometraHudWidth,
+    geometraHudHeight: d.geometraHudHeight,
+    geometraHudPlacement: d.geometraHudPlacement,
+    geometraHudMargin: d.geometraHudMargin,
+    geometraHudPointerEvents: 'auto',
+    geometraHudZIndex: '1',
+  })
+  assert.deepEqual(
+    toPlainGeometraStackedHostLayoutOptions({
+      geometraHudWidth: Number.NaN,
+      geometraHudHeight: -10,
+      geometraHudPlacement: '  TOP-LEFT ',
+      geometraHudMargin: Number.POSITIVE_INFINITY,
+      geometraHudPointerEvents: '   ',
+      geometraHudZIndex: Number.NaN,
+    }),
+    {
+      geometraHudWidth: d.geometraHudWidth,
+      geometraHudHeight: d.geometraHudHeight,
+      geometraHudPlacement: 'top-left',
+      geometraHudMargin: d.geometraHudMargin,
+      geometraHudPointerEvents: 'auto',
+      geometraHudZIndex: '1',
+    },
+  )
+  const roundTrip = JSON.parse(JSON.stringify(toPlainGeometraStackedHostLayoutOptions()))
+  assert.equal(roundTrip.geometraHudPlacement, d.geometraHudPlacement)
+  assert.equal(roundTrip.geometraHudZIndex, '1')
+}
+
 function testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne() {
   const log = []
   const renderer = {
@@ -725,5 +778,7 @@ testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
 testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne()
+testToPlainGeometraSplitHostLayoutOptionsMatchesHostCoercion()
+testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion()
 
 console.log('verify-utils: ok')

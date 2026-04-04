@@ -7,7 +7,9 @@
  * {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} (`onFrame` may return `false` to skip `render`), {@link disposeGeometraThreeWebGLWithSceneBasics},
  * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless},
- * {@link toPlainGeometraThreeHostSnapshotFromViewSizing}), and
+ * {@link toPlainGeometraThreeHostSnapshotFromViewSizing},
+ * {@link toPlainGeometraSplitHostLayoutOptions} / {@link toPlainGeometraStackedHostLayoutOptions} for JSON-stable
+ * split/stacked layout fields aligned with the hosts, and
  * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, {@link coerceHostStackingZIndexCss},
  * {@link coerceGeometraHudPointerEvents}, and {@link coerceGeometraHudPlacement} for stacked-overlay stacking and
  * HUD corner rules, and {@link GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS} /
@@ -79,6 +81,14 @@ export {
   coerceHostStackingZIndexCss,
 } from './host-css-coerce.js'
 export type { GeometraHudPlacement } from './host-css-coerce.js'
+export {
+  toPlainGeometraSplitHostLayoutOptions,
+  toPlainGeometraStackedHostLayoutOptions,
+  type PlainGeometraSplitHostLayoutOptions,
+  type PlainGeometraStackedHostLayoutOptions,
+  type ToPlainGeometraSplitHostLayoutOptionsInput,
+  type ToPlainGeometraStackedHostLayoutOptionsInput,
+} from './host-layout-plain.js'
 
 /** Re-export for hybrid apps using {@link createThreeGeometraSplitHost} with `onData`. */
 export { GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT } from '@geometra/client'
