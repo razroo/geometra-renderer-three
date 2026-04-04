@@ -27,10 +27,10 @@ export interface GeometraHostLayoutSyncRafOptions {
    * e.g. `() => win.dispatchEvent(new Event('resize'))` for Geometra thin client.
    * Runs only when {@link GeometraHostLayoutSyncRaf.schedule} requested a notify for this coalesced
    * frame, after the layout sync callback, and only if {@link isDestroyed} is still false (avoids
- * synthetic `resize` after teardown). If the layout sync callback throws, the pending notify stays
- * set so a later coalesced frame can still dispatch once sync succeeds. If `dispatchGeometraResize`
- * throws, the pending notify is also left set so a later coalesced frame can retry the dispatch after
- * `syncLayout` runs again.
+   * synthetic `resize` after teardown). If the layout sync callback throws, the pending notify stays
+   * set so a later coalesced frame can still dispatch once sync succeeds. If `dispatchGeometraResize`
+   * throws, the pending notify is also left set so a later coalesced frame can retry the dispatch after
+   * `syncLayout` runs again.
    */
   dispatchGeometraResize: () => void
 }
@@ -40,6 +40,11 @@ export interface GeometraHostLayoutSyncRafOptions {
  * Call {@link GeometraHostLayoutSyncRaf.schedule} from `ResizeObserver` callbacks with
  * `notifyGeometra: true` when Geometra’s canvas layout changed without a browser `resize`, and
  * from real `window` `resize` handlers with `notifyGeometra: false`.
+ *
+ * If `syncLayout` or `dispatchGeometraResize` throws, the error propagates from the scheduled
+ * animation-frame callback (same as an uncaught rAF handler in the browser). A pending Geometra
+ * notify is cleared only after a successful `dispatchGeometraResize`; see
+ * {@link GeometraHostLayoutSyncRafOptions.dispatchGeometraResize}.
  */
 export function createGeometraHostLayoutSyncRaf(
   win: Window,
