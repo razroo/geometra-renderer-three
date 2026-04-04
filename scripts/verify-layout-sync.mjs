@@ -4,7 +4,8 @@
  * rAF coalescing, optional synthetic Geometra `resize`, cancel/destroy semantics
  * (including cancel before the scheduled frame runs — no `syncLayout` / dispatch),
  * skip dispatch when `isDestroyed()` becomes true after `syncLayout`, and retain pending notify
- * when `syncLayout` throws so a later coalesced frame can still dispatch.
+ * when `syncLayout` throws so a later coalesced frame can still dispatch (including recovery via
+ * `schedule(true)` alone after the throw, with no `schedule(false)`).
  * Imports `dist/layout-sync.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -256,5 +257,34 @@ function testSyncLayoutThrowKeepsPendingNotifyForNextFrame() {
 
 testDestroyedAfterSyncLayoutSkipsDispatch()
 testSyncLayoutThrowKeepsPendingNotifyForNextFrame()
+
+/**
+ * After a throwing `syncLayout`, `pendingGeometraResizeNotify` stays set but no rAF is pending.
+ * A follow-up `schedule(true)` alone must re-arm the coalescer so the next flush can sync and dispatch once.
+ */
+function testSyncLayoutThrowRecoverWithNotifyScheduleOnly() {
+  const win = createMockWindow()
+  let syncAttempts = 0
+  let dispatchCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => false,
+    syncLayout: () => {
+      syncAttempts += 1
+      if (syncAttempts === 1) throw new Error('boom')
+    },
+    dispatchGeometraResize: () => {
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(true)
+  assert.throws(() => win.flushAnimationFrame(), /boom/)
+  layoutSync.schedule(true)
+  win.flushAnimationFrame()
+  assert.equal(syncAttempts, 2)
+  assert.equal(dispatchCount, 1)
+}
+
+testSyncLayoutThrowRecoverWithNotifyScheduleOnly()
 
 console.log('verify-layout-sync: ok')
