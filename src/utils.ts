@@ -90,6 +90,20 @@ export function resolveHeadlessHostDevicePixelRatio(maxDevicePixelRatio?: number
 }
 
 /**
+ * Effective device pixel ratio from a browser {@link Window}, using the same `devicePixelRatio` fallback
+ * and optional cap as {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}
+ * (`win.devicePixelRatio || 1` through {@link resolveHostDevicePixelRatio}).
+ *
+ * Use in custom hybrid hosts or tests so buffer scaling matches the built-ins without duplicating that expression.
+ */
+export function resolveHostDevicePixelRatioFromWindow(
+  win: Window,
+  maxDevicePixelRatio?: number,
+): number {
+  return resolveHostDevicePixelRatio(win.devicePixelRatio || 1, maxDevicePixelRatio)
+}
+
+/**
  * JSON-friendly viewport sizing aligned with {@link resizeGeometraThreePerspectiveView} and the
  * split/stacked hosts (floored CSS layout pixels, then × effective DPR for buffer dimensions).
  *

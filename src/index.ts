@@ -1,6 +1,6 @@
 /**
  * `@geometra/renderer-three` — split/stacked Three.js + Geometra canvas hosts, WebGL sizing helpers
- * ({@link resizeGeometraThreePerspectiveView}, {@link toPlainGeometraThreeViewSizingState}, {@link isPlainGeometraThreeViewSizingState}, {@link resizeGeometraThreeDrawingBufferView} / {@link resizeGeometraThreeDrawingBufferViewHeadless}, DPR capping, {@link GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO}, {@link resolveHeadlessHostDevicePixelRatio}, {@link createGeometraThreePerspectiveResizeHandlerHeadless}), shared scene defaults
+ * ({@link resizeGeometraThreePerspectiveView}, {@link toPlainGeometraThreeViewSizingState}, {@link isPlainGeometraThreeViewSizingState}, {@link resizeGeometraThreeDrawingBufferView} / {@link resizeGeometraThreeDrawingBufferViewHeadless}, DPR capping, {@link GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO}, {@link resolveHeadlessHostDevicePixelRatio}, {@link resolveHostDevicePixelRatioFromWindow}, {@link createGeometraThreePerspectiveResizeHandlerHeadless}), shared scene defaults
  * ({@link createGeometraThreeSceneBasics}, {@link resolveGeometraThreeSceneBasicsOptions}, {@link toPlainGeometraThreeSceneBasicsOptions},
  * {@link createGeometraThreeSceneBasicsFromPlain},
  * {@link createGeometraThreeWebGLWithSceneBasics}, {@link createGeometraThreeWebGLWithSceneBasicsFromPlain},
@@ -50,6 +50,7 @@ export {
   resizeGeometraThreePerspectiveView,
   resolveHeadlessHostDevicePixelRatio,
   resolveHostDevicePixelRatio,
+  resolveHostDevicePixelRatioFromWindow,
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
   toPlainGeometraThreeViewSizingState,

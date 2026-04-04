@@ -75,7 +75,7 @@ This package also re-exports `GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT` from [`@geomet
 
 ### WebGL device pixel ratio cap
 
-Both `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` accept optional `maxDevicePixelRatio` (for example `2`) to limit the Three.js drawing buffer on high-DPR displays and reduce GPU memory use. When omitted, the full `window.devicePixelRatio` is used.
+Both `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` accept optional `maxDevicePixelRatio` (for example `2`) to limit the Three.js drawing buffer on high-DPR displays and reduce GPU memory use. When omitted, the full `window.devicePixelRatio` is used. Custom hosts can mirror that combination with `resolveHostDevicePixelRatioFromWindow(win, maxDevicePixelRatio)` (same `win.devicePixelRatio || 1` fallback and cap as the built-in hosts).
 
 ### Geometra resize
 

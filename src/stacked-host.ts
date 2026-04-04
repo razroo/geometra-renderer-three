@@ -22,7 +22,10 @@ import {
   coerceHostStackingZIndexCss,
   type GeometraHudPlacement,
 } from './host-css-coerce.js'
-import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
+import {
+  resizeGeometraThreePerspectiveView,
+  resolveHostDevicePixelRatioFromWindow,
+} from './utils.js'
 
 export type { GeometraHudPlacement } from './host-css-coerce.js'
 
@@ -272,7 +275,7 @@ export function createThreeGeometraStackedHost(
       camera,
       root.clientWidth,
       root.clientHeight,
-      resolveHostDevicePixelRatio(win.devicePixelRatio || 1, maxDevicePixelRatio),
+      resolveHostDevicePixelRatioFromWindow(win, maxDevicePixelRatio),
     )
   }
 

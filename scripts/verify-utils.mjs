@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `resolveHostDevicePixelRatio`, `GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO`,
+ * Post-build checks for `resolveHostDevicePixelRatio`, `resolveHostDevicePixelRatioFromWindow`,
+ * `GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO`,
  * `resolveHeadlessHostDevicePixelRatio`,
  * `resizeGeometraThreeDrawingBufferView`, `resizeGeometraThreeDrawingBufferViewHeadless`,
  * `resizeGeometraThreePerspectiveView` (including non-finite / non-positive `pixelRatio` and negative CSS sizes),
@@ -57,6 +58,7 @@ const {
   resizeGeometraThreePerspectiveView,
   resolveHeadlessHostDevicePixelRatio,
   resolveHostDevicePixelRatio,
+  resolveHostDevicePixelRatioFromWindow,
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
   createGeometraThreeSceneBasics,
@@ -180,6 +182,28 @@ function testResolveHostDevicePixelRatio() {
   assert.equal(resolveHostDevicePixelRatio(Number.POSITIVE_INFINITY, undefined), 1)
   // Non-finite cap is ignored (same branch as undefined cap).
   assert.equal(resolveHostDevicePixelRatio(2, Number.POSITIVE_INFINITY), 2)
+}
+
+function testResolveHostDevicePixelRatioFromWindow() {
+  const win2 = { devicePixelRatio: 2 }
+  assert.equal(
+    resolveHostDevicePixelRatioFromWindow(win2),
+    resolveHostDevicePixelRatio(2, undefined),
+  )
+  assert.equal(
+    resolveHostDevicePixelRatioFromWindow(win2, 1.5),
+    resolveHostDevicePixelRatio(2, 1.5),
+  )
+  const winBad = { devicePixelRatio: 0 }
+  assert.equal(
+    resolveHostDevicePixelRatioFromWindow(winBad),
+    resolveHostDevicePixelRatio(1, undefined),
+  )
+  const winUndef = {}
+  assert.equal(
+    resolveHostDevicePixelRatioFromWindow(winUndef),
+    resolveHostDevicePixelRatio(1, undefined),
+  )
 }
 
 function testResolveHeadlessHostDevicePixelRatio() {
@@ -1395,6 +1419,7 @@ testToPlainGeometraThreeViewSizingStateMatchesHostPath()
 testToPlainGeometraThreeViewSizingStateHeadlessMatchesRawOne()
 testIsPlainGeometraThreeViewSizingStateMatchesHelpersAndSubsetOfHostSnapshot()
 testResolveHostDevicePixelRatio()
+testResolveHostDevicePixelRatioFromWindow()
 testResolveHeadlessHostDevicePixelRatio()
 testGeometraHeadlessRawDevicePixelRatioExport()
 testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize()

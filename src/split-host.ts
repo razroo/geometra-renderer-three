@@ -12,7 +12,10 @@ import {
 } from './three-scene-basics.js'
 import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
 import { coerceHostNonNegativeCssPx } from './host-css-coerce.js'
-import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
+import {
+  resizeGeometraThreePerspectiveView,
+  resolveHostDevicePixelRatioFromWindow,
+} from './utils.js'
 
 /**
  * Every {@link createBrowserCanvasClient} option except `canvas`, which split/stacked hosts create
@@ -214,7 +217,7 @@ export function createThreeGeometraSplitHost(
       camera,
       threePanel.clientWidth,
       threePanel.clientHeight,
-      resolveHostDevicePixelRatio(win.devicePixelRatio || 1, maxDevicePixelRatio),
+      resolveHostDevicePixelRatioFromWindow(win, maxDevicePixelRatio),
     )
   }
 
