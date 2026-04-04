@@ -7,8 +7,8 @@
  * {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}, {@link disposeGeometraThreeWebGLWithSceneBasics},
  * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless}), and
- * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, {@link coerceHostStackingZIndexCss}
- * for stacked-overlay `z-index` rules, and {@link GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS} /
+ * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, {@link coerceHostStackingZIndexCss} and
+ * {@link coerceGeometraHudPlacement} for stacked-overlay `z-index` and HUD corner rules, and {@link GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS} /
  * {@link GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS} for host layout defaults (custom layouts, logs, agent payloads).
  */
 
@@ -24,7 +24,6 @@ export {
 export {
   createThreeGeometraStackedHost,
   GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS,
-  type GeometraHudPlacement,
   type ThreeGeometraStackedHostHandle,
   type ThreeGeometraStackedHostOptions,
 } from './stacked-host.js'
@@ -69,7 +68,12 @@ export {
   type GeometraHostLayoutSyncRaf,
   type GeometraHostLayoutSyncRafOptions,
 } from './layout-sync.js'
-export { coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss } from './host-css-coerce.js'
+export {
+  coerceGeometraHudPlacement,
+  coerceHostNonNegativeCssPx,
+  coerceHostStackingZIndexCss,
+} from './host-css-coerce.js'
+export type { GeometraHudPlacement } from './host-css-coerce.js'
 
 /** Re-export for hybrid apps using {@link createThreeGeometraSplitHost} with `onData`. */
 export { GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT } from '@geometra/client'

@@ -11,6 +11,7 @@ const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
 const mod = await import(indexHref)
 
 const expectedFunctions = [
+  'coerceGeometraHudPlacement',
   'coerceHostNonNegativeCssPx',
   'coerceHostStackingZIndexCss',
   'createThreeGeometraSplitHost',

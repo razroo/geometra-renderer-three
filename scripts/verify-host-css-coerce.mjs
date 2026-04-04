@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `coerceHostNonNegativeCssPx` (split/stacked panel and HUD widths) and
- * `coerceHostStackingZIndexCss` (stacked HUD `z-index`).
+ * Post-build checks for `coerceHostNonNegativeCssPx` (split/stacked panel and HUD widths),
+ * `coerceHostStackingZIndexCss` (stacked HUD `z-index`), and `coerceGeometraHudPlacement` (HUD corner).
  * Imports `dist/host-css-coerce.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -10,7 +10,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const href = pathToFileURL(path.join(root, 'dist', 'host-css-coerce.js')).href
-const { coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss } = await import(href)
+const { coerceGeometraHudPlacement, coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss } =
+  await import(href)
 
 function testFiniteNonNegativePassesThrough() {
   assert.equal(coerceHostNonNegativeCssPx(420, 999), 420)
@@ -25,6 +26,14 @@ function testInvalidUsesFallback() {
   assert.equal(coerceHostNonNegativeCssPx(Number.NEGATIVE_INFINITY, 420), 420)
   // Non-number (defensive if called from untyped JS).
   assert.equal(coerceHostNonNegativeCssPx('wide', 420), 420)
+}
+
+function testCoerceGeometraHudPlacement() {
+  const fb = 'top-left'
+  assert.equal(coerceGeometraHudPlacement('bottom-right', fb), 'bottom-right')
+  assert.equal(coerceGeometraHudPlacement(undefined, fb), fb)
+  assert.equal(coerceGeometraHudPlacement('center', fb), fb)
+  assert.equal(coerceGeometraHudPlacement('', fb), fb)
 }
 
 function testStackingZIndexCss() {
@@ -42,6 +51,7 @@ function testStackingZIndexCss() {
 
 testFiniteNonNegativePassesThrough()
 testInvalidUsesFallback()
+testCoerceGeometraHudPlacement()
 testStackingZIndexCss()
 
 console.log('verify-host-css-coerce: ok')

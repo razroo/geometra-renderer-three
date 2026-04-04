@@ -1,3 +1,25 @@
+/** Corner anchor for the Geometra HUD overlay (same literals as {@link createThreeGeometraStackedHost}). */
+export type GeometraHudPlacement = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
+
+/**
+ * Normalize HUD corner placement from runtime strings (e.g. agent JSON or untyped config).
+ * Unknown or `undefined` values use `fallback` so the overlay keeps a valid `position: absolute` inset.
+ */
+export function coerceGeometraHudPlacement(
+  value: string | undefined,
+  fallback: GeometraHudPlacement,
+): GeometraHudPlacement {
+  if (
+    value === 'bottom-right' ||
+    value === 'bottom-left' ||
+    value === 'top-right' ||
+    value === 'top-left'
+  ) {
+    return value
+  }
+  return fallback
+}
+
 /**
  * Finite, non-negative CSS px for host panel/HUD sizing; invalid values use `fallback`
  * (avoids `NaNpx` / negative sizes in inline styles).
