@@ -35,6 +35,7 @@ const expectedFunctions = [
   'syncGeometraThreePerspectiveFromBuffer',
   'tickGeometraThreeWebGLWithSceneBasicsFrame',
   'toPlainGeometraThreeHostSnapshot',
+  'toPlainGeometraThreeHostSnapshotHeadless',
   'toPlainGeometraThreeSceneBasicsOptions',
   'toPlainGeometraThreeViewSizingState',
 ]

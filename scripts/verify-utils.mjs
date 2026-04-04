@@ -9,7 +9,7 @@
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`,
- * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeViewSizingState`
+ * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeHostSnapshotHeadless`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame`,
@@ -47,6 +47,7 @@ const {
   tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
   toPlainGeometraThreeHostSnapshot,
+  toPlainGeometraThreeHostSnapshotHeadless,
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeViewSizingState,
 } = await import(indexHref)
@@ -415,6 +416,13 @@ function testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers() {
   assert.equal(roundTrip.cameraFov, scene.cameraFov)
 }
 
+function testToPlainGeometraThreeHostSnapshotHeadlessMatchesRawOne() {
+  const sceneOpts = { cameraFov: 35 }
+  const headless = toPlainGeometraThreeHostSnapshotHeadless(640, 360, 2, sceneOpts)
+  const explicit = toPlainGeometraThreeHostSnapshot(640, 360, 1, 2, sceneOpts)
+  assert.deepEqual(headless, explicit)
+}
+
 function testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable() {
   const plainDefault = toPlainGeometraThreeSceneBasicsOptions()
   const resolvedDefault = resolveGeometraThreeSceneBasicsOptions()
@@ -618,6 +626,7 @@ testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
 testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate()
 testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers()
+testToPlainGeometraThreeHostSnapshotHeadlessMatchesRawOne()
 testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable()
 testResolveGeometraThreeSceneBasicsOptionsMatchesCoercedCreate()
 testCreateGeometraThreeSceneBasicsDefaults()

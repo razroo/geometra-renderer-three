@@ -5,7 +5,7 @@
  * {@link createGeometraThreeWebGLWithSceneBasics},
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView}, {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}, {@link disposeGeometraThreeWebGLWithSceneBasics},
- * {@link toPlainGeometraThreeHostSnapshot}), and
+ * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless}), and
  * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, and {@link coerceHostStackingZIndexCss}
  * for stacked-overlay `z-index` rules.
  */
@@ -45,6 +45,7 @@ export {
   resolveGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeHostSnapshot,
+  toPlainGeometraThreeHostSnapshotHeadless,
   createGeometraThreeWebGLRenderer,
   createGeometraThreeWebGLWithSceneBasics,
   disposeGeometraThreeWebGLWithSceneBasics,

@@ -155,6 +155,23 @@ export function toPlainGeometraThreeHostSnapshot(
 }
 
 /**
+ * Same plain snapshot as {@link toPlainGeometraThreeHostSnapshot} with raw device pixel ratio **1** —
+ * the baseline after `win.devicePixelRatio || 1` when the ratio is missing, and the same raw input as
+ * {@link resolveHeadlessHostDevicePixelRatio} when you only apply an optional cap.
+ *
+ * For headless GL, Node, tests, or agent payloads without a browser `window`, call this instead of
+ * passing a literal `1` as `rawDevicePixelRatio` everywhere.
+ */
+export function toPlainGeometraThreeHostSnapshotHeadless(
+  cssWidth: number,
+  cssHeight: number,
+  maxDevicePixelRatio?: number,
+  sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
+): PlainGeometraThreeHostSnapshot {
+  return toPlainGeometraThreeHostSnapshot(cssWidth, cssHeight, 1, maxDevicePixelRatio, sceneBasicsOptions)
+}
+
+/**
  * `WebGLRenderer` constructor options (excluding `canvas`) used by
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *
