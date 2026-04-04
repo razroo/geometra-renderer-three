@@ -14,7 +14,8 @@
  * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeHostSnapshotHeadless`,
  * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
- * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
+ * `disposeGeometraThreeWebGLWithSceneBasics` (optional `clock` → `Clock#stop` before `renderer.dispose`),
+ * `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render` and yield
  * `false`, successful ticks returning `true`, and `onFrame` throwing so `render` is skipped),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
@@ -629,6 +630,21 @@ function testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose() {
   assert.equal(disposed, 1)
 }
 
+function testDisposeGeometraThreeWebGLWithSceneBasicsStopsClockWhenProvided() {
+  let disposed = 0
+  const renderer = {
+    dispose() {
+      disposed += 1
+    },
+  }
+  const clock = new THREE.Clock()
+  clock.start()
+  assert.equal(clock.running, true)
+  disposeGeometraThreeWebGLWithSceneBasics({ renderer, clock })
+  assert.equal(disposed, 1)
+  assert.equal(clock.running, false)
+}
+
 function testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender() {
   const log = []
   const scene = {}
@@ -917,6 +933,7 @@ testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
 testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions()
 testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose()
+testDisposeGeometraThreeWebGLWithSceneBasicsStopsClockWhenProvided()
 testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender()
 testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
 testTickGeometraThreeWebGLWithSceneBasicsFrameOnFrameThrowSkipsRender()

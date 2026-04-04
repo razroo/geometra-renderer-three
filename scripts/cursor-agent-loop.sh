@@ -38,7 +38,7 @@ fi
 #     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame
 #     (onFrame false skips render and tick returns false; tick returns true when render runs; onFrame throw skips render;
 #     parity with host onThreeFrame ordering) /
-#     disposeGeometraThreeWebGLWithSceneBasics /
+#     disposeGeometraThreeWebGLWithSceneBasics (optional clock → Clock#stop before renderer.dispose) /
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
 #     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`) /
 #     host sizing helpers /

@@ -308,12 +308,18 @@ export function createGeometraThreeWebGLWithSceneBasics(
  * Tear down the {@link THREE.WebGLRenderer} from {@link createGeometraThreeWebGLWithSceneBasics}
  * (or any bundle that shares the same `renderer` reference).
  *
+ * When `clock` is passed (for example the same bundle from {@link createGeometraThreeWebGLWithSceneBasics}),
+ * calls {@link THREE.Clock.stop} before {@link THREE.WebGLRenderer.dispose} so `getDelta` / `elapsedTime`
+ * do not keep advancing after teardown in headless ticks or agent loops.
+ *
  * Calls {@link THREE.WebGLRenderer.dispose}; it does not traverse the scene or dispose meshes,
  * materials, or textures — keep that cleanup in app code or a future helper if you need it.
  */
 export function disposeGeometraThreeWebGLWithSceneBasics(
-  bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer'>,
+  bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer'> &
+    Partial<Pick<GeometraThreeWebGLWithSceneBasics, 'clock'>>,
 ): void {
+  bundle.clock?.stop()
   bundle.renderer.dispose()
 }
 
