@@ -23,7 +23,13 @@ export interface GeometraHostLayoutSyncRafOptions {
   isDestroyed: () => boolean
   /** Resize WebGL + camera (runs inside the rAF callback). */
   syncLayout: () => void
-  /** e.g. `() => win.dispatchEvent(new Event('resize'))` for Geometra thin client. */
+  /**
+   * e.g. `() => win.dispatchEvent(new Event('resize'))` for Geometra thin client.
+   * Runs only when {@link GeometraHostLayoutSyncRaf.schedule} requested a notify for this coalesced
+   * frame, after the layout sync callback, and only if {@link isDestroyed} is still false (avoids
+   * synthetic `resize` after teardown). If the layout sync callback throws, the pending notify stays
+   * set so a later coalesced frame can still dispatch once sync succeeds.
+   */
   dispatchGeometraResize: () => void
 }
 
@@ -49,6 +55,7 @@ export function createGeometraHostLayoutSyncRaf(
       layoutSyncRafId = undefined
       if (isDestroyed()) return
       syncLayout()
+      if (isDestroyed()) return
       if (pendingGeometraResizeNotify) {
         pendingGeometraResizeNotify = false
         dispatchGeometraResize()

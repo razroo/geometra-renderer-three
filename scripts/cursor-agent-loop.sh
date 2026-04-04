@@ -21,7 +21,8 @@ fi
 #     coerceGeometraHudPlacement), align README prose
 #     and examples so readers are not misled (explicit example values vs documented defaults).
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, verify-utils.mjs,
-#     verify-layout-sync.mjs, verify-host-css-coerce.mjs (dist/host-css-coerce.js; coerceHostNonNegativeCssPx,
+#     verify-layout-sync.mjs (post-sync isDestroyed skips synthetic Geometra resize; syncLayout throw retains pending notify),
+#     verify-host-css-coerce.mjs (dist/host-css-coerce.js; coerceHostNonNegativeCssPx,
 #     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
@@ -40,7 +41,7 @@ fi
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
 #     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts) /
 #     host sizing helpers /
-#     layout-sync behavior change.
+#     layout-sync behavior change (extend verify-layout-sync.mjs when semantics shift).
 #
 # Prerequisites:
 #   - Cursor Agent CLI: https://cursor.com/install (`agent` on PATH)

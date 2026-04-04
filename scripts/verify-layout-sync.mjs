@@ -2,7 +2,9 @@
 /**
  * Post-build checks for `createGeometraHostLayoutSyncRaf` (split/stacked resize coalescing):
  * rAF coalescing, optional synthetic Geometra `resize`, cancel/destroy semantics
- * (including cancel before the scheduled frame runs — no `syncLayout` / dispatch).
+ * (including cancel before the scheduled frame runs — no `syncLayout` / dispatch),
+ * skip dispatch when `isDestroyed()` becomes true after `syncLayout`, and retain pending notify
+ * when `syncLayout` throws so a later coalesced frame can still dispatch.
  * Imports `dist/layout-sync.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -204,5 +206,55 @@ testMixedNotifyCoalescesToSingleDispatch()
 testCancelBeforeFlushSkipsSync()
 testCancelBeforeFlushSkipsSyncWithPendingNotify()
 testNotifyAfterCancel()
+
+/** If teardown happens during `syncLayout`, do not fire synthetic Geometra `resize`. */
+function testDestroyedAfterSyncLayoutSkipsDispatch() {
+  const win = createMockWindow()
+  let dispatchCount = 0
+  let destroyed = false
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => destroyed,
+    syncLayout: () => {
+      destroyed = true
+    },
+    dispatchGeometraResize: () => {
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(true)
+  win.flushAnimationFrame()
+  assert.equal(dispatchCount, 0)
+}
+
+/**
+ * When `syncLayout` throws, pending notify is not cleared; a later coalesced frame can still
+ * dispatch once sync succeeds.
+ */
+function testSyncLayoutThrowKeepsPendingNotifyForNextFrame() {
+  const win = createMockWindow()
+  let syncAttempts = 0
+  let dispatchCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => false,
+    syncLayout: () => {
+      syncAttempts += 1
+      if (syncAttempts === 1) throw new Error('boom')
+    },
+    dispatchGeometraResize: () => {
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(true)
+  assert.throws(() => win.flushAnimationFrame(), /boom/)
+  layoutSync.schedule(false)
+  win.flushAnimationFrame()
+  assert.equal(syncAttempts, 2)
+  assert.equal(dispatchCount, 1)
+}
+
+testDestroyedAfterSyncLayoutSkipsDispatch()
+testSyncLayoutThrowKeepsPendingNotifyForNextFrame()
 
 console.log('verify-layout-sync: ok')
