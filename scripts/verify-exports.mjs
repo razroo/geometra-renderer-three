@@ -30,6 +30,7 @@ const expectedFunctions = [
   'resizeGeometraThreeWebGLWithSceneBasicsView',
   'resizeGeometraThreeWebGLWithSceneBasicsViewHeadless',
   'geometraHostPerspectiveAspectFromCss',
+  'isGeometraHybridHostKind',
   'normalizeGeometraLayoutPixels',
   'resizeGeometraThreeDrawingBufferView',
   'resizeGeometraThreePerspectiveView',
@@ -58,6 +59,7 @@ if (missingFns.length) {
 
 const expectedObjects = [
   'GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS',
+  'GEOMETRA_HYBRID_HOST_KINDS',
   'GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS',
   'GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS',
   'GEOMETRA_THREE_HOST_SCENE_DEFAULTS',

@@ -20,7 +20,7 @@
  * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
  * `toPlainGeometraThreeStackedHostSnapshot`, `toPlainGeometraThreeStackedHostSnapshotHeadless`
- * (composite snapshots include `geometraHybridHostKind`: `'split'` | `'stacked'`)
+ * (composite snapshots include `geometraHybridHostKind`: `'split'` | `'stacked'`; `isGeometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`)
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -60,6 +60,7 @@ const {
   toPlainGeometraThreeHostSnapshotHeadless,
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeViewSizingState,
+  GEOMETRA_HYBRID_HOST_KINDS,
   GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS,
   GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS,
   toPlainGeometraSplitHostLayoutOptions,
@@ -68,6 +69,7 @@ const {
   toPlainGeometraThreeSplitHostSnapshotHeadless,
   toPlainGeometraThreeStackedHostSnapshot,
   toPlainGeometraThreeStackedHostSnapshotHeadless,
+  isGeometraHybridHostKind,
 } = await import(indexHref)
 
 function testNormalizeGeometraLayoutPixels() {
@@ -753,6 +755,17 @@ function testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion() {
   assert.equal(roundTrip.geometraHudZIndex, '1')
 }
 
+function testGeometraHybridHostKindHelpers() {
+  assert.deepEqual([...GEOMETRA_HYBRID_HOST_KINDS], ['split', 'stacked'])
+  assert.equal(isGeometraHybridHostKind('split'), true)
+  assert.equal(isGeometraHybridHostKind('stacked'), true)
+  assert.equal(isGeometraHybridHostKind('Split'), false)
+  assert.equal(isGeometraHybridHostKind(null), false)
+  assert.equal(isGeometraHybridHostKind(undefined), false)
+  const snap = toPlainGeometraThreeSplitHostSnapshot({}, 100, 100, 1)
+  assert.equal(isGeometraHybridHostKind(snap.geometraHybridHostKind), true)
+}
+
 function testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge() {
   const layoutSplit = { geometraWidth: 400, geometraOnLeft: true }
   const mergedSplit = {
@@ -858,6 +871,7 @@ testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
 testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne()
 testToPlainGeometraSplitHostLayoutOptionsMatchesHostCoercion()
 testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion()
+testGeometraHybridHostKindHelpers()
 testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge()
 
 console.log('verify-utils: ok')

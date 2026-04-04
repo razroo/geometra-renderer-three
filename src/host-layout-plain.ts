@@ -104,6 +104,16 @@ export function toPlainGeometraStackedHostLayoutOptions(
 /** Literal tag on composite plain snapshots so JSON consumers can tell hybrid layout without inferring fields. */
 export type GeometraHybridHostKind = 'split' | 'stacked'
 
+/** Every {@link GeometraHybridHostKind} value (stable iteration, prompts, or defensive checks). */
+export const GEOMETRA_HYBRID_HOST_KINDS: readonly GeometraHybridHostKind[] = ['split', 'stacked']
+
+/**
+ * Narrow `unknown` to {@link GeometraHybridHostKind} when parsing composite snapshot JSON from logs or agents.
+ */
+export function isGeometraHybridHostKind(value: unknown): value is GeometraHybridHostKind {
+  return value === 'split' || value === 'stacked'
+}
+
 /**
  * Split-host layout fields plus {@link PlainGeometraThreeHostSnapshot} in one JSON-friendly object —
  * same coercion as {@link toPlainGeometraSplitHostLayoutOptions} and {@link toPlainGeometraThreeHostSnapshot}.
