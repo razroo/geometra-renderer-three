@@ -47,6 +47,8 @@ if (missingFns.length) {
 
 const expectedObjects = [
   'GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS',
+  'GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS',
+  'GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS',
   'GEOMETRA_THREE_HOST_SCENE_DEFAULTS',
 ]
 const missingObjs = expectedObjects.filter(

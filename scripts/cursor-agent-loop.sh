@@ -26,6 +26,7 @@ fi
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
 #     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeHostSnapshot /
 #     toPlainGeometraThreeHostSnapshotHeadless / createGeometraThreePerspectiveResizeHandler / scene-basics /
+#     GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS / GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
 #     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer /
 #     createGeometraThreeWebGLWithSceneBasics / resolveGeometraThreeSceneBasicsOptions /

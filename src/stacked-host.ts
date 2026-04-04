@@ -21,25 +21,41 @@ import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from 
 /** Corner anchor for the Geometra HUD overlay (CSS `position: absolute` on the host). */
 export type GeometraHudPlacement = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'
 
+/**
+ * Default HUD width, height, corner, and margin for {@link createThreeGeometraStackedHost}; same as
+ * those option fallbacks and README.
+ */
+export const GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS = {
+  geometraHudWidth: 420,
+  geometraHudHeight: 320,
+  geometraHudPlacement: 'bottom-right',
+  geometraHudMargin: 12,
+} as const satisfies {
+  geometraHudWidth: number
+  geometraHudHeight: number
+  geometraHudPlacement: GeometraHudPlacement
+  geometraHudMargin: number
+}
+
 export interface ThreeGeometraStackedHostOptions
   extends GeometraHostBrowserCanvasClientOptions,
     GeometraThreeSceneBasicsOptions {
   /** Host element; a full-size stacking context is appended (existing children are left untouched). */
   container: HTMLElement
   /**
-   * HUD width in CSS pixels. Default: 420.
+   * HUD width in CSS pixels. Default: {@link GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudWidth}.
    * Non-finite or negative values fall back to the default so layout does not emit invalid `px` styles.
    */
   geometraHudWidth?: number
   /**
-   * HUD height in CSS pixels. Default: 320.
+   * HUD height in CSS pixels. Default: {@link GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudHeight}.
    * Non-finite or negative values fall back to the default.
    */
   geometraHudHeight?: number
-  /** HUD corner. Default: `bottom-right`. */
+  /** HUD corner. Default: {@link GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudPlacement}. */
   geometraHudPlacement?: GeometraHudPlacement
   /**
-   * Inset from the chosen corner in CSS pixels. Default: 12.
+   * Inset from the chosen corner in CSS pixels. Default: {@link GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudMargin}.
    * Non-finite or negative values fall back to the default.
    */
   geometraHudMargin?: number
@@ -145,10 +161,10 @@ export function createThreeGeometraStackedHost(
 ): ThreeGeometraStackedHostHandle {
   const {
     container,
-    geometraHudWidth: geometraHudWidthOpt = 420,
-    geometraHudHeight: geometraHudHeightOpt = 320,
-    geometraHudPlacement = 'bottom-right',
-    geometraHudMargin: geometraHudMarginOpt = 12,
+    geometraHudWidth: geometraHudWidthOpt = GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudWidth,
+    geometraHudHeight: geometraHudHeightOpt = GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudHeight,
+    geometraHudPlacement = GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudPlacement,
+    geometraHudMargin: geometraHudMarginOpt = GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudMargin,
     geometraHudPointerEvents = 'auto',
     geometraHudZIndex = 1,
     maxDevicePixelRatio,
@@ -163,9 +179,18 @@ export function createThreeGeometraStackedHost(
     ...browserOptions
   } = options
 
-  const geometraHudWidth = coerceHostNonNegativeCssPx(geometraHudWidthOpt, 420)
-  const geometraHudHeight = coerceHostNonNegativeCssPx(geometraHudHeightOpt, 320)
-  const geometraHudMargin = coerceHostNonNegativeCssPx(geometraHudMarginOpt, 12)
+  const geometraHudWidth = coerceHostNonNegativeCssPx(
+    geometraHudWidthOpt,
+    GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudWidth,
+  )
+  const geometraHudHeight = coerceHostNonNegativeCssPx(
+    geometraHudHeightOpt,
+    GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudHeight,
+  )
+  const geometraHudMargin = coerceHostNonNegativeCssPx(
+    geometraHudMarginOpt,
+    GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudMargin,
+  )
 
   const doc = container.ownerDocument
   const win = providedWindow ?? doc.defaultView
