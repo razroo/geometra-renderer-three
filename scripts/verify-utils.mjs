@@ -9,7 +9,7 @@
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`,
- * `toPlainGeometraThreeSceneBasicsOptions`
+ * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame`,
@@ -47,6 +47,7 @@ const {
   tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
   toPlainGeometraThreeSceneBasicsOptions,
+  toPlainGeometraThreeViewSizingState,
 } = await import(indexHref)
 
 function testNormalizeGeometraLayoutPixels() {
@@ -61,6 +62,38 @@ function testGeometraHostPerspectiveAspectFromCss() {
   assert.equal(geometraHostPerspectiveAspectFromCss(100.9, 50.1), 100 / 50)
   assert.equal(geometraHostPerspectiveAspectFromCss(0, 0), 1)
   assert.equal(geometraHostPerspectiveAspectFromCss(Number.NaN, Number.POSITIVE_INFINITY), 1)
+}
+
+function testToPlainGeometraThreeViewSizingStateMatchesHostPath() {
+  const a = toPlainGeometraThreeViewSizingState(800, 400, 2)
+  assert.equal(a.layoutWidth, 800)
+  assert.equal(a.layoutHeight, 400)
+  assert.equal(a.perspectiveAspect, 2)
+  assert.equal(a.sanitizedRawDevicePixelRatio, 2)
+  assert.equal(a.effectiveDevicePixelRatio, 2)
+  assert.equal(a.drawingBufferWidth, 1600)
+  assert.equal(a.drawingBufferHeight, 800)
+
+  const floored = toPlainGeometraThreeViewSizingState(100.9, 50.1, 2)
+  assert.equal(floored.layoutWidth, 100)
+  assert.equal(floored.layoutHeight, 50)
+  assert.equal(floored.perspectiveAspect, 2)
+  assert.equal(floored.drawingBufferWidth, 200)
+  assert.equal(floored.drawingBufferHeight, 100)
+
+  const capped = toPlainGeometraThreeViewSizingState(640, 480, 3, 2)
+  assert.equal(capped.sanitizedRawDevicePixelRatio, 3)
+  assert.equal(capped.effectiveDevicePixelRatio, 2)
+  assert.equal(capped.drawingBufferWidth, 1280)
+  assert.equal(capped.drawingBufferHeight, 960)
+
+  const badRaw = toPlainGeometraThreeViewSizingState(10, 10, Number.NaN)
+  assert.equal(badRaw.sanitizedRawDevicePixelRatio, 1)
+  assert.equal(badRaw.effectiveDevicePixelRatio, 1)
+
+  const roundTrip = JSON.parse(JSON.stringify(toPlainGeometraThreeViewSizingState(320, 240, 1.5)))
+  assert.equal(roundTrip.layoutWidth, 320)
+  assert.equal(roundTrip.effectiveDevicePixelRatio, 1.5)
 }
 
 function testResolveHostDevicePixelRatio() {
@@ -551,6 +584,7 @@ function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize
 
 testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
+testToPlainGeometraThreeViewSizingStateMatchesHostPath()
 testResolveHostDevicePixelRatio()
 testResolveHeadlessHostDevicePixelRatio()
 testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize()

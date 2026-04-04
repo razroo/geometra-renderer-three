@@ -1,6 +1,6 @@
 /**
  * `@geometra/renderer-three` — split/stacked Three.js + Geometra canvas hosts, WebGL sizing helpers
- * ({@link resizeGeometraThreePerspectiveView}, drawing-buffer paths, DPR capping, {@link resolveHeadlessHostDevicePixelRatio}), shared scene defaults
+ * ({@link resizeGeometraThreePerspectiveView}, {@link toPlainGeometraThreeViewSizingState}, drawing-buffer paths, DPR capping, {@link resolveHeadlessHostDevicePixelRatio}), shared scene defaults
  * ({@link createGeometraThreeSceneBasics}, {@link resolveGeometraThreeSceneBasicsOptions}, {@link toPlainGeometraThreeSceneBasicsOptions},
  * {@link createGeometraThreeWebGLWithSceneBasics},
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView}, {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
@@ -33,6 +33,8 @@ export {
   resolveHostDevicePixelRatio,
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
+  toPlainGeometraThreeViewSizingState,
+  type PlainGeometraThreeViewSizingState,
 } from './utils.js'
 export {
   GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,

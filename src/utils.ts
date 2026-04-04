@@ -80,6 +80,66 @@ export function resolveHeadlessHostDevicePixelRatio(maxDevicePixelRatio?: number
 }
 
 /**
+ * JSON-friendly viewport sizing aligned with {@link resizeGeometraThreePerspectiveView} and the
+ * split/stacked hosts (floored CSS layout pixels, then × effective DPR for buffer dimensions).
+ *
+ * Use beside {@link toPlainGeometraThreeSceneBasicsOptions} for logs, tests, or agent payloads that
+ * describe the same numbers the hosts use without constructing a renderer.
+ */
+export interface PlainGeometraThreeViewSizingState {
+  /** Floored CSS layout width (at least 1), same as {@link normalizeGeometraLayoutPixels}. */
+  layoutWidth: number
+  /** Floored CSS layout height (at least 1). */
+  layoutHeight: number
+  /** `layoutWidth / layoutHeight` — same as {@link geometraHostPerspectiveAspectFromCss} for these inputs. */
+  perspectiveAspect: number
+  /**
+   * Finite positive device pixel ratio before optional cap (invalid raw values become `1`, matching
+   * `win.devicePixelRatio || 1` behavior in the hosts).
+   */
+  sanitizedRawDevicePixelRatio: number
+  /** Same as {@link resolveHostDevicePixelRatio}(raw, maxDevicePixelRatio). */
+  effectiveDevicePixelRatio: number
+  /**
+   * Nominal drawing-buffer width: {@link normalizeGeometraLayoutPixels}(`layoutWidth` × `effectiveDevicePixelRatio`).
+   * Aligns with the buffer scale after {@link resizeGeometraThreePerspectiveView}, not the
+   * {@link setWebGLDrawingBufferSize} path (which floors CSS×DPR before separating axes).
+   */
+  drawingBufferWidth: number
+  /** Nominal drawing-buffer height (same rules as {@link PlainGeometraThreeViewSizingState.drawingBufferWidth}). */
+  drawingBufferHeight: number
+}
+
+/**
+ * Coerce CSS layout size and DPR into the same integers the built-in hosts use for perspective resize
+ * and nominal buffer dimensions (floored layout × effective DPR per axis).
+ */
+export function toPlainGeometraThreeViewSizingState(
+  cssWidth: number,
+  cssHeight: number,
+  rawDevicePixelRatio: number,
+  maxDevicePixelRatio?: number,
+): PlainGeometraThreeViewSizingState {
+  const layoutWidth = normalizeGeometraLayoutPixels(cssWidth)
+  const layoutHeight = normalizeGeometraLayoutPixels(cssHeight)
+  const sanitizedRawDevicePixelRatio =
+    rawDevicePixelRatio > 0 && Number.isFinite(rawDevicePixelRatio) ? rawDevicePixelRatio : 1
+  const effectiveDevicePixelRatio = resolveHostDevicePixelRatio(
+    sanitizedRawDevicePixelRatio,
+    maxDevicePixelRatio,
+  )
+  return {
+    layoutWidth,
+    layoutHeight,
+    perspectiveAspect: layoutWidth / layoutHeight,
+    sanitizedRawDevicePixelRatio,
+    effectiveDevicePixelRatio,
+    drawingBufferWidth: normalizeGeometraLayoutPixels(layoutWidth * effectiveDevicePixelRatio),
+    drawingBufferHeight: normalizeGeometraLayoutPixels(layoutHeight * effectiveDevicePixelRatio),
+  }
+}
+
+/**
  * Resize drawing buffer to match CSS pixel size × device pixel ratio.
  * Use when you manage your own canvas layout (no `renderer.setSize`).
  * Non-finite CSS sizes or products fall back to 1; non-finite or non-positive `pixelRatio` becomes 1.

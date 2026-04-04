@@ -35,6 +35,7 @@ const expectedFunctions = [
   'syncGeometraThreePerspectiveFromBuffer',
   'tickGeometraThreeWebGLWithSceneBasicsFrame',
   'toPlainGeometraThreeSceneBasicsOptions',
+  'toPlainGeometraThreeViewSizingState',
 ]
 const missingFns = expectedFunctions.filter((name) => typeof mod[name] !== 'function')
 if (missingFns.length) {
