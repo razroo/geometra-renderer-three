@@ -54,11 +54,12 @@ export interface ThreeGeometraSplitHostOptions
   onThreeReady?: (ctx: ThreeRuntimeContext) => void
   /**
    * Called every frame before `renderer.render`.
-   * Use for animations; return nothing. If you call {@link ThreeRuntimeContext.destroy} here, teardown
-   * runs and this frame’s `render` is skipped (avoids rendering after WebGL dispose).
+   * Use for animations. Return **`false`** to skip `render` for this frame only (same idea as
+   * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}). If you call {@link ThreeRuntimeContext.destroy} here,
+   * teardown runs and this frame’s `render` is skipped (avoids rendering after WebGL dispose).
    * If this callback throws, the host is fully torn down and the error is rethrown (same as {@link onThreeReady}).
    */
-  onThreeFrame?: (ctx: ThreeFrameContext) => void
+  onThreeFrame?: (ctx: ThreeFrameContext) => void | false
 }
 
 export interface ThreeRuntimeContext {
@@ -291,7 +292,9 @@ export function createThreeGeometraSplitHost(
     const delta = clock.getDelta()
     const elapsed = clock.elapsedTime
     try {
-      onThreeFrame?.({ ...ctxBase, clock, delta, elapsed })
+      if (onThreeFrame?.({ ...ctxBase, clock, delta, elapsed }) === false) {
+        return
+      }
     } catch (err) {
       destroy()
       throw err

@@ -33,7 +33,7 @@ const host = createThreeGeometraSplitHost({
     camera.position.set(0, 2, 8)
   },
   onThreeFrame: ({ scene, camera, delta }) => {
-    // animate meshes, controls.update(), etc.
+    // animate meshes, controls.update(), etc.; return false to skip a single frame’s render
   },
 })
 

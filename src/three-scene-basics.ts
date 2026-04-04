@@ -411,9 +411,10 @@ export interface GeometraThreeWebGLWithSceneBasicsTickContext {
  * `clock.getDelta()` / `elapsedTime`, optional callback, then `renderer.render`.
  *
  * If `onFrame` returns **`false`**, `renderer.render` is skipped and this function returns **`false`** —
- * parity with calling {@link ThreeRuntimeContext.destroy} from {@link ThreeGeometraSplitHostOptions.onThreeFrame} /
- * stacked host `onThreeFrame` after teardown (avoids rendering after WebGL dispose). `undefined` and other return
- * values still render, and the function returns **`true`** when `render` runs.
+ * parity with {@link ThreeGeometraSplitHostOptions.onThreeFrame} / stacked host `onThreeFrame` returning `false`,
+ * or with calling {@link ThreeRuntimeContext.destroy} from those callbacks (teardown also skips `render` and
+ * avoids drawing after WebGL dispose). `undefined` and other return values still render, and the function returns
+ * **`true`** when `render` runs.
  *
  * If `onFrame` **throws**, the error propagates and `renderer.render` is not called — same ordering as browser
  * hosts, which run the frame callback before `render`.
