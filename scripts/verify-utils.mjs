@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `resolveHostDevicePixelRatio`, `resolveHeadlessHostDevicePixelRatio`,
+ * Post-build checks for `resolveHostDevicePixelRatio`, `GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO`,
+ * `resolveHeadlessHostDevicePixelRatio`,
  * `resizeGeometraThreeDrawingBufferView`,
  * `resizeGeometraThreePerspectiveView` (including non-finite / non-positive `pixelRatio` and negative CSS sizes),
  * `setWebGLDrawingBufferSize` (including non-positive `pixelRatio`),
@@ -41,6 +42,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const indexHref = pathToFileURL(path.join(root, 'dist', 'index.js')).href
 const {
+  GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO,
   GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
   createGeometraHostWebGLRendererParams,
@@ -159,6 +161,14 @@ function testResolveHeadlessHostDevicePixelRatio() {
   assert.equal(resolveHeadlessHostDevicePixelRatio(Number.NaN), 1)
   assert.equal(resolveHeadlessHostDevicePixelRatio(0), 1)
   assert.equal(resolveHeadlessHostDevicePixelRatio(Number.POSITIVE_INFINITY), 1)
+}
+
+function testGeometraHeadlessRawDevicePixelRatioExport() {
+  assert.equal(GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO, 1)
+  assert.equal(
+    resolveHostDevicePixelRatio(GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO, 2),
+    resolveHeadlessHostDevicePixelRatio(2),
+  )
 }
 
 function testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize() {
@@ -1092,6 +1102,7 @@ testToPlainGeometraThreeViewSizingStateMatchesHostPath()
 testToPlainGeometraThreeViewSizingStateHeadlessMatchesRawOne()
 testResolveHostDevicePixelRatio()
 testResolveHeadlessHostDevicePixelRatio()
+testGeometraHeadlessRawDevicePixelRatioExport()
 testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize()
 testResizeGeometraThreePerspectiveView()
 testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()

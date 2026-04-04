@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import type { WebGLRendererParameters } from 'three'
 import {
+  GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO,
   resizeGeometraThreePerspectiveView,
   resolveHostDevicePixelRatio,
   toPlainGeometraThreeViewSizingState,
@@ -419,7 +420,7 @@ export function resizeGeometraThreeWebGLWithSceneBasicsViewHeadless(
     bundle,
     cssWidth,
     cssHeight,
-    1,
+    GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO,
     maxDevicePixelRatio,
   )
 }
@@ -564,7 +565,7 @@ export function resizeTickGeometraThreeWebGLWithSceneBasicsHeadless(
     bundle,
     cssWidth,
     cssHeight,
-    1,
+    GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO,
     maxDevicePixelRatio,
     onFrame,
   )

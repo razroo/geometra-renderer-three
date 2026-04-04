@@ -89,6 +89,17 @@ if (missingStr.length) {
   process.exit(1)
 }
 
+const expectedNumbers = ['GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO']
+const missingNum = expectedNumbers.filter((name) => typeof mod[name] !== 'number')
+if (missingNum.length) {
+  console.error('verify-exports: missing or non-number exports:', missingNum.join(', '))
+  process.exit(1)
+}
+if (mod.GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO !== 1) {
+  console.error('verify-exports: GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO must be 1')
+  process.exit(1)
+}
+
 if (mod.GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT !== 'geom.tracker.snapshot') {
   console.error(
     'verify-exports: GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT must match @geometra/client (expected geom.tracker.snapshot)',
@@ -96,7 +107,7 @@ if (mod.GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT !== 'geom.tracker.snapshot') {
   process.exit(1)
 }
 
-const expected = [...expectedFunctions, ...expectedObjects, ...expectedStrings]
+const expected = [...expectedFunctions, ...expectedObjects, ...expectedStrings, ...expectedNumbers]
 const extra = Object.keys(mod).filter((k) => !expected.includes(k))
 if (extra.length) {
   console.error('verify-exports: unexpected extra exports:', extra.join(', '))

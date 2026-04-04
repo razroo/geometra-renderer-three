@@ -69,14 +69,24 @@ export function resolveHostDevicePixelRatio(
 }
 
 /**
+ * Raw device pixel ratio used by headless / no-`window` helpers that mirror browser hosts where
+ * `win.devicePixelRatio || 1` would apply, but the baseline is fixed at **1** (see
+ * {@link resolveHeadlessHostDevicePixelRatio}, {@link toPlainGeometraThreeViewSizingStateHeadless},
+ * {@link createGeometraThreePerspectiveResizeHandlerHeadless}). Prefer this export over a bare `1`
+ * in agent payloads, tests, or custom hosts so the baseline stays grep-stable and documented.
+ */
+export const GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO = 1 as const
+
+/**
  * Same optional {@link maxDevicePixelRatio} cap as {@link createThreeGeometraSplitHost} and
  * {@link createThreeGeometraStackedHost}, but with raw ratio **1** for environments without a
  * browser `window` (headless WebGL, Node, tests).
  *
- * Equivalent to `resolveHostDevicePixelRatio(1, maxDevicePixelRatio)`.
+ * Equivalent to
+ * `resolveHostDevicePixelRatio(GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO, maxDevicePixelRatio)`.
  */
 export function resolveHeadlessHostDevicePixelRatio(maxDevicePixelRatio?: number): number {
-  return resolveHostDevicePixelRatio(1, maxDevicePixelRatio)
+  return resolveHostDevicePixelRatio(GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO, maxDevicePixelRatio)
 }
 
 /**
@@ -145,14 +155,20 @@ export function toPlainGeometraThreeViewSizingState(
  * {@link toPlainGeometraThreeHostSnapshotHeadless}, and {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless}
  * for headless GL, Node, tests, or agent payloads without a browser `window`.
  *
- * Equivalent to `toPlainGeometraThreeViewSizingState(cssWidth, cssHeight, 1, maxDevicePixelRatio)`.
+ * Equivalent to
+ * `toPlainGeometraThreeViewSizingState(cssWidth, cssHeight, GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO, maxDevicePixelRatio)`.
  */
 export function toPlainGeometraThreeViewSizingStateHeadless(
   cssWidth: number,
   cssHeight: number,
   maxDevicePixelRatio?: number,
 ): PlainGeometraThreeViewSizingState {
-  return toPlainGeometraThreeViewSizingState(cssWidth, cssHeight, 1, maxDevicePixelRatio)
+  return toPlainGeometraThreeViewSizingState(
+    cssWidth,
+    cssHeight,
+    GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO,
+    maxDevicePixelRatio,
+  )
 }
 
 /**
@@ -260,7 +276,12 @@ export function createGeometraThreePerspectiveResizeHandlerHeadless(
   camera: PerspectiveCamera,
   maxDevicePixelRatio?: number,
 ): (cssWidth: number, cssHeight: number) => void {
-  return createGeometraThreePerspectiveResizeHandler(renderer, camera, () => 1, maxDevicePixelRatio)
+  return createGeometraThreePerspectiveResizeHandler(
+    renderer,
+    camera,
+    () => GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO,
+    maxDevicePixelRatio,
+  )
 }
 
 /**
