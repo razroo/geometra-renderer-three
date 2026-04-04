@@ -18,6 +18,10 @@ The same idea extends to **multiple client/server roles**: several logical insta
 
 This package (`@geometra/renderer-three`) is a practical step along that path: **Three.js alongside** Geometra’s streamed canvas today, with room to grow toward **headless Three**, **protocol-level scene description**, and **full parity** between what runs in a tab and what runs in a headless agent session.
 
+### Agent and headless parity (shipped today)
+
+While a **scene-graph extension** to the GEOM protocol is still roadmap, the package already exposes **JSON-stable** layout and viewport helpers (`toPlainGeometraThreeHostSnapshot` / headless variants, composite split/stacked snapshots with `geometraHybridHostKind`, and layout-only `toPlainGeometraSplitHostLayoutOptions` / `toPlainGeometraStackedHostLayoutOptions`) so agents and tests can describe the same numbers the browser hosts use. **Frame and resize** helpers (`tickGeometraThreeWebGLWithSceneBasicsFrame`, headless DPR and resize entrypoints) mirror split/stacked host ordering and buffer rules without a DOM. For **WebSocket side channels** on the same socket as layout, the re-exported `GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT` keeps tracker JSON channel names aligned with `@geometra/client`. The README lists the full public API and option shapes.
+
 ### What ships in `@geometra/renderer-three` today
 
 Browser **split** and **stacked HUD** hosts wire Three.js and `createBrowserCanvasClient` with shared resize coalescing and Geometra `window` resize notifications. For the same **layout, DPR, camera, and scene numbers** without a DOM host — logs, tests, or agent-side payloads next to the GEOM stream — use the **plain snapshot** helpers (`toPlainGeometraThreeHostSnapshot` / `Headless`, composite split/stacked variants), **headless resize** (`resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`, `createGeometraThreePerspectiveResizeHandlerHeadless`, `resolveHeadlessHostDevicePixelRatio`), and **frame parity** (`tickGeometraThreeWebGLWithSceneBasicsFrame`, matching host `clock` / `onThreeFrame` ordering; returns whether a frame was drawn). The package README lists the full public API.
