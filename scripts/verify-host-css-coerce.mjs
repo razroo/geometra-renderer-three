@@ -2,7 +2,7 @@
 /**
  * Post-build checks for `coerceHostNonNegativeCssPx` (split/stacked panel and HUD widths),
  * `coerceHostStackingZIndexCss` (stacked HUD `z-index`), `coerceGeometraHudPointerEvents` (HUD `pointer-events`),
- * and `coerceGeometraHudPlacement` (HUD corner).
+ * and `coerceGeometraHudPlacement` (HUD corner; trim + case-insensitive literal match).
  * Imports `dist/host-css-coerce.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -36,6 +36,8 @@ function testInvalidUsesFallback() {
 function testCoerceGeometraHudPlacement() {
   const fb = 'top-left'
   assert.equal(coerceGeometraHudPlacement('bottom-right', fb), 'bottom-right')
+  assert.equal(coerceGeometraHudPlacement('  Bottom-Right  ', fb), 'bottom-right')
+  assert.equal(coerceGeometraHudPlacement('TOP-LEFT', fb), 'top-left')
   assert.equal(coerceGeometraHudPlacement(undefined, fb), fb)
   assert.equal(coerceGeometraHudPlacement('center', fb), fb)
   assert.equal(coerceGeometraHudPlacement('', fb), fb)

@@ -59,7 +59,8 @@ export interface ThreeGeometraStackedHostOptions
   geometraHudHeight?: number
   /**
    * HUD corner. Default: {@link GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudPlacement}.
-   * Invalid runtime strings (e.g. from JSON) are coerced with {@link coerceGeometraHudPlacement} to that default.
+   * Runtime strings (e.g. from JSON or agents) are normalized with {@link coerceGeometraHudPlacement}
+   * (trim + case-insensitive match for the four literals; anything else uses the default).
    */
   geometraHudPlacement?: GeometraHudPlacement
   /**

@@ -3,21 +3,25 @@ export type GeometraHudPlacement = 'bottom-right' | 'bottom-left' | 'top-right' 
 
 /**
  * Normalize HUD corner placement from runtime strings (e.g. agent JSON or untyped config).
- * Unknown or `undefined` values use `fallback` so the overlay keeps a valid `position: absolute` inset.
+ * Leading/trailing whitespace is trimmed and the four known literals are matched **case-insensitively**
+ * so payloads stay stable across generators. Unknown or empty values use `fallback` so the overlay
+ * keeps a valid `position: absolute` inset.
  */
 export function coerceGeometraHudPlacement(
   value: string | undefined,
   fallback: GeometraHudPlacement,
 ): GeometraHudPlacement {
-  if (
-    value === 'bottom-right' ||
-    value === 'bottom-left' ||
-    value === 'top-right' ||
-    value === 'top-left'
-  ) {
-    return value
+  if (typeof value !== 'string') return fallback
+  const key = value.trim().toLowerCase()
+  switch (key) {
+    case 'bottom-right':
+    case 'bottom-left':
+    case 'top-right':
+    case 'top-left':
+      return key
+    default:
+      return fallback
   }
-  return fallback
 }
 
 /**
