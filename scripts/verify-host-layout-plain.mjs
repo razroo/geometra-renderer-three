@@ -3,7 +3,8 @@
  * Post-build checks for `dist/host-layout-plain.js`: split/stacked plain layout helpers,
  * stacked HUD rect (`toPlainGeometraStackedHudRect`), composite snapshots (`geometraHybridHostKind`),
  * `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`,
- * `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot`, and
+ * `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot` (split column and HUD
+ *   width/height/margin finite and ≥ 0, matching `coerceHostNonNegativeCssPx`), and
  * `isPlainGeometraThreeHostSnapshot` (from `dist/three-scene-basics.js`).
  * Imports the compiled module directly (not only via `dist/index.js`). Run after `npm run build`.
  */
@@ -152,6 +153,17 @@ function testCompositeSnapshotTypeGuards() {
 
   const stackedH = toPlainGeometraThreeStackedHostSnapshotHeadless({}, 320, 240)
   assert.equal(isPlainGeometraThreeStackedHostSnapshot(stackedH), true)
+
+  const stackedFlush = toPlainGeometraThreeStackedHostSnapshot({ geometraHudMargin: 0 }, 200, 150, 1)
+  assert.equal(stackedFlush.geometraHudMargin, 0)
+  assert.equal(isPlainGeometraThreeStackedHostSnapshot(stackedFlush), true)
+
+  const splitZeroCol = toPlainGeometraThreeSplitHostSnapshot({ geometraWidth: 0 }, 100, 80, 1)
+  assert.equal(splitZeroCol.geometraWidth, 0)
+  assert.equal(isPlainGeometraThreeSplitHostSnapshot(splitZeroCol), true)
+
+  assert.equal(isPlainGeometraThreeStackedHostSnapshot({ ...stacked, geometraHudMargin: -1 }), false)
+  assert.equal(isPlainGeometraThreeSplitHostSnapshot({ ...split, geometraWidth: -1 }), false)
 
   assert.equal(isPlainGeometraThreeSplitHostSnapshot(null), false)
   assert.equal(isPlainGeometraThreeStackedHostSnapshot(undefined), false)

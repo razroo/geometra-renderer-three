@@ -27,8 +27,9 @@ fi
 #     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts),
 #     verify-host-layout-plain.mjs (dist/host-layout-plain.js; plain split/stacked layout, stacked HUD rect
 #     toPlainGeometraStackedHudRect, composite snapshots, geometraHybridHostKind / GEOMETRA_HYBRID_HOST_KINDS /
-#     isGeometraHybridHostKind / coerceGeometraHybridHostKind; isPlainGeometraThreeHostSnapshot from
-#     dist/three-scene-basics.js for base viewport+scene JSON guards).
+#     isGeometraHybridHostKind / coerceGeometraHybridHostKind; isPlainGeometraThreeSplitHostSnapshot /
+#     isPlainGeometraThreeStackedHostSnapshot with layout numbers ≥ 0 (same idea as coerceHostNonNegativeCssPx);
+#     isPlainGeometraThreeHostSnapshot from dist/three-scene-basics.js for base viewport+scene JSON guards).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
 #     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeViewSizingStateHeadless / toPlainGeometraThreeHostSnapshot /
@@ -49,7 +50,7 @@ fi
 #     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless /
 #     toPlainGeometraStackedHudRect (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`,
 #     `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`,
-#     `isPlainGeometraThreeStackedHostSnapshot`; three-scene-basics.ts: `isPlainGeometraThreeHostSnapshot`) /
+#     `isPlainGeometraThreeStackedHostSnapshot` (split/HUD layout numbers ≥ 0); three-scene-basics.ts: `isPlainGeometraThreeHostSnapshot`) /
 #     host sizing helpers /
 #     layout-sync behavior change (extend verify-layout-sync.mjs when semantics shift).
 #

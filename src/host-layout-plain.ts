@@ -196,8 +196,8 @@ const GEOMETRA_HUD_PLACEMENT_LITERALS = new Set<GeometraHudPlacement>([
 /**
  * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeSplitHostSnapshot} when the object
  * matches the shape produced by {@link toPlainGeometraThreeSplitHostSnapshot} /
- * {@link toPlainGeometraThreeSplitHostSnapshotHeadless}. Complements {@link isGeometraHybridHostKind} for
- * composite agent or log payloads.
+ * {@link toPlainGeometraThreeSplitHostSnapshotHeadless}. `geometraWidth` is finite and **≥ 0**, same as
+ * {@link coerceHostNonNegativeCssPx}. Complements {@link isGeometraHybridHostKind} for composite agent or log payloads.
  */
 export function isPlainGeometraThreeSplitHostSnapshot(
   value: unknown,
@@ -206,7 +206,7 @@ export function isPlainGeometraThreeSplitHostSnapshot(
   const o = value as Record<string, unknown>
   if (o.geometraHybridHostKind !== 'split') return false
   if (typeof o.geometraOnLeft !== 'boolean') return false
-  if (typeof o.geometraWidth !== 'number' || !Number.isFinite(o.geometraWidth) || o.geometraWidth <= 0) {
+  if (typeof o.geometraWidth !== 'number' || !Number.isFinite(o.geometraWidth) || o.geometraWidth < 0) {
     return false
   }
   return isPlainGeometraThreeHostSnapshot(value)
@@ -215,6 +215,7 @@ export function isPlainGeometraThreeSplitHostSnapshot(
 /**
  * Same idea as {@link isPlainGeometraThreeSplitHostSnapshot} for {@link PlainGeometraThreeStackedHostSnapshot}
  * / {@link toPlainGeometraThreeStackedHostSnapshot} / {@link toPlainGeometraThreeStackedHostSnapshotHeadless}.
+ * HUD width, height, and margin are finite and **≥ 0**, same as {@link coerceHostNonNegativeCssPx}.
  */
 export function isPlainGeometraThreeStackedHostSnapshot(
   value: unknown,
@@ -225,13 +226,13 @@ export function isPlainGeometraThreeStackedHostSnapshot(
   if (
     typeof o.geometraHudWidth !== 'number' ||
     !Number.isFinite(o.geometraHudWidth) ||
-    o.geometraHudWidth <= 0 ||
+    o.geometraHudWidth < 0 ||
     typeof o.geometraHudHeight !== 'number' ||
     !Number.isFinite(o.geometraHudHeight) ||
-    o.geometraHudHeight <= 0 ||
+    o.geometraHudHeight < 0 ||
     typeof o.geometraHudMargin !== 'number' ||
     !Number.isFinite(o.geometraHudMargin) ||
-    o.geometraHudMargin <= 0
+    o.geometraHudMargin < 0
   ) {
     return false
   }
