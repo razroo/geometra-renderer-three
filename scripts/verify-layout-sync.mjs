@@ -5,7 +5,8 @@
  * (including cancel before the scheduled frame runs — no `syncLayout` / dispatch),
  * skip dispatch when `isDestroyed()` becomes true after `syncLayout`, and retain pending notify
  * when `syncLayout` throws so a later coalesced frame can still dispatch (including recovery via
- * `schedule(true)` alone after the throw, with no `schedule(false)`).
+ * `schedule(true)` alone after the throw, with no `schedule(false)`). Same pending-notify retention
+ * when `dispatchGeometraResize` throws (clear only after a successful dispatch).
  * Imports `dist/layout-sync.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -286,5 +287,33 @@ function testSyncLayoutThrowRecoverWithNotifyScheduleOnly() {
 }
 
 testSyncLayoutThrowRecoverWithNotifyScheduleOnly()
+
+/**
+ * When `dispatchGeometraResize` throws, pending notify must stay set (same idea as `syncLayout`
+ * throw) so a later coalesced frame can dispatch again after layout sync runs.
+ */
+function testDispatchThrowKeepsPendingNotifyForNextFrame() {
+  const win = createMockWindow()
+  let dispatchAttempts = 0
+  let dispatchCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => false,
+    syncLayout: () => {},
+    dispatchGeometraResize: () => {
+      dispatchAttempts += 1
+      if (dispatchAttempts === 1) throw new Error('dispatch boom')
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(true)
+  assert.throws(() => win.flushAnimationFrame(), /dispatch boom/)
+  layoutSync.schedule(false)
+  win.flushAnimationFrame()
+  assert.equal(dispatchAttempts, 2)
+  assert.equal(dispatchCount, 1)
+}
+
+testDispatchThrowKeepsPendingNotifyForNextFrame()
 
 console.log('verify-layout-sync: ok')

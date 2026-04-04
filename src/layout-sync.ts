@@ -27,8 +27,10 @@ export interface GeometraHostLayoutSyncRafOptions {
    * e.g. `() => win.dispatchEvent(new Event('resize'))` for Geometra thin client.
    * Runs only when {@link GeometraHostLayoutSyncRaf.schedule} requested a notify for this coalesced
    * frame, after the layout sync callback, and only if {@link isDestroyed} is still false (avoids
-   * synthetic `resize` after teardown). If the layout sync callback throws, the pending notify stays
-   * set so a later coalesced frame can still dispatch once sync succeeds.
+ * synthetic `resize` after teardown). If the layout sync callback throws, the pending notify stays
+ * set so a later coalesced frame can still dispatch once sync succeeds. If `dispatchGeometraResize`
+ * throws, the pending notify is also left set so a later coalesced frame can retry the dispatch after
+ * `syncLayout` runs again.
    */
   dispatchGeometraResize: () => void
 }
@@ -57,8 +59,8 @@ export function createGeometraHostLayoutSyncRaf(
       syncLayout()
       if (isDestroyed()) return
       if (pendingGeometraResizeNotify) {
-        pendingGeometraResizeNotify = false
         dispatchGeometraResize()
+        pendingGeometraResizeNotify = false
       }
     })
   }
