@@ -6,7 +6,8 @@
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView}, {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless},
  * {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}, {@link disposeGeometraThreeWebGLWithSceneBasics},
- * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless}), and
+ * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless},
+ * {@link toPlainGeometraThreeHostSnapshotFromViewSizing}), and
  * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, {@link coerceHostStackingZIndexCss},
  * {@link coerceGeometraHudPointerEvents}, and {@link coerceGeometraHudPlacement} for stacked-overlay stacking and
  * HUD corner rules, and {@link GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS} /
@@ -50,6 +51,7 @@ export {
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshotHeadless,
+  toPlainGeometraThreeHostSnapshotFromViewSizing,
   createGeometraThreeWebGLRenderer,
   createGeometraThreeWebGLWithSceneBasics,
   disposeGeometraThreeWebGLWithSceneBasics,

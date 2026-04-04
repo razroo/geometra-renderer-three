@@ -172,6 +172,24 @@ export function toPlainGeometraThreeHostSnapshotHeadless(
 }
 
 /**
+ * Merge an existing {@link PlainGeometraThreeViewSizingState} (from {@link toPlainGeometraThreeViewSizingState}
+ * or your own pipeline) with {@link toPlainGeometraThreeSceneBasicsOptions} into one
+ * {@link PlainGeometraThreeHostSnapshot}.
+ *
+ * Use in headless loops, tests, or agent payloads when layout/DPR sizing is computed once and scene/camera
+ * options are added later, without re-running {@link toPlainGeometraThreeViewSizingState}.
+ */
+export function toPlainGeometraThreeHostSnapshotFromViewSizing(
+  sizing: PlainGeometraThreeViewSizingState,
+  sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
+): PlainGeometraThreeHostSnapshot {
+  return {
+    ...sizing,
+    ...toPlainGeometraThreeSceneBasicsOptions(sceneBasicsOptions),
+  }
+}
+
+/**
  * `WebGLRenderer` constructor options (excluding `canvas`) used by
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *

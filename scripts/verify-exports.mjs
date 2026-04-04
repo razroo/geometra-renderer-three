@@ -39,6 +39,7 @@ const expectedFunctions = [
   'tickGeometraThreeWebGLWithSceneBasicsFrame',
   'toPlainGeometraThreeHostSnapshot',
   'toPlainGeometraThreeHostSnapshotHeadless',
+  'toPlainGeometraThreeHostSnapshotFromViewSizing',
   'toPlainGeometraThreeSceneBasicsOptions',
   'toPlainGeometraThreeViewSizingState',
 ]
