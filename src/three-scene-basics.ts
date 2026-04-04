@@ -3,6 +3,8 @@ import type { WebGLRendererParameters } from 'three'
 import {
   GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO,
   isPlainGeometraThreeViewSizingState,
+  resizeGeometraThreeDrawingBufferView,
+  resizeGeometraThreeDrawingBufferViewHeadless,
   resizeGeometraThreePerspectiveView,
   resolveHostDevicePixelRatio,
   toPlainGeometraThreeViewSizingState,
@@ -620,6 +622,62 @@ export function resizeTickGeometraThreeWebGLWithSceneBasicsHeadless(
     maxDevicePixelRatio,
     onFrame,
   )
+}
+
+/**
+ * One-step frame on the **drawing-buffer** path: {@link resizeGeometraThreeDrawingBufferView}, then
+ * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} — same ordering as
+ * {@link resizeTickGeometraThreeWebGLWithSceneBasics} but using {@link setWebGLDrawingBufferSize} parity
+ * ({@link resizeGeometraThreeDrawingBufferView}) instead of `setPixelRatio` / `setSize`.
+ *
+ * Use in headless GL, offscreen canvas, or agent loops that size with `setDrawingBufferSize` while keeping
+ * clock / `onFrame` / render ordering aligned with split/stacked hosts.
+ *
+ * @returns Same boolean as {@link tickGeometraThreeWebGLWithSceneBasicsFrame}.
+ */
+export function resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBuffer(
+  bundle: GeometraThreeWebGLWithSceneBasics,
+  cssWidth: number,
+  cssHeight: number,
+  rawDevicePixelRatio: number,
+  maxDevicePixelRatio?: number,
+  onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
+): boolean {
+  resizeGeometraThreeDrawingBufferView(
+    bundle.renderer,
+    bundle.camera,
+    cssWidth,
+    cssHeight,
+    resolveHostDevicePixelRatio(rawDevicePixelRatio, maxDevicePixelRatio),
+  )
+  return tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, onFrame)
+}
+
+/**
+ * Headless one-step frame on the drawing-buffer path: {@link resizeGeometraThreeDrawingBufferViewHeadless}, then
+ * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}.
+ *
+ * Equivalent to {@link resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBuffer} with raw device pixel ratio **1**
+ * and the same optional {@link maxDevicePixelRatio} cap — parity with
+ * {@link resizeTickGeometraThreeWebGLWithSceneBasicsHeadless} for the buffer-sizing path.
+ *
+ * @returns Same boolean as {@link tickGeometraThreeWebGLWithSceneBasicsFrame}.
+ */
+export function resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBufferHeadless(
+  bundle: GeometraThreeWebGLWithSceneBasics,
+  cssWidth: number,
+  cssHeight: number,
+  maxDevicePixelRatio?: number,
+  onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
+): boolean {
+  resizeGeometraThreeDrawingBufferViewHeadless(
+    bundle.renderer,
+    bundle.camera,
+    cssWidth,
+    cssHeight,
+    maxDevicePixelRatio,
+  )
+  return tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, onFrame)
 }
 
 /**

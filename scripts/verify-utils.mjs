@@ -25,7 +25,7 @@
  * without requiring `return false`, successful ticks returning `true`, and `onFrame` throwing so `render` is skipped),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
  * `resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing` (matches explicit resize from `toPlainGeometraThreeViewSizingState`),
- * `resizeTickGeometraThreeWebGLWithSceneBasics` / `resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing` / `resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainHostSnapshot` / `resizeTickGeometraThreeWebGLWithSceneBasicsHeadless` (resize then tick; plain-sizing variant matches sequential `resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing` + tick; plain-host-snapshot delegates to plain-sizing with full `PlainGeometraThreeHostSnapshot`; headless delegates with raw DPR 1; return `false` when `onFrame` returns `false`),
+ * `resizeTickGeometraThreeWebGLWithSceneBasics` / `resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBuffer` / `resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBufferHeadless` / `resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing` / `resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainHostSnapshot` / `resizeTickGeometraThreeWebGLWithSceneBasicsHeadless` (resize then tick; drawing-buffer pair uses `resizeGeometraThreeDrawingBufferView` / `Headless` + tick; plain-sizing variant matches sequential `resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing` + tick; plain-host-snapshot delegates to plain-sizing with full `PlainGeometraThreeHostSnapshot`; headless delegates with raw DPR 1; return `false` when `onFrame` returns `false`),
  * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
  * `toPlainGeometraThreeStackedHostSnapshot`, `toPlainGeometraThreeStackedHostSnapshotHeadless`
@@ -73,6 +73,8 @@ const {
   resizeGeometraThreeWebGLWithSceneBasicsViewHeadless,
   resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing,
   resizeTickGeometraThreeWebGLWithSceneBasics,
+  resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBuffer,
+  resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBufferHeadless,
   resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing,
   resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainHostSnapshot,
   resizeTickGeometraThreeWebGLWithSceneBasicsHeadless,
@@ -947,6 +949,70 @@ function testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne() 
   assert.deepEqual(headlessLog, log)
 }
 
+function testResizeTickGeometraThreeWebGLWithSceneBasicsDrawingBufferParity() {
+  const dom = { width: 0, height: 0 }
+  const log = []
+  const clock = new THREE.Clock()
+  const scene = {}
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+  const renderer = {
+    domElement: dom,
+    setDrawingBufferSize(w, h, pr) {
+      log.push(['setDrawingBufferSize', w, h, pr])
+      dom.width = w
+      dom.height = h
+    },
+    render(s, c) {
+      log.push(['render', s, c])
+    },
+  }
+  const bundle = { renderer, scene, camera, clock }
+
+  assert.equal(
+    resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBuffer(bundle, 640, 360, 2, undefined, () => {
+      log.push('onFrame')
+    }),
+    true,
+  )
+  assert.deepEqual(log, [
+    ['setDrawingBufferSize', 1280, 720, 2],
+    ['updateProjectionMatrix'],
+    'onFrame',
+    ['render', scene, camera],
+  ])
+  assert.equal(camera.aspect, 1280 / 720)
+
+  log.length = 0
+  assert.equal(
+    resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBuffer(bundle, 320, 240, 2, undefined, () => false),
+    false,
+  )
+  assert.deepEqual(log, [['setDrawingBufferSize', 640, 480, 2], ['updateProjectionMatrix']])
+
+  log.length = 0
+  assert.equal(resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBuffer(bundle, 100, 200, 2, 2), true)
+  const combinedLog = [...log]
+  log.length = 0
+  resizeGeometraThreeDrawingBufferView(renderer, camera, 100, 200, 2)
+  const resizeLog = [...log]
+  log.length = 0
+  assert.equal(tickGeometraThreeWebGLWithSceneBasicsFrame(bundle), true)
+  const tickLog = [...log]
+  assert.deepEqual(combinedLog, [...resizeLog, ...tickLog])
+
+  log.length = 0
+  assert.equal(resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBufferHeadless(bundle, 50, 80, 2), true)
+  const headlessCombined = [...log]
+  log.length = 0
+  resizeTickGeometraThreeWebGLWithSceneBasicsDrawingBuffer(bundle, 50, 80, 1, 2)
+  assert.deepEqual(headlessCombined, log)
+}
+
 function testResizeTickGeometraThreeWebGLWithSceneBasicsHeadlessRunsResizeThenTick() {
   const log = []
   const clock = new THREE.Clock()
@@ -1364,6 +1430,7 @@ testTickGeometraThreeWebGLWithSceneBasicsFrameDisposeInOnFrameSkipsRender()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 testResizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizingMatchesExplicitResize()
 testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
+testResizeTickGeometraThreeWebGLWithSceneBasicsDrawingBufferParity()
 testResizeTickGeometraThreeWebGLWithSceneBasicsHeadlessRunsResizeThenTick()
 testResizeTickGeometraThreeWebGLWithSceneBasicsParity()
 testResizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizingParity()
