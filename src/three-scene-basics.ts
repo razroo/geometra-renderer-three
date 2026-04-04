@@ -437,3 +437,24 @@ export function tickGeometraThreeWebGLWithSceneBasicsFrame(
   renderer.render(scene, camera)
   return true
 }
+
+/**
+ * Headless one-step frame: {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless}, then
+ * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} — same as calling those two in sequence (resize
+ * before `clock.getDelta()` / `onFrame` / `render`).
+ *
+ * For Node, headless WebGL, tests, or agent loops that need buffer + camera sync on every tick with raw
+ * DPR **1** and the same optional cap as the browser hosts, without repeating the pair at every call site.
+ *
+ * @returns Same boolean as {@link tickGeometraThreeWebGLWithSceneBasicsFrame}.
+ */
+export function resizeTickGeometraThreeWebGLWithSceneBasicsHeadless(
+  bundle: GeometraThreeWebGLWithSceneBasics,
+  cssWidth: number,
+  cssHeight: number,
+  maxDevicePixelRatio?: number,
+  onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
+): boolean {
+  resizeGeometraThreeWebGLWithSceneBasicsViewHeadless(bundle, cssWidth, cssHeight, maxDevicePixelRatio)
+  return tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, onFrame)
+}

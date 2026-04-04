@@ -20,6 +20,7 @@
  * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render` and yield
  * `false`, successful ticks returning `true`, and `onFrame` throwing so `render` is skipped),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
+ * `resizeTickGeometraThreeWebGLWithSceneBasicsHeadless` (headless resize then tick; return `false` when `onFrame` returns `false`),
  * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
  * `toPlainGeometraThreeStackedHostSnapshot`, `toPlainGeometraThreeStackedHostSnapshotHeadless`
@@ -59,6 +60,7 @@ const {
   tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
   resizeGeometraThreeWebGLWithSceneBasicsViewHeadless,
+  resizeTickGeometraThreeWebGLWithSceneBasicsHeadless,
   toPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshotFromViewSizing,
   toPlainGeometraThreeHostSnapshotHeadless,
@@ -785,6 +787,68 @@ function testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne() 
   assert.deepEqual(headlessLog, log)
 }
 
+function testResizeTickGeometraThreeWebGLWithSceneBasicsHeadlessRunsResizeThenTick() {
+  const log = []
+  const clock = new THREE.Clock()
+  const scene = {}
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+  const renderer = {
+    setPixelRatio(pr) {
+      log.push(['setPixelRatio', pr])
+    },
+    setSize(w, h, updateStyle) {
+      log.push(['setSize', w, h, updateStyle])
+    },
+    render(s, c) {
+      log.push(['render', s, c])
+    },
+  }
+  const bundle = { renderer, scene, camera, clock }
+
+  assert.equal(
+    resizeTickGeometraThreeWebGLWithSceneBasicsHeadless(bundle, 640, 360, 2, () => {
+      log.push('onFrame')
+    }),
+    true,
+  )
+
+  assert.deepEqual(log, [
+    ['setPixelRatio', 1],
+    ['updateProjectionMatrix'],
+    ['setSize', 640, 360, false],
+    'onFrame',
+    ['render', scene, camera],
+  ])
+  assert.equal(camera.aspect, 640 / 360)
+
+  log.length = 0
+  assert.equal(
+    resizeTickGeometraThreeWebGLWithSceneBasicsHeadless(bundle, 320, 240, undefined, () => false),
+    false,
+  )
+  assert.deepEqual(log, [
+    ['setPixelRatio', 1],
+    ['updateProjectionMatrix'],
+    ['setSize', 320, 240, false],
+  ])
+
+  log.length = 0
+  assert.equal(resizeTickGeometraThreeWebGLWithSceneBasicsHeadless(bundle, 100, 200, 2), true)
+  const combinedLog = [...log]
+  log.length = 0
+  resizeGeometraThreeWebGLWithSceneBasicsViewHeadless(bundle, 100, 200, 2)
+  const resizeLog = [...log]
+  log.length = 0
+  assert.equal(tickGeometraThreeWebGLWithSceneBasicsFrame(bundle), true)
+  const tickLog = [...log]
+  assert.deepEqual(combinedLog, [...resizeLog, ...tickLog])
+}
+
 function testToPlainGeometraSplitHostLayoutOptionsMatchesHostCoercion() {
   const d = GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS
   assert.deepEqual(toPlainGeometraSplitHostLayoutOptions(), {
@@ -959,6 +1023,7 @@ testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
 testTickGeometraThreeWebGLWithSceneBasicsFrameOnFrameThrowSkipsRender()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
+testResizeTickGeometraThreeWebGLWithSceneBasicsHeadlessRunsResizeThenTick()
 testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne()
 testToPlainGeometraSplitHostLayoutOptionsMatchesHostCoercion()
 testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion()
