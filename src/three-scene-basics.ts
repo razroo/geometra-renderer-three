@@ -481,10 +481,16 @@ export function resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing(
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView} (or your own sizing) so a single frame matches
  * the same scene/camera/renderer wiring as {@link createThreeGeometraSplitHost} /
  * {@link createThreeGeometraStackedHost} without duplicating the render call.
+ *
+ * No-ops when the same `renderer` was already passed to {@link disposeGeometraThreeWebGLWithSceneBasics}
+ * — same skip-after-dispose registration as {@link tickGeometraThreeWebGLWithSceneBasicsFrame}.
  */
 export function renderGeometraThreeWebGLWithSceneBasicsFrame(
   bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer' | 'scene' | 'camera'>,
 ): void {
+  if (geometraDisposedWebGLRenderers.has(bundle.renderer)) {
+    return
+  }
   bundle.renderer.render(bundle.scene, bundle.camera)
 }
 

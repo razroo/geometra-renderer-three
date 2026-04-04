@@ -18,7 +18,7 @@
  * `toPlainGeometraThreeViewSizingStateHeadless`, `isPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics` (optional `clock` → `Clock#stop` before `renderer.dispose`),
- * `renderGeometraThreeWebGLWithSceneBasicsFrame`,
+ * `renderGeometraThreeWebGLWithSceneBasicsFrame` (no-op after `disposeGeometraThreeWebGLWithSceneBasics`, same as tick skip-after-dispose),
  * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render` and yield
  * `false`, `disposeGeometraThreeWebGLWithSceneBasics` inside `onFrame` skipping `render` and yielding `false`
  * without requiring `return false`, successful ticks returning `true`, and `onFrame` throwing so `render` is skipped),
@@ -729,9 +729,15 @@ function testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender() {
     render(s, c) {
       log.push(['render', s, c])
     },
+    dispose() {},
   }
   renderGeometraThreeWebGLWithSceneBasicsFrame({ renderer, scene, camera })
   assert.deepEqual(log, [['render', scene, camera]])
+
+  log.length = 0
+  disposeGeometraThreeWebGLWithSceneBasics({ renderer })
+  renderGeometraThreeWebGLWithSceneBasicsFrame({ renderer, scene, camera })
+  assert.deepEqual(log, [])
 }
 
 function testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders() {

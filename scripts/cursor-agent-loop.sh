@@ -47,7 +47,7 @@ fi
 #     createGeometraThreeWebGLWithSceneBasics / createGeometraThreeWebGLWithSceneBasicsFromPlain / resolveGeometraThreeSceneBasicsOptions /
 #     resizeGeometraThreeWebGLWithSceneBasicsView / resizeGeometraThreeWebGLWithSceneBasicsViewHeadless /
 #     resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing (viewport plain JSON → resize; verify-utils) /
-#     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame
+#     renderGeometraThreeWebGLWithSceneBasicsFrame (no-op after disposeGeometraThreeWebGLWithSceneBasics) / tickGeometraThreeWebGLWithSceneBasicsFrame
 #     (onFrame false skips render and tick returns false; disposeGeometraThreeWebGLWithSceneBasics inside onFrame
 #     skips render without return false; tick returns true when render runs; onFrame throw skips render;
 #     parity with host onThreeFrame ordering) /
