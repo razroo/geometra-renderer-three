@@ -12,6 +12,7 @@ const mod = await import(indexHref)
 
 const expectedFunctions = [
   'coerceHostNonNegativeCssPx',
+  'coerceHostStackingZIndexCss',
   'createThreeGeometraSplitHost',
   'createThreeGeometraStackedHost',
   'createGeometraHostLayoutSyncRaf',

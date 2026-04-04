@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `coerceHostNonNegativeCssPx` (split/stacked panel and HUD widths).
+ * Post-build checks for `coerceHostNonNegativeCssPx` (split/stacked panel and HUD widths) and
+ * `coerceHostStackingZIndexCss` (stacked HUD `z-index`).
  * Imports `dist/host-css-coerce.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -9,7 +10,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const href = pathToFileURL(path.join(root, 'dist', 'host-css-coerce.js')).href
-const { coerceHostNonNegativeCssPx } = await import(href)
+const { coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss } = await import(href)
 
 function testFiniteNonNegativePassesThrough() {
   assert.equal(coerceHostNonNegativeCssPx(420, 999), 420)
@@ -26,7 +27,21 @@ function testInvalidUsesFallback() {
   assert.equal(coerceHostNonNegativeCssPx('wide', 420), 420)
 }
 
+function testStackingZIndexCss() {
+  assert.equal(coerceHostStackingZIndexCss(1, 99), '1')
+  assert.equal(coerceHostStackingZIndexCss(0, 99), '0')
+  assert.equal(coerceHostStackingZIndexCss(-2, 99), '-2')
+  assert.equal(coerceHostStackingZIndexCss(' 12 ', 99), '12')
+  assert.equal(coerceHostStackingZIndexCss('auto', 99), 'auto')
+  assert.equal(coerceHostStackingZIndexCss(Number.NaN, 7), '7')
+  assert.equal(coerceHostStackingZIndexCss(Number.POSITIVE_INFINITY, 7), '7')
+  assert.equal(coerceHostStackingZIndexCss('', 7), '7')
+  assert.equal(coerceHostStackingZIndexCss('   ', 7), '7')
+  assert.equal(coerceHostStackingZIndexCss(null, 7), '7')
+}
+
 testFiniteNonNegativePassesThrough()
 testInvalidUsesFallback()
+testStackingZIndexCss()
 
 console.log('verify-host-css-coerce: ok')

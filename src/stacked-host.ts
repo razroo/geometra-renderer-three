@@ -15,7 +15,7 @@ import {
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'
 import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
-import { coerceHostNonNegativeCssPx } from './host-css-coerce.js'
+import { coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss } from './host-css-coerce.js'
 import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
 
 /** Corner anchor for the Geometra HUD overlay (CSS `position: absolute` on the host). */
@@ -51,6 +51,7 @@ export interface ThreeGeometraStackedHostOptions
   /**
    * CSS `z-index` on the HUD wrapper when you stack other siblings in {@link ThreeGeometraStackedHostOptions.container}
    * or need a fixed order above the WebGL layer (Three canvas uses `0`). Default: `1`.
+   * Non-finite numbers and blank/whitespace-only strings fall back to the default so the HUD keeps a predictable stack order.
    */
   geometraHudZIndex?: string | number
   /**
@@ -193,7 +194,7 @@ export function createThreeGeometraStackedHost(
 
   const geometraHud = doc.createElement('div')
   geometraHud.style.position = 'absolute'
-  geometraHud.style.zIndex = String(geometraHudZIndex)
+  geometraHud.style.zIndex = coerceHostStackingZIndexCss(geometraHudZIndex, 1)
   geometraHud.style.width = `${geometraHudWidth}px`
   geometraHud.style.height = `${geometraHudHeight}px`
   geometraHud.style.minWidth = '0'

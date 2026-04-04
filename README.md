@@ -67,7 +67,7 @@ If you omit sizing and placement options, the HUD uses **defaults** that match `
 
 Use `geometraHudPointerEvents` (CSS `pointer-events`, default `'auto'`) when you want the HUD to ignore input — for example `'none'` so pointer events reach the full-viewport Three.js canvas underneath.
 
-Use `geometraHudZIndex` (default `1`; the WebGL canvas stays at `0`) when you add other absolutely positioned siblings and need a predictable stacking order.
+Use `geometraHudZIndex` (default `1`; the WebGL canvas stays at `0`) when you add other absolutely positioned siblings and need a predictable stacking order. Non-finite numbers and blank strings fall back to that default; custom layouts can use the exported helper `coerceHostStackingZIndexCss` for the same rules.
 
 `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` each forward all [`createBrowserCanvasClient`](https://github.com/razroo/geometra/tree/main/packages/renderer-canvas) options except `canvas` (the host creates the Geometra canvas for you). For that option shape in TypeScript (e.g. building a custom host), use the exported type `GeometraHostBrowserCanvasClientOptions`.
 

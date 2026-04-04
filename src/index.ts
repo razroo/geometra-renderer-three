@@ -3,7 +3,8 @@
  * ({@link resizeGeometraThreePerspectiveView}, drawing-buffer paths, DPR capping), shared scene defaults
  * ({@link createGeometraThreeSceneBasics}, {@link createGeometraThreeWebGLWithSceneBasics},
  * {@link disposeGeometraThreeWebGLWithSceneBasics}), and
- * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts.
+ * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, and {@link coerceHostStackingZIndexCss}
+ * for stacked-overlay `z-index` rules.
  */
 
 export {
@@ -47,7 +48,7 @@ export {
   type GeometraHostLayoutSyncRaf,
   type GeometraHostLayoutSyncRafOptions,
 } from './layout-sync.js'
-export { coerceHostNonNegativeCssPx } from './host-css-coerce.js'
+export { coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss } from './host-css-coerce.js'
 
 /** Re-export for hybrid apps using {@link createThreeGeometraSplitHost} with `onData`. */
 export { GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT } from '@geometra/client'

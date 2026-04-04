@@ -13,3 +13,21 @@
 export function coerceHostNonNegativeCssPx(value: number, fallback: number): number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : fallback
 }
+
+/**
+ * CSS `z-index` string for stacked HUD / overlay wrappers: finite numbers and non-blank strings pass
+ * through; otherwise `fallback` (avoids `NaN` / `Infinity` in inline styles).
+ *
+ * {@link createThreeGeometraStackedHost} uses this for {@link ThreeGeometraStackedHostOptions.geometraHudZIndex}.
+ * Use in custom stacking layouts next to {@link coerceHostNonNegativeCssPx} for consistent behavior.
+ */
+export function coerceHostStackingZIndexCss(value: string | number, fallback: number): string {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return String(value)
+  }
+  if (typeof value === 'string') {
+    const t = value.trim()
+    if (t.length > 0) return t
+  }
+  return String(fallback)
+}
