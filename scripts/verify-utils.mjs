@@ -9,7 +9,8 @@
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`,
- * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeHostSnapshotHeadless`, `toPlainGeometraThreeViewSizingState`
+ * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeHostSnapshotHeadless`,
+ * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame`,
@@ -48,6 +49,7 @@ const {
   resizeGeometraThreeWebGLWithSceneBasicsView,
   resizeGeometraThreeWebGLWithSceneBasicsViewHeadless,
   toPlainGeometraThreeHostSnapshot,
+  toPlainGeometraThreeHostSnapshotFromViewSizing,
   toPlainGeometraThreeHostSnapshotHeadless,
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeViewSizingState,
@@ -424,6 +426,24 @@ function testToPlainGeometraThreeHostSnapshotHeadlessMatchesRawOne() {
   assert.deepEqual(headless, explicit)
 }
 
+function testToPlainGeometraThreeHostSnapshotFromViewSizingMatchesMergeAndFullSnapshot() {
+  const w = 800
+  const h = 400
+  const dpr = 2
+  const cap = 1.5
+  const sceneOpts = { threeBackground: '#00ff88', cameraFov: 40 }
+  const sizing = toPlainGeometraThreeViewSizingState(w, h, dpr, cap)
+  const merged = toPlainGeometraThreeHostSnapshotFromViewSizing(sizing, sceneOpts)
+  assert.deepEqual(merged, {
+    ...sizing,
+    ...toPlainGeometraThreeSceneBasicsOptions(sceneOpts),
+  })
+  assert.deepEqual(merged, toPlainGeometraThreeHostSnapshot(w, h, dpr, cap, sceneOpts))
+  const roundTrip = JSON.parse(JSON.stringify(merged))
+  assert.equal(roundTrip.layoutWidth, sizing.layoutWidth)
+  assert.equal(roundTrip.threeBackgroundHex, merged.threeBackgroundHex)
+}
+
 function testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable() {
   const plainDefault = toPlainGeometraThreeSceneBasicsOptions()
   const resolvedDefault = resolveGeometraThreeSceneBasicsOptions()
@@ -655,6 +675,7 @@ testGeometraThreeHostSceneDefaultsMatchBasics()
 testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate()
 testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers()
 testToPlainGeometraThreeHostSnapshotHeadlessMatchesRawOne()
+testToPlainGeometraThreeHostSnapshotFromViewSizingMatchesMergeAndFullSnapshot()
 testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable()
 testResolveGeometraThreeSceneBasicsOptionsMatchesCoercedCreate()
 testCreateGeometraThreeSceneBasicsDefaults()
