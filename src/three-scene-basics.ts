@@ -88,6 +88,39 @@ export function resolveGeometraThreeSceneBasicsOptions(
 }
 
 /**
+ * Host-aligned scene/camera numbers in a JSON-friendly shape: clear color as a single **sRGB hex**
+ * integer (`0xRRGGBB`), same as {@link THREE.Color#getHex}.
+ *
+ * Use for logs, tests, or agent-side payloads where {@link GeometraThreeSceneBasicsOptions.threeBackground}
+ * may be a string or other {@link THREE.ColorRepresentation} but you need a stable numeric field for
+ * `JSON.stringify`.
+ */
+export interface PlainGeometraThreeSceneBasicsOptions {
+  threeBackgroundHex: number
+  cameraFov: number
+  cameraNear: number
+  cameraFar: number
+  cameraPosition: THREE.Vector3Tuple
+}
+
+/**
+ * Same coercion as {@link resolveGeometraThreeSceneBasicsOptions}, plus a hex background for stable JSON.
+ */
+export function toPlainGeometraThreeSceneBasicsOptions(
+  options: GeometraThreeSceneBasicsOptions = {},
+): PlainGeometraThreeSceneBasicsOptions {
+  const resolved = resolveGeometraThreeSceneBasicsOptions(options)
+  const threeBackgroundHex = new THREE.Color(resolved.threeBackground).getHex()
+  return {
+    threeBackgroundHex,
+    cameraFov: resolved.cameraFov,
+    cameraNear: resolved.cameraNear,
+    cameraFar: resolved.cameraFar,
+    cameraPosition: [...resolved.cameraPosition] as THREE.Vector3Tuple,
+  }
+}
+
+/**
  * `WebGLRenderer` constructor options (excluding `canvas`) used by
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *

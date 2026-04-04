@@ -1,7 +1,7 @@
 /**
  * `@geometra/renderer-three` — split/stacked Three.js + Geometra canvas hosts, WebGL sizing helpers
  * ({@link resizeGeometraThreePerspectiveView}, drawing-buffer paths, DPR capping, {@link resolveHeadlessHostDevicePixelRatio}), shared scene defaults
- * ({@link createGeometraThreeSceneBasics}, {@link resolveGeometraThreeSceneBasicsOptions},
+ * ({@link createGeometraThreeSceneBasics}, {@link resolveGeometraThreeSceneBasicsOptions}, {@link toPlainGeometraThreeSceneBasicsOptions},
  * {@link createGeometraThreeWebGLWithSceneBasics},
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView}, {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}, {@link disposeGeometraThreeWebGLWithSceneBasics}), and
@@ -40,6 +40,7 @@ export {
   createGeometraHostWebGLRendererParams,
   createGeometraThreeSceneBasics,
   resolveGeometraThreeSceneBasicsOptions,
+  toPlainGeometraThreeSceneBasicsOptions,
   createGeometraThreeWebGLRenderer,
   createGeometraThreeWebGLWithSceneBasics,
   disposeGeometraThreeWebGLWithSceneBasics,
@@ -48,6 +49,7 @@ export {
   resizeGeometraThreeWebGLWithSceneBasicsView,
   type GeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,
+  type PlainGeometraThreeSceneBasicsOptions,
   type GeometraThreeWebGLWithSceneBasics,
   type GeometraThreeWebGLWithSceneBasicsTickContext,
 } from './three-scene-basics.js'

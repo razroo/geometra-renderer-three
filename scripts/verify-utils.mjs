@@ -8,7 +8,8 @@
  * `geometraHostPerspectiveAspectFromCss`,
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
- * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`
+ * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`,
+ * `toPlainGeometraThreeSceneBasicsOptions`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame`,
@@ -45,6 +46,7 @@ const {
   renderGeometraThreeWebGLWithSceneBasicsFrame,
   tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
+  toPlainGeometraThreeSceneBasicsOptions,
 } = await import(indexHref)
 
 function testNormalizeGeometraLayoutPixels() {
@@ -363,6 +365,25 @@ function testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate() {
   assert.deepEqual([...resolved.cameraPosition], [camera.position.x, camera.position.y, camera.position.z])
 }
 
+function testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable() {
+  const plainDefault = toPlainGeometraThreeSceneBasicsOptions()
+  const resolvedDefault = resolveGeometraThreeSceneBasicsOptions()
+  assert.equal(
+    plainDefault.threeBackgroundHex,
+    new THREE.Color(resolvedDefault.threeBackground).getHex(),
+  )
+  assert.equal(plainDefault.cameraFov, resolvedDefault.cameraFov)
+  assert.equal(plainDefault.cameraNear, resolvedDefault.cameraNear)
+  assert.equal(plainDefault.cameraFar, resolvedDefault.cameraFar)
+  assert.deepEqual(plainDefault.cameraPosition, resolvedDefault.cameraPosition)
+
+  const plainStringBg = toPlainGeometraThreeSceneBasicsOptions({ threeBackground: '#ff00ff' })
+  assert.equal(plainStringBg.threeBackgroundHex, 0xff00ff)
+  const roundTrip = JSON.parse(JSON.stringify(plainStringBg))
+  assert.equal(roundTrip.threeBackgroundHex, 0xff00ff)
+  assert.deepEqual(roundTrip.cameraPosition, plainStringBg.cameraPosition)
+}
+
 function testResolveGeometraThreeSceneBasicsOptionsMatchesCoercedCreate() {
   const d = GEOMETRA_THREE_HOST_SCENE_DEFAULTS
   const opts = {
@@ -545,6 +566,7 @@ testGeometraHostWebglRendererOptions()
 testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
 testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate()
+testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable()
 testResolveGeometraThreeSceneBasicsOptionsMatchesCoercedCreate()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
