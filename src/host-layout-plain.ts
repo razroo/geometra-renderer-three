@@ -162,6 +162,19 @@ export type GeometraHybridHostKind = 'split' | 'stacked'
 export const GEOMETRA_HYBRID_HOST_KINDS: readonly GeometraHybridHostKind[] = ['split', 'stacked']
 
 /**
+ * Parse a {@link GeometraHybridHostKind} from loose input (trim + case-insensitive literals) without a fallback.
+ * Used by {@link coerceGeometraHybridHostKind} and composite {@link isPlainGeometraThreeSplitHostSnapshot} /
+ * {@link isPlainGeometraThreeStackedHostSnapshot} guards so agent JSON matches coercion rules.
+ */
+function parseGeometraHybridHostKindLiteral(value: unknown): GeometraHybridHostKind | undefined {
+  if (value === 'split' || value === 'stacked') return value
+  if (typeof value !== 'string') return undefined
+  const key = value.trim().toLowerCase()
+  if (key === 'split' || key === 'stacked') return key
+  return undefined
+}
+
+/**
  * Narrow `unknown` to {@link GeometraHybridHostKind} when parsing composite snapshot JSON from logs or agents.
  */
 export function isGeometraHybridHostKind(value: unknown): value is GeometraHybridHostKind {
@@ -179,11 +192,7 @@ export function coerceGeometraHybridHostKind(
   value: unknown,
   fallback: GeometraHybridHostKind,
 ): GeometraHybridHostKind {
-  if (value === 'split' || value === 'stacked') return value
-  if (typeof value !== 'string') return fallback
-  const key = value.trim().toLowerCase()
-  if (key === 'split' || key === 'stacked') return key
-  return fallback
+  return parseGeometraHybridHostKindLiteral(value) ?? fallback
 }
 
 const GEOMETRA_HUD_PLACEMENT_LITERALS = new Set<GeometraHudPlacement>([
@@ -196,7 +205,9 @@ const GEOMETRA_HUD_PLACEMENT_LITERALS = new Set<GeometraHudPlacement>([
 /**
  * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeSplitHostSnapshot} when the object
  * matches the shape produced by {@link toPlainGeometraThreeSplitHostSnapshot} /
- * {@link toPlainGeometraThreeSplitHostSnapshotHeadless}. `geometraWidth` is finite and **≥ 0**, same as
+ * {@link toPlainGeometraThreeSplitHostSnapshotHeadless}. `geometraHybridHostKind` accepts the same trim +
+ * case-insensitive literals as {@link coerceGeometraHybridHostKind} (not only exact `'split'`).
+ * `geometraWidth` is finite and **≥ 0**, same as
  * {@link coerceHostNonNegativeCssPx}. Complements {@link isGeometraHybridHostKind} for composite agent or log payloads.
  */
 export function isPlainGeometraThreeSplitHostSnapshot(
@@ -204,7 +215,7 @@ export function isPlainGeometraThreeSplitHostSnapshot(
 ): value is PlainGeometraThreeSplitHostSnapshot {
   if (value === null || typeof value !== 'object') return false
   const o = value as Record<string, unknown>
-  if (o.geometraHybridHostKind !== 'split') return false
+  if (parseGeometraHybridHostKindLiteral(o.geometraHybridHostKind) !== 'split') return false
   if (typeof o.geometraOnLeft !== 'boolean') return false
   if (typeof o.geometraWidth !== 'number' || !Number.isFinite(o.geometraWidth) || o.geometraWidth < 0) {
     return false
@@ -215,6 +226,7 @@ export function isPlainGeometraThreeSplitHostSnapshot(
 /**
  * Same idea as {@link isPlainGeometraThreeSplitHostSnapshot} for {@link PlainGeometraThreeStackedHostSnapshot}
  * / {@link toPlainGeometraThreeStackedHostSnapshot} / {@link toPlainGeometraThreeStackedHostSnapshotHeadless}.
+ * `geometraHybridHostKind` accepts the same trim + case-insensitive literals as {@link coerceGeometraHybridHostKind}.
  * HUD width, height, and margin are finite and **≥ 0**, same as {@link coerceHostNonNegativeCssPx}.
  */
 export function isPlainGeometraThreeStackedHostSnapshot(
@@ -222,7 +234,7 @@ export function isPlainGeometraThreeStackedHostSnapshot(
 ): value is PlainGeometraThreeStackedHostSnapshot {
   if (value === null || typeof value !== 'object') return false
   const o = value as Record<string, unknown>
-  if (o.geometraHybridHostKind !== 'stacked') return false
+  if (parseGeometraHybridHostKindLiteral(o.geometraHybridHostKind) !== 'stacked') return false
   if (
     typeof o.geometraHudWidth !== 'number' ||
     !Number.isFinite(o.geometraHudWidth) ||

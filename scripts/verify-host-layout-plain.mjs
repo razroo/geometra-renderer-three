@@ -4,7 +4,8 @@
  * stacked HUD rect (`toPlainGeometraStackedHudRect`), composite snapshots (`geometraHybridHostKind`),
  * `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`,
  * `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot` (split column and HUD
- *   width/height/margin finite and ≥ 0, matching `coerceHostNonNegativeCssPx`), and
+ *   width/height/margin finite and ≥ 0, matching `coerceHostNonNegativeCssPx`; `geometraHybridHostKind` trim +
+ *   case-insensitive like `coerceGeometraHybridHostKind`), and
  * `isPlainGeometraThreeHostSnapshot` (from `dist/three-scene-basics.js`).
  * Imports the compiled module directly (not only via `dist/index.js`). Run after `npm run build`.
  */
@@ -179,6 +180,12 @@ function testCompositeSnapshotTypeGuards() {
 
   const wrongKind = { ...split, geometraHybridHostKind: 'stacked' }
   assert.equal(isPlainGeometraThreeSplitHostSnapshot(wrongKind), false)
+
+  const splitLooseKind = { ...split, geometraHybridHostKind: '  SpLiT  ' }
+  assert.equal(isPlainGeometraThreeSplitHostSnapshot(splitLooseKind), true)
+
+  const stackedLooseKind = { ...stacked, geometraHybridHostKind: 'STACKED' }
+  assert.equal(isPlainGeometraThreeStackedHostSnapshot(stackedLooseKind), true)
 }
 
 testCompositeSnapshotTypeGuards()

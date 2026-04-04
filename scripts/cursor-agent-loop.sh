@@ -52,7 +52,7 @@ fi
 #     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless /
 #     toPlainGeometraStackedHudRect (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`,
 #     `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`,
-#     `isPlainGeometraThreeStackedHostSnapshot` (split/HUD layout numbers ≥ 0); three-scene-basics.ts: `isPlainGeometraThreeHostSnapshot`) /
+#     `isPlainGeometraThreeStackedHostSnapshot` (split/HUD layout numbers ≥ 0; composite kind trim/case like `coerceGeometraHybridHostKind`); three-scene-basics.ts: `isPlainGeometraThreeHostSnapshot`) /
 #     host sizing helpers /
 #     layout-sync behavior change (extend verify-layout-sync.mjs when semantics shift).
 #
