@@ -18,6 +18,10 @@ The same idea extends to **multiple client/server roles**: several logical insta
 
 This package (`@geometra/renderer-three`) is a practical step along that path: **Three.js alongside** Geometra’s streamed canvas today, with room to grow toward **headless Three**, **protocol-level scene description**, and **full parity** between what runs in a tab and what runs in a headless agent session.
 
+### What ships in `@geometra/renderer-three` today
+
+Browser **split** and **stacked HUD** hosts wire Three.js and `createBrowserCanvasClient` with shared resize coalescing and Geometra `window` resize notifications. For the same **layout, DPR, camera, and scene numbers** without a DOM host — logs, tests, or agent-side payloads next to the GEOM stream — use the **plain snapshot** helpers (`toPlainGeometraThreeHostSnapshot` / `Headless`, composite split/stacked variants), **headless resize** (`resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`, `createGeometraThreePerspectiveResizeHandlerHeadless`, `resolveHeadlessHostDevicePixelRatio`), and **frame parity** (`tickGeometraThreeWebGLWithSceneBasicsFrame`, matching host `clock` / `onThreeFrame` ordering). The package README lists the full public API.
+
 ---
 
 *Geometra native space: one protocol, any render target, symmetric peers — layout and graphics as data, end to end.*
