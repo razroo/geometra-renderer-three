@@ -54,6 +54,7 @@ const expectedFunctions = [
   'toPlainGeometraThreeViewSizingStateHeadless',
   'toPlainGeometraSplitHostLayoutOptions',
   'toPlainGeometraStackedHostLayoutOptions',
+  'toPlainGeometraStackedHudRect',
   'toPlainGeometraThreeSplitHostSnapshot',
   'toPlainGeometraThreeSplitHostSnapshotHeadless',
   'toPlainGeometraThreeStackedHostSnapshot',

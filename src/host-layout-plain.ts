@@ -14,6 +14,7 @@ import {
   type GeometraThreeSceneBasicsOptions,
   type PlainGeometraThreeHostSnapshot,
 } from './three-scene-basics.js'
+import { normalizeGeometraLayoutPixels } from './utils.js'
 
 /** Resolved Geometra column layout for {@link createThreeGeometraSplitHost} after coercion (JSON-friendly). */
 export interface PlainGeometraSplitHostLayoutOptions {
@@ -99,6 +100,58 @@ export function toPlainGeometraStackedHostLayoutOptions(
     geometraHudMargin,
     geometraHudPointerEvents,
     geometraHudZIndex,
+  }
+}
+
+/**
+ * Axis-aligned HUD rectangle in the stacked host root’s coordinate system (origin top-left), matching
+ * the inset rules used by {@link createThreeGeometraStackedHost} (`right`/`bottom`/`left`/`top` on the
+ * absolutely positioned HUD wrapper).
+ *
+ * Root width and height are normalized with {@link normalizeGeometraLayoutPixels} per axis so they stay
+ * aligned with {@link PlainGeometraThreeViewSizingState.layoutWidth} / `layoutHeight` for the same CSS
+ * inputs. `width` and `height` are taken from {@link PlainGeometraStackedHostLayoutOptions} as-is.
+ *
+ * Use for custom overlay geometry, agent hit targets, or stacked layouts built outside this package
+ * without calling `getBoundingClientRect`.
+ */
+export interface PlainGeometraStackedHudRect {
+  left: number
+  top: number
+  width: number
+  height: number
+}
+
+/** Fields read by {@link toPlainGeometraStackedHudRect} (satisfied by {@link PlainGeometraStackedHostLayoutOptions} and stacked composite snapshots). */
+export type GeometraStackedHudRectLayoutInput = Pick<
+  PlainGeometraStackedHostLayoutOptions,
+  'geometraHudWidth' | 'geometraHudHeight' | 'geometraHudPlacement' | 'geometraHudMargin'
+>
+
+/**
+ * Compute {@link PlainGeometraStackedHudRect} from resolved stacked layout and root CSS size.
+ *
+ * @param layout - From {@link toPlainGeometraStackedHostLayoutOptions}, or any object that includes the
+ *   HUD width/height/placement/margin fields (for example {@link toPlainGeometraThreeStackedHostSnapshot}).
+ */
+export function toPlainGeometraStackedHudRect(
+  layout: GeometraStackedHudRectLayoutInput,
+  rootCssWidth: number,
+  rootCssHeight: number,
+): PlainGeometraStackedHudRect {
+  const rw = normalizeGeometraLayoutPixels(rootCssWidth)
+  const rh = normalizeGeometraLayoutPixels(rootCssHeight)
+  const { geometraHudWidth: w, geometraHudHeight: h, geometraHudPlacement: p, geometraHudMargin: m } =
+    layout
+  switch (p) {
+    case 'bottom-right':
+      return { left: rw - w - m, top: rh - h - m, width: w, height: h }
+    case 'bottom-left':
+      return { left: m, top: rh - h - m, width: w, height: h }
+    case 'top-right':
+      return { left: rw - w - m, top: m, width: w, height: h }
+    case 'top-left':
+      return { left: m, top: m, width: w, height: h }
   }
 }
 

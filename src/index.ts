@@ -13,7 +13,8 @@
  * {@link toPlainGeometraSplitHostLayoutOptions} / {@link toPlainGeometraStackedHostLayoutOptions},
  * {@link toPlainGeometraThreeSplitHostSnapshot} / {@link toPlainGeometraThreeStackedHostSnapshot} (and headless variants)
  * for JSON-stable split/stacked layout plus viewport/scene in one object ({@link isGeometraHybridHostKind}, {@link coerceGeometraHybridHostKind}, {@link GEOMETRA_HYBRID_HOST_KINDS},
- * {@link isPlainGeometraThreeHostSnapshot}, {@link isPlainGeometraThreeSplitHostSnapshot}, {@link isPlainGeometraThreeStackedHostSnapshot}), and
+ * {@link isPlainGeometraThreeHostSnapshot}, {@link isPlainGeometraThreeSplitHostSnapshot}, {@link isPlainGeometraThreeStackedHostSnapshot}),
+ * {@link toPlainGeometraStackedHudRect} for stacked HUD box math (same insets as {@link createThreeGeometraStackedHost}), and
  * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, {@link coerceHostStackingZIndexCss},
  * {@link coerceGeometraHudPointerEvents}, and {@link coerceGeometraHudPlacement} for stacked-overlay stacking and
  * HUD corner rules, and {@link GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS} /
@@ -102,7 +103,10 @@ export {
   toPlainGeometraThreeSplitHostSnapshotHeadless,
   toPlainGeometraThreeStackedHostSnapshot,
   toPlainGeometraThreeStackedHostSnapshotHeadless,
+  toPlainGeometraStackedHudRect,
   type GeometraHybridHostKind,
+  type GeometraStackedHudRectLayoutInput,
+  type PlainGeometraStackedHudRect,
   type PlainGeometraSplitHostLayoutOptions,
   type PlainGeometraStackedHostLayoutOptions,
   type PlainGeometraThreeSplitHostSnapshot,

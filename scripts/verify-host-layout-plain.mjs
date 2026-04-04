@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
  * Post-build checks for `dist/host-layout-plain.js`: split/stacked plain layout helpers,
- * composite snapshots (`geometraHybridHostKind`), `GEOMETRA_HYBRID_HOST_KINDS`,
- * `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`,
- * `isPlainGeometraThreeStackedHostSnapshot`, and `isPlainGeometraThreeHostSnapshot` (from `dist/three-scene-basics.js`).
+ * stacked HUD rect (`toPlainGeometraStackedHudRect`), composite snapshots (`geometraHybridHostKind`),
+ * `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`,
+ * `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot`, and
+ * `isPlainGeometraThreeHostSnapshot` (from `dist/three-scene-basics.js`).
  * Imports the compiled module directly (not only via `dist/index.js`). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -28,6 +29,7 @@ const {
   toPlainGeometraThreeSplitHostSnapshotHeadless,
   toPlainGeometraThreeStackedHostSnapshot,
   toPlainGeometraThreeStackedHostSnapshotHeadless,
+  toPlainGeometraStackedHudRect,
 } = await import(layoutPlainHref)
 
 const { isPlainGeometraThreeHostSnapshot, toPlainGeometraThreeHostSnapshot } = await import(
@@ -95,6 +97,44 @@ testHybridHostKindHelpers()
 testSplitPlainLayoutMatchesDefaults()
 testStackedPlainLayoutMatchesDefaults()
 testCompositeSnapshotsKindAndLayout()
+
+function testStackedHudRectMatchesHostPlacement() {
+  const layout = toPlainGeometraStackedHostLayoutOptions()
+  assert.deepEqual(toPlainGeometraStackedHudRect(layout, 800, 600), {
+    left: 800 - layout.geometraHudWidth - layout.geometraHudMargin,
+    top: 600 - layout.geometraHudHeight - layout.geometraHudMargin,
+    width: layout.geometraHudWidth,
+    height: layout.geometraHudHeight,
+  })
+  const bl = toPlainGeometraStackedHostLayoutOptions({ geometraHudPlacement: 'bottom-left' })
+  assert.deepEqual(toPlainGeometraStackedHudRect(bl, 800, 600), {
+    left: bl.geometraHudMargin,
+    top: 600 - bl.geometraHudHeight - bl.geometraHudMargin,
+    width: bl.geometraHudWidth,
+    height: bl.geometraHudHeight,
+  })
+  const tr = toPlainGeometraStackedHostLayoutOptions({ geometraHudPlacement: 'top-right' })
+  assert.deepEqual(toPlainGeometraStackedHudRect(tr, 800, 600), {
+    left: 800 - tr.geometraHudWidth - tr.geometraHudMargin,
+    top: tr.geometraHudMargin,
+    width: tr.geometraHudWidth,
+    height: tr.geometraHudHeight,
+  })
+  const tl = toPlainGeometraStackedHostLayoutOptions({ geometraHudPlacement: 'top-left' })
+  assert.deepEqual(toPlainGeometraStackedHudRect(tl, 800, 600), {
+    left: tl.geometraHudMargin,
+    top: tl.geometraHudMargin,
+    width: tl.geometraHudWidth,
+    height: tl.geometraHudHeight,
+  })
+  const fromSnapshot = toPlainGeometraThreeStackedHostSnapshot({}, 800, 600, 1)
+  assert.deepEqual(
+    toPlainGeometraStackedHudRect(fromSnapshot, 800, 600),
+    toPlainGeometraStackedHudRect(layout, 800, 600),
+  )
+}
+
+testStackedHudRectMatchesHostPlacement()
 
 function testCompositeSnapshotTypeGuards() {
   const split = toPlainGeometraThreeSplitHostSnapshot({}, 100, 80, 2)
