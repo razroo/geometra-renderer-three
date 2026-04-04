@@ -22,8 +22,9 @@ fi
 #     and examples so readers are not misled (explicit example values vs documented defaults).
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs (including
 #     GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT === geom.tracker.snapshot vs @geometra/client), verify-utils.mjs,
-#     verify-layout-sync.mjs (post-sync isDestroyed skips synthetic Geometra resize; syncLayout or
-#     dispatchGeometraResize throw retains pending notify until a later successful coalesced frame),
+#     verify-layout-sync.mjs (pre-sync or post-sync isDestroyed clears pending notify without cancel;
+#     post-sync isDestroyed skips synthetic Geometra resize; syncLayout or dispatchGeometraResize throw
+#     retains pending notify until a later successful coalesced frame),
 #     verify-host-css-coerce.mjs (dist/host-css-coerce.js; coerceHostNonNegativeCssPx,
 #     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts),
 #     verify-host-layout-plain.mjs (dist/host-layout-plain.js; plain split/stacked layout, stacked HUD rect

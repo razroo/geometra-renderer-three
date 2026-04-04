@@ -3,7 +3,9 @@
  * Post-build checks for `createGeometraHostLayoutSyncRaf` (split/stacked resize coalescing):
  * rAF coalescing, optional synthetic Geometra `resize`, cancel/destroy semantics
  * (including cancel before the scheduled frame runs — no `syncLayout` / dispatch),
- * skip dispatch when `isDestroyed()` becomes true after `syncLayout`, and retain pending notify
+ * skip dispatch when `isDestroyed()` becomes true after `syncLayout` (pending notify cleared so a
+ * later frame does not spuriously dispatch), clear pending when `isDestroyed()` is true before `syncLayout`
+ * without `cancel`, and retain pending notify
  * when `syncLayout` throws so a later coalesced frame can still dispatch (including recovery via
  * `schedule(true)` alone after the throw, with no `schedule(false)`). Same pending-notify retention
  * when `dispatchGeometraResize` throws (clear only after a successful dispatch), including recovery
@@ -258,6 +260,56 @@ function testSyncLayoutThrowKeepsPendingNotifyForNextFrame() {
 }
 
 testDestroyedAfterSyncLayoutSkipsDispatch()
+
+/** Teardown inside `syncLayout` clears pending notify so a later live frame does not dispatch. */
+function testDestroyedAfterSyncLayoutClearsPendingForLaterFrames() {
+  const win = createMockWindow()
+  let destroyed = false
+  let dispatchCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => destroyed,
+    syncLayout: () => {
+      destroyed = true
+    },
+    dispatchGeometraResize: () => {
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(true)
+  win.flushAnimationFrame()
+  assert.equal(dispatchCount, 0)
+  destroyed = false
+  layoutSync.schedule(false)
+  win.flushAnimationFrame()
+  assert.equal(dispatchCount, 0)
+}
+
+testDestroyedAfterSyncLayoutClearsPendingForLaterFrames()
+
+/** Teardown before the coalesced frame runs clears a pending notify so a later live frame does not dispatch. */
+function testDestroyedBeforeSyncClearsPendingNotifyForLaterFrames() {
+  const win = createMockWindow()
+  let destroyed = false
+  let dispatchCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => destroyed,
+    syncLayout: () => {},
+    dispatchGeometraResize: () => {
+      dispatchCount += 1
+    },
+  })
+
+  layoutSync.schedule(true)
+  destroyed = true
+  win.flushAnimationFrame()
+  destroyed = false
+  layoutSync.schedule(false)
+  win.flushAnimationFrame()
+  assert.equal(dispatchCount, 0)
+}
+
+testDestroyedBeforeSyncClearsPendingNotifyForLaterFrames()
 testSyncLayoutThrowKeepsPendingNotifyForNextFrame()
 
 /**

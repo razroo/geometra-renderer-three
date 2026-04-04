@@ -27,8 +27,9 @@ export interface GeometraHostLayoutSyncRafOptions {
    * e.g. `() => win.dispatchEvent(new Event('resize'))` for Geometra thin client.
    * Runs only when {@link GeometraHostLayoutSyncRaf.schedule} requested a notify for this coalesced
    * frame, after the layout sync callback, and only if {@link isDestroyed} is still false (avoids
-   * synthetic `resize` after teardown). If the layout sync callback throws, the pending notify stays
-   * set so a later coalesced frame can still dispatch once sync succeeds. If `dispatchGeometraResize`
+   * synthetic `resize` after teardown). If teardown happens after a successful `syncLayout` but before
+   * dispatch, the pending notify is cleared for the same reason. If the layout sync callback throws, the
+   * pending notify stays set so a later coalesced frame can still dispatch once sync succeeds. If `dispatchGeometraResize`
    * throws, the pending notify is also left set so a later coalesced frame can retry the dispatch after
    * `syncLayout` runs again.
    */
@@ -44,7 +45,10 @@ export interface GeometraHostLayoutSyncRafOptions {
  * If `syncLayout` or `dispatchGeometraResize` throws, the error propagates from the scheduled
  * animation-frame callback (same as an uncaught rAF handler in the browser). A pending Geometra
  * notify is cleared only after a successful `dispatchGeometraResize`; see
- * {@link GeometraHostLayoutSyncRafOptions.dispatchGeometraResize}.
+ * {@link GeometraHostLayoutSyncRafOptions.dispatchGeometraResize}. If `isDestroyed` is true before
+ * `syncLayout` runs, or becomes true after `syncLayout` before `dispatchGeometraResize` (when
+ * {@link GeometraHostLayoutSyncRaf.cancel} was not used), the pending notify flag is cleared so later
+ * schedules do not inherit a stale synthetic `resize`.
  */
 export function createGeometraHostLayoutSyncRaf(
   win: Window,
@@ -60,9 +64,15 @@ export function createGeometraHostLayoutSyncRaf(
     if (layoutSyncRafId !== undefined) return
     layoutSyncRafId = win.requestAnimationFrame(() => {
       layoutSyncRafId = undefined
-      if (isDestroyed()) return
+      if (isDestroyed()) {
+        pendingGeometraResizeNotify = false
+        return
+      }
       syncLayout()
-      if (isDestroyed()) return
+      if (isDestroyed()) {
+        pendingGeometraResizeNotify = false
+        return
+      }
       if (pendingGeometraResizeNotify) {
         dispatchGeometraResize()
         pendingGeometraResizeNotify = false
