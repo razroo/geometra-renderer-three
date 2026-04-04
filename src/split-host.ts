@@ -88,7 +88,11 @@ export interface ThreeGeometraSplitHostHandle {
   camera: THREE.PerspectiveCamera
   clock: THREE.Clock
   geometra: BrowserCanvasClientHandle
-  /** Stops the render loop, disconnects observers, disposes WebGL, and tears down the Geometra client. */
+  /**
+   * Stops the render loop, calls {@link THREE.Clock.stop} on the host clock (parity with
+   * {@link disposeGeometraThreeWebGLWithSceneBasics}), disconnects observers, disposes WebGL, and tears
+   * down the Geometra client.
+   */
   destroy(): void
 }
 
@@ -237,6 +241,7 @@ export function createThreeGeometraSplitHost(
     } catch (err) {
       layoutSync.cancel()
       win.removeEventListener('resize', onWindowResize)
+      clock.stop()
       glRenderer.dispose()
       root.remove()
       throw err
@@ -262,6 +267,7 @@ export function createThreeGeometraSplitHost(
     win.removeEventListener('resize', onWindowResize)
     roContainer.disconnect()
     geometraHandle.destroy()
+    clock.stop()
     glRenderer.dispose()
     root.remove()
   }
