@@ -132,6 +132,97 @@ export function coerceGeometraHybridHostKind(
   return fallback
 }
 
+const GEOMETRA_HUD_PLACEMENT_LITERALS = new Set<GeometraHudPlacement>([
+  'bottom-right',
+  'bottom-left',
+  'top-right',
+  'top-left',
+])
+
+function isFinitePositiveNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0
+}
+
+function isPlainCameraPosition(value: unknown): value is [number, number, number] {
+  return (
+    Array.isArray(value) &&
+    value.length === 3 &&
+    value.every((n) => typeof n === 'number' && Number.isFinite(n))
+  )
+}
+
+/**
+ * Structural check for {@link PlainGeometraThreeHostSnapshot} fields (viewport + scene basics) on a
+ * plain object — for {@link isPlainGeometraThreeSplitHostSnapshot} / {@link isPlainGeometraThreeStackedHostSnapshot}.
+ */
+function isPlainGeometraThreeHostSnapshotCore(o: Record<string, unknown>): boolean {
+  if (
+    !isFinitePositiveNumber(o.layoutWidth) ||
+    !isFinitePositiveNumber(o.layoutHeight) ||
+    !isFinitePositiveNumber(o.perspectiveAspect) ||
+    !isFinitePositiveNumber(o.sanitizedRawDevicePixelRatio) ||
+    !isFinitePositiveNumber(o.effectiveDevicePixelRatio) ||
+    !isFinitePositiveNumber(o.drawingBufferWidth) ||
+    !isFinitePositiveNumber(o.drawingBufferHeight)
+  ) {
+    return false
+  }
+  if (typeof o.threeBackgroundHex !== 'number' || !Number.isFinite(o.threeBackgroundHex)) {
+    return false
+  }
+  const fov = o.cameraFov
+  if (typeof fov !== 'number' || !Number.isFinite(fov) || fov <= 0 || fov >= 180) {
+    return false
+  }
+  const near = o.cameraNear
+  const far = o.cameraFar
+  if (typeof near !== 'number' || !Number.isFinite(near) || near <= 0) return false
+  if (typeof far !== 'number' || !Number.isFinite(far) || far <= near) return false
+  return isPlainCameraPosition(o.cameraPosition)
+}
+
+/**
+ * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeSplitHostSnapshot} when the object
+ * matches the shape produced by {@link toPlainGeometraThreeSplitHostSnapshot} /
+ * {@link toPlainGeometraThreeSplitHostSnapshotHeadless}. Complements {@link isGeometraHybridHostKind} for
+ * composite agent or log payloads.
+ */
+export function isPlainGeometraThreeSplitHostSnapshot(
+  value: unknown,
+): value is PlainGeometraThreeSplitHostSnapshot {
+  if (value === null || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  if (o.geometraHybridHostKind !== 'split') return false
+  if (typeof o.geometraOnLeft !== 'boolean') return false
+  if (!isFinitePositiveNumber(o.geometraWidth)) return false
+  return isPlainGeometraThreeHostSnapshotCore(o)
+}
+
+/**
+ * Same idea as {@link isPlainGeometraThreeSplitHostSnapshot} for {@link PlainGeometraThreeStackedHostSnapshot}
+ * / {@link toPlainGeometraThreeStackedHostSnapshot} / {@link toPlainGeometraThreeStackedHostSnapshotHeadless}.
+ */
+export function isPlainGeometraThreeStackedHostSnapshot(
+  value: unknown,
+): value is PlainGeometraThreeStackedHostSnapshot {
+  if (value === null || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  if (o.geometraHybridHostKind !== 'stacked') return false
+  if (
+    !isFinitePositiveNumber(o.geometraHudWidth) ||
+    !isFinitePositiveNumber(o.geometraHudHeight) ||
+    !isFinitePositiveNumber(o.geometraHudMargin)
+  ) {
+    return false
+  }
+  if (typeof o.geometraHudPlacement !== 'string' || !GEOMETRA_HUD_PLACEMENT_LITERALS.has(o.geometraHudPlacement as GeometraHudPlacement)) {
+    return false
+  }
+  if (typeof o.geometraHudPointerEvents !== 'string') return false
+  if (typeof o.geometraHudZIndex !== 'string') return false
+  return isPlainGeometraThreeHostSnapshotCore(o)
+}
+
 /**
  * Split-host layout fields plus {@link PlainGeometraThreeHostSnapshot} in one JSON-friendly object —
  * same coercion as {@link toPlainGeometraSplitHostLayoutOptions} and {@link toPlainGeometraThreeHostSnapshot}.

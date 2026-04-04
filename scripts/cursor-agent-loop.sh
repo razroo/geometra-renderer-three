@@ -44,7 +44,7 @@ fi
 #     disposeGeometraThreeWebGLWithSceneBasics (optional clock → Clock#stop before renderer.dispose) /
 #     resizeTickGeometraThreeWebGLWithSceneBasicsHeadless (headless resize then tick; same as sequential headless resize + tickGeometraThreeWebGLWithSceneBasicsFrame) /
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
-#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`) /
+#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot`) /
 #     host sizing helpers /
 #     layout-sync behavior change (extend verify-layout-sync.mjs when semantics shift).
 #
