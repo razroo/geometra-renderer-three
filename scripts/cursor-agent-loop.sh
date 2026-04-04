@@ -26,7 +26,8 @@ fi
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
 #     geometraHostPerspectiveAspectFromCss / scene-basics /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
-#     createGeometraHostWebGLRendererParams / host sizing helpers / layout-sync behavior change.
+#     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer / host sizing helpers /
+#     layout-sync behavior change.
 #
 # Prerequisites:
 #   - Cursor Agent CLI: https://cursor.com/install (`agent` on PATH)

@@ -17,6 +17,7 @@ const expectedFunctions = [
   'createGeometraHostLayoutSyncRaf',
   'createGeometraHostWebGLRendererParams',
   'createGeometraThreeSceneBasics',
+  'createGeometraThreeWebGLRenderer',
   'geometraHostPerspectiveAspectFromCss',
   'normalizeGeometraLayoutPixels',
   'resizeGeometraThreeDrawingBufferView',

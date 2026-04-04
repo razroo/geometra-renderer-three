@@ -26,6 +26,7 @@ export {
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
   createGeometraHostWebGLRendererParams,
   createGeometraThreeSceneBasics,
+  createGeometraThreeWebGLRenderer,
   type GeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'

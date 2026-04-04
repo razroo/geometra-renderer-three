@@ -65,6 +65,20 @@ export function createGeometraHostWebGLRendererParams(
 }
 
 /**
+ * `new WebGLRenderer(createGeometraHostWebGLRendererParams(canvas))` with the same flags as
+ * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
+ *
+ * Use in the browser or any environment where Three can create a GL context (offscreen canvas,
+ * custom hosts). Prefer {@link createGeometraHostWebGLRendererParams} when you need to spread
+ * into a larger parameter object.
+ */
+export function createGeometraThreeWebGLRenderer(
+  canvas: NonNullable<WebGLRendererParameters['canvas']>,
+): THREE.WebGLRenderer {
+  return new THREE.WebGLRenderer(createGeometraHostWebGLRendererParams(canvas))
+}
+
+/**
  * Create a scene, perspective camera, and clock with the same defaults as
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *
