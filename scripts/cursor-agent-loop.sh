@@ -40,7 +40,7 @@ fi
 #     parity with host onThreeFrame ordering) /
 #     disposeGeometraThreeWebGLWithSceneBasics (optional clock → Clock#stop before renderer.dispose) /
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
-#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`) /
+#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`) /
 #     host sizing helpers /
 #     layout-sync behavior change (extend verify-layout-sync.mjs when semantics shift).
 #

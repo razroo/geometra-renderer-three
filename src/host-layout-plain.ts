@@ -115,6 +115,24 @@ export function isGeometraHybridHostKind(value: unknown): value is GeometraHybri
 }
 
 /**
+ * Normalize {@link GeometraHybridHostKind} from runtime values (e.g. agent JSON or untyped config).
+ * Literal `'split'` and `'stacked'` pass through. Strings are trimmed and matched **case-insensitively**;
+ * unknown or empty strings use `fallback` (same normalization idea as {@link coerceGeometraHudPlacement}).
+ *
+ * For narrowing without coercion, use {@link isGeometraHybridHostKind}.
+ */
+export function coerceGeometraHybridHostKind(
+  value: unknown,
+  fallback: GeometraHybridHostKind,
+): GeometraHybridHostKind {
+  if (value === 'split' || value === 'stacked') return value
+  if (typeof value !== 'string') return fallback
+  const key = value.trim().toLowerCase()
+  if (key === 'split' || key === 'stacked') return key
+  return fallback
+}
+
+/**
  * Split-host layout fields plus {@link PlainGeometraThreeHostSnapshot} in one JSON-friendly object —
  * same coercion as {@link toPlainGeometraSplitHostLayoutOptions} and {@link toPlainGeometraThreeHostSnapshot}.
  *

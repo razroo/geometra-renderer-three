@@ -23,7 +23,7 @@
  * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
  * `toPlainGeometraThreeStackedHostSnapshot`, `toPlainGeometraThreeStackedHostSnapshotHeadless`
- * (composite snapshots include `geometraHybridHostKind`: `'split'` | `'stacked'`; `isGeometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`)
+ * (composite snapshots include `geometraHybridHostKind`: `'split'` | `'stacked'`; `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`)
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -75,6 +75,7 @@ const {
   toPlainGeometraThreeStackedHostSnapshot,
   toPlainGeometraThreeStackedHostSnapshotHeadless,
   isGeometraHybridHostKind,
+  coerceGeometraHybridHostKind,
 } = await import(indexHref)
 
 function testNormalizeGeometraLayoutPixels() {
@@ -841,6 +842,16 @@ function testGeometraHybridHostKindHelpers() {
   assert.equal(isGeometraHybridHostKind(undefined), false)
   const snap = toPlainGeometraThreeSplitHostSnapshot({}, 100, 100, 1)
   assert.equal(isGeometraHybridHostKind(snap.geometraHybridHostKind), true)
+
+  const fb = 'stacked'
+  assert.equal(coerceGeometraHybridHostKind('split', fb), 'split')
+  assert.equal(coerceGeometraHybridHostKind('  SPLIT  ', fb), 'split')
+  assert.equal(coerceGeometraHybridHostKind('STACKED', fb), 'stacked')
+  assert.equal(coerceGeometraHybridHostKind(snap.geometraHybridHostKind, fb), 'split')
+  assert.equal(coerceGeometraHybridHostKind('overlay', fb), fb)
+  assert.equal(coerceGeometraHybridHostKind('', fb), fb)
+  assert.equal(coerceGeometraHybridHostKind(null, 'split'), 'split')
+  assert.equal(coerceGeometraHybridHostKind(undefined, 'split'), 'split')
 }
 
 function testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge() {

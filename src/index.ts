@@ -12,7 +12,7 @@
  * {@link toPlainGeometraThreeHostSnapshotFromViewSizing},
  * {@link toPlainGeometraSplitHostLayoutOptions} / {@link toPlainGeometraStackedHostLayoutOptions},
  * {@link toPlainGeometraThreeSplitHostSnapshot} / {@link toPlainGeometraThreeStackedHostSnapshot} (and headless variants)
- * for JSON-stable split/stacked layout plus viewport/scene in one object ({@link isGeometraHybridHostKind}, {@link GEOMETRA_HYBRID_HOST_KINDS}), and
+ * for JSON-stable split/stacked layout plus viewport/scene in one object ({@link isGeometraHybridHostKind}, {@link coerceGeometraHybridHostKind}, {@link GEOMETRA_HYBRID_HOST_KINDS}), and
  * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, {@link coerceHostStackingZIndexCss},
  * {@link coerceGeometraHudPointerEvents}, and {@link coerceGeometraHudPlacement} for stacked-overlay stacking and
  * HUD corner rules, and {@link GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS} /
@@ -88,6 +88,7 @@ export {
 export type { GeometraHudPlacement } from './host-css-coerce.js'
 export {
   GEOMETRA_HYBRID_HOST_KINDS,
+  coerceGeometraHybridHostKind,
   isGeometraHybridHostKind,
   toPlainGeometraSplitHostLayoutOptions,
   toPlainGeometraStackedHostLayoutOptions,
