@@ -14,7 +14,8 @@
  * `resolveGeometraThreeSceneBasicsOptions`,
  * `toPlainGeometraThreeSceneBasicsOptions`, `isPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `isPlainGeometraThreeHostSnapshot`,
  * `toPlainGeometraThreeHostSnapshotHeadless`,
- * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`,
+ * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `mergePlainGeometraThreeHostSnapshot`,
+ * `toPlainGeometraThreeViewSizingState`,
  * `toPlainGeometraThreeViewSizingStateHeadless`, `isPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics` (optional `clock` → `Clock#stop` before `renderer.dispose`),
@@ -77,6 +78,7 @@ const {
   resizeTickGeometraThreeWebGLWithSceneBasicsHeadless,
   toPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshotFromViewSizing,
+  mergePlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshotHeadless,
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeViewSizingState,
@@ -559,6 +561,8 @@ function testToPlainGeometraThreeHostSnapshotFromViewSizingMatchesMergeAndFullSn
   const sceneOpts = { threeBackground: '#00ff88', cameraFov: 40 }
   const sizing = toPlainGeometraThreeViewSizingState(w, h, dpr, cap)
   const merged = toPlainGeometraThreeHostSnapshotFromViewSizing(sizing, sceneOpts)
+  const plainScene = toPlainGeometraThreeSceneBasicsOptions(sceneOpts)
+  assert.deepEqual(mergePlainGeometraThreeHostSnapshot(sizing, plainScene), merged)
   assert.deepEqual(merged, {
     ...sizing,
     ...toPlainGeometraThreeSceneBasicsOptions(sceneOpts),

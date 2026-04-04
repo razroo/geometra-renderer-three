@@ -10,7 +10,7 @@
  * {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} (`onFrame` may return `false` to skip `render` and make the tick return `false`; {@link disposeGeometraThreeWebGLWithSceneBasics} inside `onFrame` skips `render` too, like host {@link ThreeRuntimeContext.destroy}; if `onFrame` throws, the error propagates and `render` is not called, matching split/stacked {@link ThreeGeometraSplitHostOptions.onThreeFrame} ordering), {@link resizeTickGeometraThreeWebGLWithSceneBasics} (resize + tick with explicit raw DPR), {@link resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing} (resize + tick from plain {@link PlainGeometraThreeViewSizingState}), {@link resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainHostSnapshot} (same from full {@link PlainGeometraThreeHostSnapshot} / composite JSON), {@link resizeTickGeometraThreeWebGLWithSceneBasicsHeadless} (same with raw DPR **1**), {@link disposeGeometraThreeWebGLWithSceneBasics} (optional `clock` stops timing after dispose),
  * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless},
- * {@link toPlainGeometraThreeHostSnapshotFromViewSizing},
+ * {@link toPlainGeometraThreeHostSnapshotFromViewSizing}, {@link mergePlainGeometraThreeHostSnapshot},
  * {@link toPlainGeometraSplitHostLayoutOptions} / {@link toPlainGeometraStackedHostLayoutOptions},
  * {@link toPlainGeometraThreeSplitHostSnapshot} / {@link toPlainGeometraThreeStackedHostSnapshot} (and headless variants)
  * for JSON-stable split/stacked layout plus viewport/scene in one object ({@link isGeometraHybridHostKind}, {@link coerceGeometraHybridHostKind}, {@link GEOMETRA_HYBRID_HOST_KINDS},
@@ -67,6 +67,7 @@ export {
   toPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshotHeadless,
   toPlainGeometraThreeHostSnapshotFromViewSizing,
+  mergePlainGeometraThreeHostSnapshot,
   createGeometraThreeWebGLRenderer,
   createGeometraThreeWebGLWithSceneBasics,
   createGeometraThreeWebGLWithSceneBasicsFromPlain,

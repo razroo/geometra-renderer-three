@@ -267,6 +267,22 @@ export function toPlainGeometraThreeHostSnapshotFromViewSizing(
 }
 
 /**
+ * Combine an existing {@link PlainGeometraThreeViewSizingState} with an already-plain scene slice
+ * {@link PlainGeometraThreeSceneBasicsOptions} (for example after {@link isPlainGeometraThreeViewSizingState}
+ * and {@link isPlainGeometraThreeSceneBasicsOptions}) into one {@link PlainGeometraThreeHostSnapshot}.
+ *
+ * Same object shape as {@link toPlainGeometraThreeHostSnapshotFromViewSizing} when `scene` is the output of
+ * {@link toPlainGeometraThreeSceneBasicsOptions}, but skips a redundant {@link THREE.Color} round-trip when
+ * the scene fields are already JSON-stable.
+ */
+export function mergePlainGeometraThreeHostSnapshot(
+  sizing: PlainGeometraThreeViewSizingState,
+  scene: PlainGeometraThreeSceneBasicsOptions,
+): PlainGeometraThreeHostSnapshot {
+  return { ...sizing, ...scene }
+}
+
+/**
  * `WebGLRenderer` constructor options (excluding `canvas`) used by
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *
