@@ -26,7 +26,8 @@ fi
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
 #     geometraHostPerspectiveAspectFromCss / createGeometraThreePerspectiveResizeHandler / scene-basics /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
-#     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer / host sizing helpers /
+#     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer /
+#     createGeometraThreeWebGLWithSceneBasics / host sizing helpers /
 #     layout-sync behavior change.
 #
 # Prerequisites:

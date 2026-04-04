@@ -8,7 +8,8 @@
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`
- * (`createGeometraThreeWebGLRenderer` needs a real GL context; export shape is checked in verify-exports only)
+ * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
+ * export shape is checked in verify-exports only)
  * using lightweight mocks /
  * Node `three` (no WebGL).
  * Run after `npm run build` (see `release:gate`).

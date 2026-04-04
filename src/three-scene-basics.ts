@@ -108,3 +108,28 @@ export function createGeometraThreeSceneBasics(
 
   return { scene, camera, clock }
 }
+
+/** {@link createGeometraThreeSceneBasics} plus a host-aligned {@link THREE.WebGLRenderer} on the same canvas. */
+export type GeometraThreeWebGLWithSceneBasics = GeometraThreeSceneBasics & {
+  renderer: THREE.WebGLRenderer
+}
+
+/**
+ * Create a {@link THREE.WebGLRenderer} and {@link GeometraThreeSceneBasics} in one call, using the same
+ * constructor flags and scene defaults as {@link createThreeGeometraSplitHost} and
+ * {@link createThreeGeometraStackedHost}.
+ *
+ * Equivalent to {@link createGeometraThreeWebGLRenderer} on `canvas` plus
+ * {@link createGeometraThreeSceneBasics} with the same `options` — useful for offscreen canvas, custom hosts, or
+ * agent-side bootstrap where you want parity without duplicating the two factories.
+ *
+ * Requires a WebGL-capable environment (same as `new WebGLRenderer(...)`).
+ */
+export function createGeometraThreeWebGLWithSceneBasics(
+  canvas: NonNullable<WebGLRendererParameters['canvas']>,
+  options: GeometraThreeSceneBasicsOptions = {},
+): GeometraThreeWebGLWithSceneBasics {
+  const renderer = createGeometraThreeWebGLRenderer(canvas)
+  const { scene, camera, clock } = createGeometraThreeSceneBasics(options)
+  return { renderer, scene, camera, clock }
+}

@@ -1,7 +1,8 @@
 /**
  * `@geometra/renderer-three` — split/stacked Three.js + Geometra canvas hosts, WebGL sizing helpers
  * ({@link resizeGeometraThreePerspectiveView}, drawing-buffer paths, DPR capping), shared scene defaults
- * ({@link createGeometraThreeSceneBasics}), and {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts.
+ * ({@link createGeometraThreeSceneBasics}, {@link createGeometraThreeWebGLWithSceneBasics}), and
+ * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts.
  */
 
 export {
@@ -34,8 +35,10 @@ export {
   createGeometraHostWebGLRendererParams,
   createGeometraThreeSceneBasics,
   createGeometraThreeWebGLRenderer,
+  createGeometraThreeWebGLWithSceneBasics,
   type GeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,
+  type GeometraThreeWebGLWithSceneBasics,
 } from './three-scene-basics.js'
 export {
   createGeometraHostLayoutSyncRaf,
