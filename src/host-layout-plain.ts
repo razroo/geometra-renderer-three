@@ -196,7 +196,8 @@ export function isPlainGeometraHybridHostKind(value: unknown): value is Geometra
  * Literal `'split'` and `'stacked'` pass through. Strings are trimmed and matched **case-insensitively**;
  * unknown or empty strings use `fallback` (same normalization idea as {@link coerceGeometraHudPlacement}).
  *
- * For narrowing without coercion, use {@link isGeometraHybridHostKind}.
+ * For narrowing without coercion, use {@link isGeometraHybridHostKind} for exact literals or
+ * {@link isPlainGeometraHybridHostKind} when payloads may use whitespace or mixed case.
  */
 export function coerceGeometraHybridHostKind(
   value: unknown,
