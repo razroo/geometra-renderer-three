@@ -16,12 +16,13 @@ fi
 #   - rg 'TODO|FIXME|HACK' src for concrete hooks.
 #   - When changing public API or types, keep README examples and package.json
 #     peer ranges coherent with https://github.com/razroo/geometra (renderer-canvas, client, core).
-#   - When editing host options defaults or CSS pixel / z-index coercion (split-host.ts, stacked-host.ts,
-#     host-css-coerce.ts: coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss, coerceGeometraHudPlacement), align README prose
+#   - When editing host options defaults or CSS pixel / z-index / pointer-events coercion (split-host.ts, stacked-host.ts,
+#     host-css-coerce.ts: coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss, coerceGeometraHudPointerEvents,
+#     coerceGeometraHudPlacement), align README prose
 #     and examples so readers are not misled (explicit example values vs documented defaults).
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, verify-utils.mjs,
 #     verify-layout-sync.mjs, verify-host-css-coerce.mjs (dist/host-css-coerce.js; coerceHostNonNegativeCssPx,
-#     coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts).
+#     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
 #     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeHostSnapshot /

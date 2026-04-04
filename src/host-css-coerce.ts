@@ -21,6 +21,24 @@ export function coerceGeometraHudPlacement(
 }
 
 /**
+ * CSS `pointer-events` for stacked HUD / overlay wrappers: trimmed non-empty strings pass through;
+ * otherwise `fallback` (avoids blank or invalid values from untyped config or agent JSON).
+ *
+ * {@link createThreeGeometraStackedHost} uses this for {@link ThreeGeometraStackedHostOptions.geometraHudPointerEvents}.
+ * Use next to {@link coerceHostStackingZIndexCss} when you build a custom stacked layout.
+ */
+export function coerceGeometraHudPointerEvents(
+  value: string | undefined | null,
+  fallback = 'auto',
+): string {
+  if (typeof value === 'string') {
+    const t = value.trim()
+    if (t.length > 0) return t
+  }
+  return fallback
+}
+
+/**
  * Finite, non-negative CSS px for host panel/HUD sizing; invalid values use `fallback`
  * (avoids `NaNpx` / negative sizes in inline styles).
  *

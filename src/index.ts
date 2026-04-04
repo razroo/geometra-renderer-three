@@ -7,8 +7,9 @@
  * {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}, {@link disposeGeometraThreeWebGLWithSceneBasics},
  * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless}), and
- * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, {@link coerceHostStackingZIndexCss} and
- * {@link coerceGeometraHudPlacement} for stacked-overlay `z-index` and HUD corner rules, and {@link GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS} /
+ * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, {@link coerceHostStackingZIndexCss},
+ * {@link coerceGeometraHudPointerEvents}, and {@link coerceGeometraHudPlacement} for stacked-overlay stacking and
+ * HUD corner rules, and {@link GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS} /
  * {@link GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS} for host layout defaults (custom layouts, logs, agent payloads).
  */
 
@@ -70,6 +71,7 @@ export {
 } from './layout-sync.js'
 export {
   coerceGeometraHudPlacement,
+  coerceGeometraHudPointerEvents,
   coerceHostNonNegativeCssPx,
   coerceHostStackingZIndexCss,
 } from './host-css-coerce.js'

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Post-build checks for `coerceHostNonNegativeCssPx` (split/stacked panel and HUD widths),
- * `coerceHostStackingZIndexCss` (stacked HUD `z-index`), and `coerceGeometraHudPlacement` (HUD corner).
+ * `coerceHostStackingZIndexCss` (stacked HUD `z-index`), `coerceGeometraHudPointerEvents` (HUD `pointer-events`),
+ * and `coerceGeometraHudPlacement` (HUD corner).
  * Imports `dist/host-css-coerce.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -10,8 +11,12 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const href = pathToFileURL(path.join(root, 'dist', 'host-css-coerce.js')).href
-const { coerceGeometraHudPlacement, coerceHostNonNegativeCssPx, coerceHostStackingZIndexCss } =
-  await import(href)
+const {
+  coerceGeometraHudPlacement,
+  coerceGeometraHudPointerEvents,
+  coerceHostNonNegativeCssPx,
+  coerceHostStackingZIndexCss,
+} = await import(href)
 
 function testFiniteNonNegativePassesThrough() {
   assert.equal(coerceHostNonNegativeCssPx(420, 999), 420)
@@ -36,6 +41,16 @@ function testCoerceGeometraHudPlacement() {
   assert.equal(coerceGeometraHudPlacement('', fb), fb)
 }
 
+function testCoerceGeometraHudPointerEvents() {
+  assert.equal(coerceGeometraHudPointerEvents('none', 'auto'), 'none')
+  assert.equal(coerceGeometraHudPointerEvents('  none  ', 'auto'), 'none')
+  assert.equal(coerceGeometraHudPointerEvents('', 'auto'), 'auto')
+  assert.equal(coerceGeometraHudPointerEvents('   ', 'auto'), 'auto')
+  assert.equal(coerceGeometraHudPointerEvents(undefined, 'auto'), 'auto')
+  assert.equal(coerceGeometraHudPointerEvents(null, 'auto'), 'auto')
+  assert.equal(coerceGeometraHudPointerEvents(undefined, 'none'), 'none')
+}
+
 function testStackingZIndexCss() {
   assert.equal(coerceHostStackingZIndexCss(1, 99), '1')
   assert.equal(coerceHostStackingZIndexCss(0, 99), '0')
@@ -52,6 +67,7 @@ function testStackingZIndexCss() {
 testFiniteNonNegativePassesThrough()
 testInvalidUsesFallback()
 testCoerceGeometraHudPlacement()
+testCoerceGeometraHudPointerEvents()
 testStackingZIndexCss()
 
 console.log('verify-host-css-coerce: ok')

@@ -17,6 +17,7 @@ import {
 import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
 import {
   coerceGeometraHudPlacement,
+  coerceGeometraHudPointerEvents,
   coerceHostNonNegativeCssPx,
   coerceHostStackingZIndexCss,
   type GeometraHudPlacement,
@@ -68,7 +69,8 @@ export interface ThreeGeometraStackedHostOptions
   geometraHudMargin?: number
   /**
    * CSS `pointer-events` on the HUD wrapper (e.g. `'none'` so input falls through to the WebGL canvas).
-   * Default: `'auto'`.
+   * Default: `'auto'`. Blank or whitespace-only strings fall back to the default; use
+   * {@link coerceGeometraHudPointerEvents} in custom layouts for the same rules.
    */
   geometraHudPointerEvents?: string
   /**
@@ -172,7 +174,7 @@ export function createThreeGeometraStackedHost(
     geometraHudHeight: geometraHudHeightOpt = GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudHeight,
     geometraHudPlacement: geometraHudPlacementOpt = GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudPlacement,
     geometraHudMargin: geometraHudMarginOpt = GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudMargin,
-    geometraHudPointerEvents = 'auto',
+    geometraHudPointerEvents: geometraHudPointerEventsOpt = 'auto',
     geometraHudZIndex = 1,
     maxDevicePixelRatio,
     threeBackground = GEOMETRA_THREE_HOST_SCENE_DEFAULTS.threeBackground,
@@ -202,6 +204,7 @@ export function createThreeGeometraStackedHost(
     geometraHudPlacementOpt as string | undefined,
     GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS.geometraHudPlacement,
   )
+  const geometraHudPointerEvents = coerceGeometraHudPointerEvents(geometraHudPointerEventsOpt, 'auto')
 
   const doc = container.ownerDocument
   const win = providedWindow ?? doc.defaultView

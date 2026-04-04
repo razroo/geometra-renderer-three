@@ -65,7 +65,7 @@ stacked.destroy()
 
 If you omit sizing and placement options, the HUD uses **defaults** that match `createThreeGeometraStackedHost` in code: width **420** CSS px, height **320** CSS px, placement **`bottom-right`**, corner margin **12** CSS px. The same numbers are exported as `GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS` for custom stacked layouts, logs, or agent payloads. Split-host Geometra column width **420** is `GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS.geometraWidth`.
 
-Use `geometraHudPointerEvents` (CSS `pointer-events`, default `'auto'`) when you want the HUD to ignore input — for example `'none'` so pointer events reach the full-viewport Three.js canvas underneath.
+Use `geometraHudPointerEvents` (CSS `pointer-events`, default `'auto'`) when you want the HUD to ignore input — for example `'none'` so pointer events reach the full-viewport Three.js canvas underneath. Blank or whitespace-only values fall back to `'auto'`; custom layouts can use the exported helper `coerceGeometraHudPointerEvents` for the same rules.
 
 Use `geometraHudZIndex` (default `1`; the WebGL canvas stays at `0`) when you add other absolutely positioned siblings and need a predictable stacking order. Non-finite numbers and blank strings fall back to that default; custom layouts can use the exported helper `coerceHostStackingZIndexCss` for the same rules.
 
