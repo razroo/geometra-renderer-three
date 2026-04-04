@@ -42,6 +42,7 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
+    "@geometra/client": "^1.2.2",
     "@geometra/renderer-canvas": "^1.2.2",
     "three": ">=0.160.0 <0.180.0"
   },
