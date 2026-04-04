@@ -71,6 +71,8 @@ Use `geometraHudZIndex` (default `1`; the WebGL canvas stays at `0`) when you ad
 
 `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` each forward all [`createBrowserCanvasClient`](https://github.com/razroo/geometra/tree/main/packages/renderer-canvas) options except `canvas` (the host creates the Geometra canvas for you). For that option shape in TypeScript (e.g. building a custom host), use the exported type `GeometraHostBrowserCanvasClientOptions`.
 
+This package also re-exports `GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT` from [`@geometra/client`](https://github.com/razroo/geometra/tree/main/packages/client) so hybrid Three + Geometra code can match the tracker-snapshot data channel name when handling JSON `onData` side-channels on the same socket as layout, without importing `@geometra/client` only for that constant.
+
 ### WebGL device pixel ratio cap
 
 Both `createThreeGeometraSplitHost` and `createThreeGeometraStackedHost` accept optional `maxDevicePixelRatio` (for example `2`) to limit the Three.js drawing buffer on high-DPR displays and reduce GPU memory use. When omitted, the full `window.devicePixelRatio` is used.

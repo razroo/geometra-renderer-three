@@ -97,5 +97,9 @@ export {
   type ToPlainGeometraStackedHostLayoutOptionsInput,
 } from './host-layout-plain.js'
 
-/** Re-export for hybrid apps using {@link createThreeGeometraSplitHost} with `onData`. */
+/**
+ * Data channel name for tracker snapshot JSON on the GEOM WebSocket (from `@geometra/client`).
+ * Use in `onData` handlers passed through {@link createThreeGeometraSplitHost} /
+ * {@link createThreeGeometraStackedHost} so channel comparisons stay aligned with the thin client.
+ */
 export { GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT } from '@geometra/client'
