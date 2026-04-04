@@ -3,7 +3,7 @@
  * Post-build checks for `dist/host-layout-plain.js`: split/stacked plain layout helpers,
  * composite snapshots (`geometraHybridHostKind`), `GEOMETRA_HYBRID_HOST_KINDS`,
  * `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`,
- * and `isPlainGeometraThreeStackedHostSnapshot`.
+ * `isPlainGeometraThreeStackedHostSnapshot`, and `isPlainGeometraThreeHostSnapshot` (from `dist/three-scene-basics.js`).
  * Imports the compiled module directly (not only via `dist/index.js`). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -12,6 +12,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const layoutPlainHref = pathToFileURL(path.join(root, 'dist', 'host-layout-plain.js')).href
+const threeSceneBasicsHref = pathToFileURL(path.join(root, 'dist', 'three-scene-basics.js')).href
 const splitHostHref = pathToFileURL(path.join(root, 'dist', 'split-host.js')).href
 const stackedHostHref = pathToFileURL(path.join(root, 'dist', 'stacked-host.js')).href
 
@@ -28,6 +29,10 @@ const {
   toPlainGeometraThreeStackedHostSnapshot,
   toPlainGeometraThreeStackedHostSnapshotHeadless,
 } = await import(layoutPlainHref)
+
+const { isPlainGeometraThreeHostSnapshot, toPlainGeometraThreeHostSnapshot } = await import(
+  threeSceneBasicsHref,
+)
 
 const { GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS } = await import(splitHostHref)
 const { GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS } = await import(stackedHostHref)
@@ -93,6 +98,7 @@ testCompositeSnapshotsKindAndLayout()
 
 function testCompositeSnapshotTypeGuards() {
   const split = toPlainGeometraThreeSplitHostSnapshot({}, 100, 80, 2)
+  assert.equal(isPlainGeometraThreeHostSnapshot(split), true)
   assert.equal(isPlainGeometraThreeSplitHostSnapshot(split), true)
   assert.equal(isPlainGeometraThreeStackedHostSnapshot(split), false)
 
@@ -100,6 +106,7 @@ function testCompositeSnapshotTypeGuards() {
   assert.equal(isPlainGeometraThreeSplitHostSnapshot(splitH), true)
 
   const stacked = toPlainGeometraThreeStackedHostSnapshot({}, 200, 150, 1)
+  assert.equal(isPlainGeometraThreeHostSnapshot(stacked), true)
   assert.equal(isPlainGeometraThreeStackedHostSnapshot(stacked), true)
   assert.equal(isPlainGeometraThreeSplitHostSnapshot(stacked), false)
 
@@ -109,6 +116,10 @@ function testCompositeSnapshotTypeGuards() {
   assert.equal(isPlainGeometraThreeSplitHostSnapshot(null), false)
   assert.equal(isPlainGeometraThreeStackedHostSnapshot(undefined), false)
   assert.equal(isPlainGeometraThreeSplitHostSnapshot({ geometraHybridHostKind: 'split' }), false)
+
+  const baseOnly = toPlainGeometraThreeHostSnapshot(120, 90, 1)
+  assert.equal(isPlainGeometraThreeHostSnapshot(baseOnly), true)
+  assert.equal(isPlainGeometraThreeSplitHostSnapshot(baseOnly), false)
 
   const tampered = { ...split }
   delete tampered.layoutWidth

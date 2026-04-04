@@ -34,6 +34,7 @@ const expectedFunctions = [
   'resizeTickGeometraThreeWebGLWithSceneBasicsHeadless',
   'geometraHostPerspectiveAspectFromCss',
   'isGeometraHybridHostKind',
+  'isPlainGeometraThreeHostSnapshot',
   'isPlainGeometraThreeSplitHostSnapshot',
   'isPlainGeometraThreeStackedHostSnapshot',
   'normalizeGeometraLayoutPixels',

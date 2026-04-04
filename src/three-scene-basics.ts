@@ -156,6 +156,52 @@ export function createGeometraThreeSceneBasicsFromPlain(
 export type PlainGeometraThreeHostSnapshot = PlainGeometraThreeViewSizingState &
   PlainGeometraThreeSceneBasicsOptions
 
+function isFinitePositiveNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0
+}
+
+function isPlainCameraPosition(value: unknown): value is THREE.Vector3Tuple {
+  return (
+    Array.isArray(value) &&
+    value.length === 3 &&
+    value.every((n) => typeof n === 'number' && Number.isFinite(n))
+  )
+}
+
+/**
+ * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeHostSnapshot} when the object matches
+ * the shape from {@link toPlainGeometraThreeHostSnapshot} / {@link toPlainGeometraThreeHostSnapshotHeadless} /
+ * {@link toPlainGeometraThreeHostSnapshotFromViewSizing}. Extra keys (e.g. hybrid layout fields) are allowed.
+ * Composite payloads use {@link isPlainGeometraThreeSplitHostSnapshot} / {@link isPlainGeometraThreeStackedHostSnapshot}.
+ */
+export function isPlainGeometraThreeHostSnapshot(value: unknown): value is PlainGeometraThreeHostSnapshot {
+  if (value === null || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  if (
+    !isFinitePositiveNumber(o.layoutWidth) ||
+    !isFinitePositiveNumber(o.layoutHeight) ||
+    !isFinitePositiveNumber(o.perspectiveAspect) ||
+    !isFinitePositiveNumber(o.sanitizedRawDevicePixelRatio) ||
+    !isFinitePositiveNumber(o.effectiveDevicePixelRatio) ||
+    !isFinitePositiveNumber(o.drawingBufferWidth) ||
+    !isFinitePositiveNumber(o.drawingBufferHeight)
+  ) {
+    return false
+  }
+  if (typeof o.threeBackgroundHex !== 'number' || !Number.isFinite(o.threeBackgroundHex)) {
+    return false
+  }
+  const fov = o.cameraFov
+  if (typeof fov !== 'number' || !Number.isFinite(fov) || fov <= 0 || fov >= 180) {
+    return false
+  }
+  const near = o.cameraNear
+  const far = o.cameraFar
+  if (typeof near !== 'number' || !Number.isFinite(near) || near <= 0) return false
+  if (typeof far !== 'number' || !Number.isFinite(far) || far <= near) return false
+  return isPlainCameraPosition(o.cameraPosition)
+}
+
 /**
  * Merge host-aligned viewport sizing and scene/camera plain fields for stable JSON.
  *

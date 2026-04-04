@@ -8,6 +8,7 @@ import {
   type GeometraHudPlacement,
 } from './host-css-coerce.js'
 import {
+  isPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshotHeadless,
   type GeometraThreeSceneBasicsOptions,
@@ -139,48 +140,6 @@ const GEOMETRA_HUD_PLACEMENT_LITERALS = new Set<GeometraHudPlacement>([
   'top-left',
 ])
 
-function isFinitePositiveNumber(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value > 0
-}
-
-function isPlainCameraPosition(value: unknown): value is [number, number, number] {
-  return (
-    Array.isArray(value) &&
-    value.length === 3 &&
-    value.every((n) => typeof n === 'number' && Number.isFinite(n))
-  )
-}
-
-/**
- * Structural check for {@link PlainGeometraThreeHostSnapshot} fields (viewport + scene basics) on a
- * plain object — for {@link isPlainGeometraThreeSplitHostSnapshot} / {@link isPlainGeometraThreeStackedHostSnapshot}.
- */
-function isPlainGeometraThreeHostSnapshotCore(o: Record<string, unknown>): boolean {
-  if (
-    !isFinitePositiveNumber(o.layoutWidth) ||
-    !isFinitePositiveNumber(o.layoutHeight) ||
-    !isFinitePositiveNumber(o.perspectiveAspect) ||
-    !isFinitePositiveNumber(o.sanitizedRawDevicePixelRatio) ||
-    !isFinitePositiveNumber(o.effectiveDevicePixelRatio) ||
-    !isFinitePositiveNumber(o.drawingBufferWidth) ||
-    !isFinitePositiveNumber(o.drawingBufferHeight)
-  ) {
-    return false
-  }
-  if (typeof o.threeBackgroundHex !== 'number' || !Number.isFinite(o.threeBackgroundHex)) {
-    return false
-  }
-  const fov = o.cameraFov
-  if (typeof fov !== 'number' || !Number.isFinite(fov) || fov <= 0 || fov >= 180) {
-    return false
-  }
-  const near = o.cameraNear
-  const far = o.cameraFar
-  if (typeof near !== 'number' || !Number.isFinite(near) || near <= 0) return false
-  if (typeof far !== 'number' || !Number.isFinite(far) || far <= near) return false
-  return isPlainCameraPosition(o.cameraPosition)
-}
-
 /**
  * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeSplitHostSnapshot} when the object
  * matches the shape produced by {@link toPlainGeometraThreeSplitHostSnapshot} /
@@ -194,8 +153,10 @@ export function isPlainGeometraThreeSplitHostSnapshot(
   const o = value as Record<string, unknown>
   if (o.geometraHybridHostKind !== 'split') return false
   if (typeof o.geometraOnLeft !== 'boolean') return false
-  if (!isFinitePositiveNumber(o.geometraWidth)) return false
-  return isPlainGeometraThreeHostSnapshotCore(o)
+  if (typeof o.geometraWidth !== 'number' || !Number.isFinite(o.geometraWidth) || o.geometraWidth <= 0) {
+    return false
+  }
+  return isPlainGeometraThreeHostSnapshot(value)
 }
 
 /**
@@ -209,9 +170,15 @@ export function isPlainGeometraThreeStackedHostSnapshot(
   const o = value as Record<string, unknown>
   if (o.geometraHybridHostKind !== 'stacked') return false
   if (
-    !isFinitePositiveNumber(o.geometraHudWidth) ||
-    !isFinitePositiveNumber(o.geometraHudHeight) ||
-    !isFinitePositiveNumber(o.geometraHudMargin)
+    typeof o.geometraHudWidth !== 'number' ||
+    !Number.isFinite(o.geometraHudWidth) ||
+    o.geometraHudWidth <= 0 ||
+    typeof o.geometraHudHeight !== 'number' ||
+    !Number.isFinite(o.geometraHudHeight) ||
+    o.geometraHudHeight <= 0 ||
+    typeof o.geometraHudMargin !== 'number' ||
+    !Number.isFinite(o.geometraHudMargin) ||
+    o.geometraHudMargin <= 0
   ) {
     return false
   }
@@ -220,7 +187,7 @@ export function isPlainGeometraThreeStackedHostSnapshot(
   }
   if (typeof o.geometraHudPointerEvents !== 'string') return false
   if (typeof o.geometraHudZIndex !== 'string') return false
-  return isPlainGeometraThreeHostSnapshotCore(o)
+  return isPlainGeometraThreeHostSnapshot(value)
 }
 
 /**

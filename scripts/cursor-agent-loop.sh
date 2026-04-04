@@ -26,7 +26,8 @@ fi
 #     verify-host-css-coerce.mjs (dist/host-css-coerce.js; coerceHostNonNegativeCssPx,
 #     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts),
 #     verify-host-layout-plain.mjs (dist/host-layout-plain.js; plain split/stacked layout, composite snapshots,
-#     geometraHybridHostKind / GEOMETRA_HYBRID_HOST_KINDS / isGeometraHybridHostKind / coerceGeometraHybridHostKind).
+#     geometraHybridHostKind / GEOMETRA_HYBRID_HOST_KINDS / isGeometraHybridHostKind / coerceGeometraHybridHostKind;
+#     isPlainGeometraThreeHostSnapshot from dist/three-scene-basics.js for base viewport+scene JSON guards).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
 #     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeViewSizingStateHeadless / toPlainGeometraThreeHostSnapshot /
@@ -44,7 +45,7 @@ fi
 #     disposeGeometraThreeWebGLWithSceneBasics (optional clock → Clock#stop before renderer.dispose) /
 #     resizeTickGeometraThreeWebGLWithSceneBasicsHeadless (headless resize then tick; same as sequential headless resize + tickGeometraThreeWebGLWithSceneBasicsFrame) /
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
-#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot`) /
+#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot`; three-scene-basics.ts: `isPlainGeometraThreeHostSnapshot`) /
 #     host sizing helpers /
 #     layout-sync behavior change (extend verify-layout-sync.mjs when semantics shift).
 #

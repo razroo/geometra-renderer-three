@@ -11,7 +11,8 @@
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `createGeometraThreeSceneBasicsFromPlain`,
  * `resolveGeometraThreeSceneBasicsOptions`,
- * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeHostSnapshotHeadless`,
+ * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `isPlainGeometraThreeHostSnapshot`,
+ * `toPlainGeometraThreeHostSnapshotHeadless`,
  * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`,
  * `toPlainGeometraThreeViewSizingStateHeadless`
  * (including invalid camera coercion and out-of-range FOV),
@@ -56,6 +57,7 @@ const {
   resolveGeometraThreeSceneBasicsOptions,
   disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
+  isPlainGeometraThreeHostSnapshot,
   renderGeometraThreeWebGLWithSceneBasicsFrame,
   tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
@@ -448,6 +450,10 @@ function testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers() {
   assert.equal(roundTrip.layoutWidth, view.layoutWidth)
   assert.equal(roundTrip.threeBackgroundHex, scene.threeBackgroundHex)
   assert.equal(roundTrip.cameraFov, scene.cameraFov)
+  assert.equal(isPlainGeometraThreeHostSnapshot(roundTrip), true)
+  assert.equal(isPlainGeometraThreeHostSnapshot(null), false)
+  const badFov = { ...roundTrip, cameraFov: 200 }
+  assert.equal(isPlainGeometraThreeHostSnapshot(badFov), false)
 }
 
 function testToPlainGeometraThreeHostSnapshotHeadlessMatchesRawOne() {
