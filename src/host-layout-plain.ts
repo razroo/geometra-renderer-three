@@ -7,6 +7,12 @@ import {
   coerceHostStackingZIndexCss,
   type GeometraHudPlacement,
 } from './host-css-coerce.js'
+import {
+  toPlainGeometraThreeHostSnapshot,
+  toPlainGeometraThreeHostSnapshotHeadless,
+  type GeometraThreeSceneBasicsOptions,
+  type PlainGeometraThreeHostSnapshot,
+} from './three-scene-basics.js'
 
 /** Resolved Geometra column layout for {@link createThreeGeometraSplitHost} after coercion (JSON-friendly). */
 export interface PlainGeometraSplitHostLayoutOptions {
@@ -92,5 +98,105 @@ export function toPlainGeometraStackedHostLayoutOptions(
     geometraHudMargin,
     geometraHudPointerEvents,
     geometraHudZIndex,
+  }
+}
+
+/**
+ * Split-host layout fields plus {@link PlainGeometraThreeHostSnapshot} in one JSON-friendly object —
+ * same coercion as {@link toPlainGeometraSplitHostLayoutOptions} and {@link toPlainGeometraThreeHostSnapshot}.
+ *
+ * Use for logs, tests, or agent payloads that describe column chrome and Three viewport/scene together.
+ */
+export type PlainGeometraThreeSplitHostSnapshot = PlainGeometraSplitHostLayoutOptions &
+  PlainGeometraThreeHostSnapshot
+
+/**
+ * Stacked-host HUD layout plus {@link PlainGeometraThreeHostSnapshot} (full-viewport Three sizing, not HUD box size).
+ *
+ * Same coercion as {@link toPlainGeometraStackedHostLayoutOptions} and {@link toPlainGeometraThreeHostSnapshot}.
+ */
+export type PlainGeometraThreeStackedHostSnapshot = PlainGeometraStackedHostLayoutOptions &
+  PlainGeometraThreeHostSnapshot
+
+/**
+ * Merge split layout and host viewport/scene plain fields for stable JSON.
+ *
+ * @see PlainGeometraThreeSplitHostSnapshot
+ */
+export function toPlainGeometraThreeSplitHostSnapshot(
+  layoutOptions: ToPlainGeometraSplitHostLayoutOptionsInput = {},
+  cssWidth: number,
+  cssHeight: number,
+  rawDevicePixelRatio: number,
+  maxDevicePixelRatio?: number,
+  sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
+): PlainGeometraThreeSplitHostSnapshot {
+  return {
+    ...toPlainGeometraSplitHostLayoutOptions(layoutOptions),
+    ...toPlainGeometraThreeHostSnapshot(
+      cssWidth,
+      cssHeight,
+      rawDevicePixelRatio,
+      maxDevicePixelRatio,
+      sceneBasicsOptions,
+    ),
+  }
+}
+
+/**
+ * Same as {@link toPlainGeometraThreeSplitHostSnapshot} with raw device pixel ratio **1** —
+ * parity with {@link toPlainGeometraThreeHostSnapshotHeadless} for headless or agent payloads without a `window`.
+ */
+export function toPlainGeometraThreeSplitHostSnapshotHeadless(
+  layoutOptions: ToPlainGeometraSplitHostLayoutOptionsInput = {},
+  cssWidth: number,
+  cssHeight: number,
+  maxDevicePixelRatio?: number,
+  sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
+): PlainGeometraThreeSplitHostSnapshot {
+  return {
+    ...toPlainGeometraSplitHostLayoutOptions(layoutOptions),
+    ...toPlainGeometraThreeHostSnapshotHeadless(cssWidth, cssHeight, maxDevicePixelRatio, sceneBasicsOptions),
+  }
+}
+
+/**
+ * Merge stacked HUD layout and host viewport/scene plain fields for stable JSON.
+ *
+ * @see PlainGeometraThreeStackedHostSnapshot
+ */
+export function toPlainGeometraThreeStackedHostSnapshot(
+  layoutOptions: ToPlainGeometraStackedHostLayoutOptionsInput = {},
+  cssWidth: number,
+  cssHeight: number,
+  rawDevicePixelRatio: number,
+  maxDevicePixelRatio?: number,
+  sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
+): PlainGeometraThreeStackedHostSnapshot {
+  return {
+    ...toPlainGeometraStackedHostLayoutOptions(layoutOptions),
+    ...toPlainGeometraThreeHostSnapshot(
+      cssWidth,
+      cssHeight,
+      rawDevicePixelRatio,
+      maxDevicePixelRatio,
+      sceneBasicsOptions,
+    ),
+  }
+}
+
+/**
+ * Same as {@link toPlainGeometraThreeStackedHostSnapshot} with raw device pixel ratio **1**.
+ */
+export function toPlainGeometraThreeStackedHostSnapshotHeadless(
+  layoutOptions: ToPlainGeometraStackedHostLayoutOptionsInput = {},
+  cssWidth: number,
+  cssHeight: number,
+  maxDevicePixelRatio?: number,
+  sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
+): PlainGeometraThreeStackedHostSnapshot {
+  return {
+    ...toPlainGeometraStackedHostLayoutOptions(layoutOptions),
+    ...toPlainGeometraThreeHostSnapshotHeadless(cssWidth, cssHeight, maxDevicePixelRatio, sceneBasicsOptions),
   }
 }

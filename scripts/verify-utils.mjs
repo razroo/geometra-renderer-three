@@ -16,7 +16,9 @@
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render`),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
- * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`
+ * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
+ * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
+ * `toPlainGeometraThreeStackedHostSnapshot`, `toPlainGeometraThreeStackedHostSnapshotHeadless`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -60,6 +62,10 @@ const {
   GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS,
   toPlainGeometraSplitHostLayoutOptions,
   toPlainGeometraStackedHostLayoutOptions,
+  toPlainGeometraThreeSplitHostSnapshot,
+  toPlainGeometraThreeSplitHostSnapshotHeadless,
+  toPlainGeometraThreeStackedHostSnapshot,
+  toPlainGeometraThreeStackedHostSnapshotHeadless,
 } = await import(indexHref)
 
 function testNormalizeGeometraLayoutPixels() {
@@ -717,6 +723,43 @@ function testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion() {
   assert.equal(roundTrip.geometraHudZIndex, '1')
 }
 
+function testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge() {
+  const layoutSplit = { geometraWidth: 400, geometraOnLeft: true }
+  const mergedSplit = {
+    ...toPlainGeometraSplitHostLayoutOptions(layoutSplit),
+    ...toPlainGeometraThreeHostSnapshot(800, 600, 2, undefined, { cameraFov: 45 }),
+  }
+  assert.deepEqual(
+    toPlainGeometraThreeSplitHostSnapshot(layoutSplit, 800, 600, 2, undefined, { cameraFov: 45 }),
+    mergedSplit,
+  )
+  const mergedSplitHeadless = {
+    ...toPlainGeometraSplitHostLayoutOptions(),
+    ...toPlainGeometraThreeHostSnapshotHeadless(640, 360, 2),
+  }
+  assert.deepEqual(
+    toPlainGeometraThreeSplitHostSnapshotHeadless({}, 640, 360, 2),
+    mergedSplitHeadless,
+  )
+
+  const mergedStacked = {
+    ...toPlainGeometraStackedHostLayoutOptions({ geometraHudPlacement: 'top-right' }),
+    ...toPlainGeometraThreeHostSnapshot(1920, 1080, 1.25),
+  }
+  assert.deepEqual(
+    toPlainGeometraThreeStackedHostSnapshot({ geometraHudPlacement: 'top-right' }, 1920, 1080, 1.25),
+    mergedStacked,
+  )
+  const mergedStackedHeadless = {
+    ...toPlainGeometraStackedHostLayoutOptions(),
+    ...toPlainGeometraThreeHostSnapshotHeadless(100, 100),
+  }
+  assert.deepEqual(
+    toPlainGeometraThreeStackedHostSnapshotHeadless({}, 100, 100),
+    mergedStackedHeadless,
+  )
+}
+
 function testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne() {
   const log = []
   const renderer = {
@@ -780,5 +823,6 @@ testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
 testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne()
 testToPlainGeometraSplitHostLayoutOptionsMatchesHostCoercion()
 testToPlainGeometraStackedHostLayoutOptionsMatchesHostCoercion()
+testToPlainGeometraThreeCompositeHostSnapshotsMatchManualMerge()
 
 console.log('verify-utils: ok')

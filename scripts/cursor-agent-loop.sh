@@ -36,7 +36,8 @@ fi
 #     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame
 #     (onFrame returning false skips render, parity with host onThreeFrame after teardown) /
 #     disposeGeometraThreeWebGLWithSceneBasics /
-#     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions (host-layout-plain.ts) /
+#     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
+#     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts) /
 #     host sizing helpers /
 #     layout-sync behavior change.
 #

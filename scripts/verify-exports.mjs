@@ -45,6 +45,10 @@ const expectedFunctions = [
   'toPlainGeometraThreeViewSizingState',
   'toPlainGeometraSplitHostLayoutOptions',
   'toPlainGeometraStackedHostLayoutOptions',
+  'toPlainGeometraThreeSplitHostSnapshot',
+  'toPlainGeometraThreeSplitHostSnapshotHeadless',
+  'toPlainGeometraThreeStackedHostSnapshot',
+  'toPlainGeometraThreeStackedHostSnapshotHeadless',
 ]
 const missingFns = expectedFunctions.filter((name) => typeof mod[name] !== 'function')
 if (missingFns.length) {
