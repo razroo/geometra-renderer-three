@@ -5,6 +5,7 @@
  * `resizeGeometraThreePerspectiveView` (including non-finite / non-positive `pixelRatio` and negative CSS sizes),
  * `setWebGLDrawingBufferSize` (including non-positive `pixelRatio`),
  * `syncGeometraThreePerspectiveFromBuffer`, `createGeometraThreePerspectiveResizeHandler`,
+ * `createGeometraThreePerspectiveResizeHandlerHeadless`,
  * `geometraHostPerspectiveAspectFromCss`,
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
@@ -33,6 +34,7 @@ const {
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
   createGeometraHostWebGLRendererParams,
   createGeometraThreePerspectiveResizeHandler,
+  createGeometraThreePerspectiveResizeHandlerHeadless,
   normalizeGeometraLayoutPixels,
   resizeGeometraThreeDrawingBufferView,
   resizeGeometraThreePerspectiveView,
@@ -655,6 +657,35 @@ function testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne() 
   assert.deepEqual(headlessLog, log)
 }
 
+function testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne() {
+  const log = []
+  const renderer = {
+    setPixelRatio(pr) {
+      log.push(['setPixelRatio', pr])
+    },
+    setSize(w, h, updateStyle) {
+      log.push(['setSize', w, h, updateStyle])
+    },
+  }
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+
+  const headless = createGeometraThreePerspectiveResizeHandlerHeadless(renderer, camera, 2)
+  headless(640, 360)
+  const headlessLog = [...log]
+
+  log.length = 0
+  const explicit = createGeometraThreePerspectiveResizeHandler(renderer, camera, () => 1, 2)
+  explicit(640, 360)
+
+  assert.deepEqual(headlessLog, log)
+  assert.equal(camera.aspect, 640 / 360)
+}
+
 testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
 testToPlainGeometraThreeViewSizingStateMatchesHostPath()
@@ -686,5 +717,6 @@ testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender()
 testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
+testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne()
 
 console.log('verify-utils: ok')

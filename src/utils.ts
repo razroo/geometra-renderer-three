@@ -232,6 +232,22 @@ export function createGeometraThreePerspectiveResizeHandler(
 }
 
 /**
+ * Same as {@link createGeometraThreePerspectiveResizeHandler} with raw device pixel ratio fixed at **1** —
+ * parity with {@link resolveHeadlessHostDevicePixelRatio}, {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless},
+ * and {@link toPlainGeometraThreeHostSnapshotHeadless} for headless GL, Node, tests, or agent loops without a browser
+ * `window`.
+ *
+ * Equivalent to `createGeometraThreePerspectiveResizeHandler(renderer, camera, () => 1, maxDevicePixelRatio)`.
+ */
+export function createGeometraThreePerspectiveResizeHandlerHeadless(
+  renderer: WebGLRenderer,
+  camera: PerspectiveCamera,
+  maxDevicePixelRatio?: number,
+): (cssWidth: number, cssHeight: number) => void {
+  return createGeometraThreePerspectiveResizeHandler(renderer, camera, () => 1, maxDevicePixelRatio)
+}
+
+/**
  * Update perspective projection from **drawing-buffer** pixel dimensions (physical pixels), not CSS size.
  *
  * Use when you size WebGL with {@link setWebGLDrawingBufferSize} or `renderer.setDrawingBufferSize` directly
