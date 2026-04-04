@@ -203,6 +203,56 @@ const GEOMETRA_HUD_PLACEMENT_LITERALS = new Set<GeometraHudPlacement>([
 ])
 
 /**
+ * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraSplitHostLayoutOptions} — the layout-only
+ * fields from {@link toPlainGeometraSplitHostLayoutOptions} without viewport or scene sizing. Extra keys
+ * are allowed. Composite {@link PlainGeometraThreeSplitHostSnapshot} values satisfy this guard as well.
+ */
+export function isPlainGeometraSplitHostLayoutOptions(
+  value: unknown,
+): value is PlainGeometraSplitHostLayoutOptions {
+  if (value === null || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  if (typeof o.geometraOnLeft !== 'boolean') return false
+  if (typeof o.geometraWidth !== 'number' || !Number.isFinite(o.geometraWidth) || o.geometraWidth < 0) {
+    return false
+  }
+  return true
+}
+
+/**
+ * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraStackedHostLayoutOptions} — the HUD layout
+ * fields from {@link toPlainGeometraStackedHostLayoutOptions} without viewport or scene. Extra keys are
+ * allowed. `geometraHudPlacement` must be exactly one of the four corner literals (same rule as
+ * {@link isPlainGeometraThreeStackedHostSnapshot}; normalize loose strings with {@link coerceGeometraHudPlacement}
+ * before asserting). Composite {@link PlainGeometraThreeStackedHostSnapshot} values satisfy this guard too.
+ */
+export function isPlainGeometraStackedHostLayoutOptions(
+  value: unknown,
+): value is PlainGeometraStackedHostLayoutOptions {
+  if (value === null || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  if (
+    typeof o.geometraHudWidth !== 'number' ||
+    !Number.isFinite(o.geometraHudWidth) ||
+    o.geometraHudWidth < 0 ||
+    typeof o.geometraHudHeight !== 'number' ||
+    !Number.isFinite(o.geometraHudHeight) ||
+    o.geometraHudHeight < 0 ||
+    typeof o.geometraHudMargin !== 'number' ||
+    !Number.isFinite(o.geometraHudMargin) ||
+    o.geometraHudMargin < 0
+  ) {
+    return false
+  }
+  if (typeof o.geometraHudPlacement !== 'string' || !GEOMETRA_HUD_PLACEMENT_LITERALS.has(o.geometraHudPlacement as GeometraHudPlacement)) {
+    return false
+  }
+  if (typeof o.geometraHudPointerEvents !== 'string') return false
+  if (typeof o.geometraHudZIndex !== 'string') return false
+  return true
+}
+
+/**
  * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeSplitHostSnapshot} when the object
  * matches the shape produced by {@link toPlainGeometraThreeSplitHostSnapshot} /
  * {@link toPlainGeometraThreeSplitHostSnapshotHeadless}. `geometraHybridHostKind` accepts the same trim +

@@ -28,8 +28,9 @@ fi
 #     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts),
 #     verify-host-layout-plain.mjs (dist/host-layout-plain.js; plain split/stacked layout, stacked HUD rect
 #     toPlainGeometraStackedHudRect, composite snapshots, geometraHybridHostKind / GEOMETRA_HYBRID_HOST_KINDS /
-#     isGeometraHybridHostKind / coerceGeometraHybridHostKind; isPlainGeometraThreeSplitHostSnapshot /
-#     isPlainGeometraThreeStackedHostSnapshot with layout numbers ≥ 0 (same idea as coerceHostNonNegativeCssPx);
+#     isGeometraHybridHostKind / coerceGeometraHybridHostKind; isPlainGeometraSplitHostLayoutOptions /
+#     isPlainGeometraStackedHostLayoutOptions (layout-only JSON; stacked placement exact literals);
+#     isPlainGeometraThreeSplitHostSnapshot / isPlainGeometraThreeStackedHostSnapshot with layout numbers ≥ 0 (same idea as coerceHostNonNegativeCssPx);
 #     isPlainGeometraThreeHostSnapshot / isPlainGeometraThreeSceneBasicsOptions from dist/three-scene-basics.js for
 #     base viewport+scene vs scene-only JSON guards;
 #     isPlainGeometraThreeViewSizingState from dist/utils.js for viewport-only JSON guards).
@@ -54,7 +55,8 @@ fi
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
 #     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless /
 #     toPlainGeometraStackedHudRect (host-layout-plain.ts; `geometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`,
-#     `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraThreeSplitHostSnapshot`,
+#     `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `isPlainGeometraSplitHostLayoutOptions`,
+#     `isPlainGeometraStackedHostLayoutOptions`, `isPlainGeometraThreeSplitHostSnapshot`,
 #     `isPlainGeometraThreeStackedHostSnapshot` (split/HUD layout numbers ≥ 0; composite kind trim/case like `coerceGeometraHybridHostKind`); three-scene-basics.ts: `isPlainGeometraThreeHostSnapshot`) /
 #     host sizing helpers /
 #     layout-sync behavior change (extend verify-layout-sync.mjs when semantics shift).

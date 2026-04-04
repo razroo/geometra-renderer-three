@@ -3,7 +3,8 @@
  * Post-build checks for `dist/host-layout-plain.js`: split/stacked plain layout helpers,
  * stacked HUD rect (`toPlainGeometraStackedHudRect`), composite snapshots (`geometraHybridHostKind`),
  * `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`,
- * `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot` (split column and HUD
+ * `isPlainGeometraSplitHostLayoutOptions`, `isPlainGeometraStackedHostLayoutOptions` (layout-only JSON;
+ *   stacked placement exact literals like composite guard), `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot` (split column and HUD
  *   width/height/margin finite and ≥ 0, matching `coerceHostNonNegativeCssPx`; `geometraHybridHostKind` trim +
  *   case-insensitive like `coerceGeometraHybridHostKind`), and
  * `isPlainGeometraThreeHostSnapshot` (from `dist/three-scene-basics.js`).
@@ -23,6 +24,8 @@ const {
   GEOMETRA_HYBRID_HOST_KINDS,
   coerceGeometraHybridHostKind,
   isGeometraHybridHostKind,
+  isPlainGeometraSplitHostLayoutOptions,
+  isPlainGeometraStackedHostLayoutOptions,
   isPlainGeometraThreeSplitHostSnapshot,
   isPlainGeometraThreeStackedHostSnapshot,
   toPlainGeometraSplitHostLayoutOptions,
@@ -99,6 +102,35 @@ testHybridHostKindHelpers()
 testSplitPlainLayoutMatchesDefaults()
 testStackedPlainLayoutMatchesDefaults()
 testCompositeSnapshotsKindAndLayout()
+
+function testPlainLayoutOnlyGuards() {
+  const splitPlain = toPlainGeometraSplitHostLayoutOptions()
+  assert.equal(isPlainGeometraSplitHostLayoutOptions(splitPlain), true)
+  assert.equal(isPlainGeometraSplitHostLayoutOptions(toPlainGeometraThreeSplitHostSnapshot({}, 10, 10, 1)), true)
+
+  const stackedPlain = toPlainGeometraStackedHostLayoutOptions()
+  assert.equal(isPlainGeometraStackedHostLayoutOptions(stackedPlain), true)
+  assert.equal(
+    isPlainGeometraStackedHostLayoutOptions(toPlainGeometraThreeStackedHostSnapshot({}, 10, 10, 1)),
+    true,
+  )
+
+  assert.equal(isPlainGeometraSplitHostLayoutOptions(null), false)
+  assert.equal(isPlainGeometraSplitHostLayoutOptions({ geometraWidth: 1 }), false)
+  assert.equal(isPlainGeometraSplitHostLayoutOptions({ geometraWidth: -1, geometraOnLeft: false }), false)
+  assert.equal(isPlainGeometraSplitHostLayoutOptions({ geometraWidth: 1, geometraOnLeft: 'no' }), false)
+
+  assert.equal(isPlainGeometraStackedHostLayoutOptions(null), false)
+  assert.equal(
+    isPlainGeometraStackedHostLayoutOptions({
+      ...stackedPlain,
+      geometraHudPlacement: 'Bottom-Right',
+    }),
+    false,
+  )
+}
+
+testPlainLayoutOnlyGuards()
 
 function testStackedHudRectMatchesHostPlacement() {
   const layout = toPlainGeometraStackedHostLayoutOptions()
