@@ -27,6 +27,7 @@ const expectedFunctions = [
   'normalizeGeometraLayoutPixels',
   'resizeGeometraThreeDrawingBufferView',
   'resizeGeometraThreePerspectiveView',
+  'resolveHeadlessHostDevicePixelRatio',
   'resolveHostDevicePixelRatio',
   'setWebGLDrawingBufferSize',
   'syncGeometraThreePerspectiveFromBuffer',

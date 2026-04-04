@@ -69,6 +69,17 @@ export function resolveHostDevicePixelRatio(
 }
 
 /**
+ * Same optional {@link maxDevicePixelRatio} cap as {@link createThreeGeometraSplitHost} and
+ * {@link createThreeGeometraStackedHost}, but with raw ratio **1** for environments without a
+ * browser `window` (headless WebGL, Node, tests).
+ *
+ * Equivalent to `resolveHostDevicePixelRatio(1, maxDevicePixelRatio)`.
+ */
+export function resolveHeadlessHostDevicePixelRatio(maxDevicePixelRatio?: number): number {
+  return resolveHostDevicePixelRatio(1, maxDevicePixelRatio)
+}
+
+/**
  * Resize drawing buffer to match CSS pixel size × device pixel ratio.
  * Use when you manage your own canvas layout (no `renderer.setSize`).
  * Non-finite CSS sizes or products fall back to 1; non-finite or non-positive `pixelRatio` becomes 1.

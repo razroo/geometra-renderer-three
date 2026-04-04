@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreeDrawingBufferView`,
+ * Post-build checks for `resolveHostDevicePixelRatio`, `resolveHeadlessHostDevicePixelRatio`,
+ * `resizeGeometraThreeDrawingBufferView`,
  * `resizeGeometraThreePerspectiveView` (including non-finite / non-positive `pixelRatio` and negative CSS sizes),
  * `setWebGLDrawingBufferSize` (including non-positive `pixelRatio`),
  * `syncGeometraThreePerspectiveFromBuffer`, `createGeometraThreePerspectiveResizeHandler`,
@@ -30,6 +31,7 @@ const {
   normalizeGeometraLayoutPixels,
   resizeGeometraThreeDrawingBufferView,
   resizeGeometraThreePerspectiveView,
+  resolveHeadlessHostDevicePixelRatio,
   resolveHostDevicePixelRatio,
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
@@ -66,6 +68,15 @@ function testResolveHostDevicePixelRatio() {
   assert.equal(resolveHostDevicePixelRatio(Number.POSITIVE_INFINITY, undefined), 1)
   // Non-finite cap is ignored (same branch as undefined cap).
   assert.equal(resolveHostDevicePixelRatio(2, Number.POSITIVE_INFINITY), 2)
+}
+
+function testResolveHeadlessHostDevicePixelRatio() {
+  assert.equal(resolveHeadlessHostDevicePixelRatio(undefined), 1)
+  assert.equal(resolveHeadlessHostDevicePixelRatio(2), 1)
+  assert.equal(resolveHeadlessHostDevicePixelRatio(), 1)
+  assert.equal(resolveHeadlessHostDevicePixelRatio(Number.NaN), 1)
+  assert.equal(resolveHeadlessHostDevicePixelRatio(0), 1)
+  assert.equal(resolveHeadlessHostDevicePixelRatio(Number.POSITIVE_INFINITY), 1)
 }
 
 function testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize() {
@@ -434,6 +445,7 @@ function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize
 testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
 testResolveHostDevicePixelRatio()
+testResolveHeadlessHostDevicePixelRatio()
 testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize()
 testResizeGeometraThreePerspectiveView()
 testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()
