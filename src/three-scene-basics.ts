@@ -425,6 +425,30 @@ export function resizeGeometraThreeWebGLWithSceneBasicsViewHeadless(
 }
 
 /**
+ * Resize from {@link PlainGeometraThreeViewSizingState} using `layoutWidth`, `layoutHeight`, and
+ * `effectiveDevicePixelRatio` — equivalent to
+ * {@link resizeGeometraThreeWebGLWithSceneBasicsView} with those dimensions and the same effective ratio
+ * the plain helpers compute from raw DPR and optional cap.
+ *
+ * Accepts any object with those fields, including a full {@link PlainGeometraThreeHostSnapshot} or composite
+ * split/stacked snapshot (extra keys ignored). Use when logs, tests, or agents already validated viewport JSON
+ * via {@link isPlainGeometraThreeHostSnapshot} and should not re-derive {@link resolveHostDevicePixelRatio}
+ * from partial inputs.
+ */
+export function resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing(
+  bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer' | 'camera'>,
+  sizing: PlainGeometraThreeViewSizingState,
+): void {
+  resizeGeometraThreePerspectiveView(
+    bundle.renderer,
+    bundle.camera,
+    sizing.layoutWidth,
+    sizing.layoutHeight,
+    sizing.effectiveDevicePixelRatio,
+  )
+}
+
+/**
  * One `renderer.render(scene, camera)` pass for a {@link GeometraThreeWebGLWithSceneBasics} bundle.
  *
  * Use in headless GL, tests, or agent-style loops after
