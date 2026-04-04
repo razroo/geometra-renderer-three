@@ -9,7 +9,8 @@
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics` (including invalid camera coercion and out-of-range FOV),
- * `disposeGeometraThreeWebGLWithSceneBasics`, `resizeGeometraThreeWebGLWithSceneBasicsView`
+ * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
+ * `resizeGeometraThreeWebGLWithSceneBasicsView`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -38,6 +39,7 @@ const {
   createGeometraThreeSceneBasics,
   disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
+  renderGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
 } = await import(indexHref)
 
@@ -414,6 +416,19 @@ function testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose() {
   assert.equal(disposed, 1)
 }
 
+function testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender() {
+  const log = []
+  const scene = {}
+  const camera = {}
+  const renderer = {
+    render(s, c) {
+      log.push(['render', s, c])
+    },
+  }
+  renderGeometraThreeWebGLWithSceneBasicsFrame({ renderer, scene, camera })
+  assert.deepEqual(log, [['render', scene, camera]])
+}
+
 function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize() {
   const log = []
   const renderer = {
@@ -462,6 +477,7 @@ testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
 testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions()
 testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose()
+testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 
 console.log('verify-utils: ok')

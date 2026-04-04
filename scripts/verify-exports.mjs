@@ -22,6 +22,7 @@ const expectedFunctions = [
   'createGeometraThreeWebGLRenderer',
   'createGeometraThreeWebGLWithSceneBasics',
   'disposeGeometraThreeWebGLWithSceneBasics',
+  'renderGeometraThreeWebGLWithSceneBasicsFrame',
   'resizeGeometraThreeWebGLWithSceneBasicsView',
   'geometraHostPerspectiveAspectFromCss',
   'normalizeGeometraLayoutPixels',

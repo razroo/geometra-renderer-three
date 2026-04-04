@@ -203,3 +203,17 @@ export function resizeGeometraThreeWebGLWithSceneBasicsView(
     resolveHostDevicePixelRatio(rawDevicePixelRatio, maxDevicePixelRatio),
   )
 }
+
+/**
+ * One `renderer.render(scene, camera)` pass for a {@link GeometraThreeWebGLWithSceneBasics} bundle.
+ *
+ * Use in headless GL, tests, or agent-style loops after
+ * {@link resizeGeometraThreeWebGLWithSceneBasicsView} (or your own sizing) so a single frame matches
+ * the same scene/camera/renderer wiring as {@link createThreeGeometraSplitHost} /
+ * {@link createThreeGeometraStackedHost} without duplicating the render call.
+ */
+export function renderGeometraThreeWebGLWithSceneBasicsFrame(
+  bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer' | 'scene' | 'camera'>,
+): void {
+  bundle.renderer.render(bundle.scene, bundle.camera)
+}
