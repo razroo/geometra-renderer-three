@@ -34,7 +34,7 @@ fi
 #     createGeometraThreeWebGLWithSceneBasics / resolveGeometraThreeSceneBasicsOptions /
 #     resizeGeometraThreeWebGLWithSceneBasicsView / resizeGeometraThreeWebGLWithSceneBasicsViewHeadless /
 #     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame
-#     (onFrame returning false skips render, parity with host onThreeFrame after teardown) /
+#     (onFrame returning false skips render; onFrame throw skips render, parity with host onThreeFrame ordering) /
 #     disposeGeometraThreeWebGLWithSceneBasics /
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
 #     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless (host-layout-plain.ts) /

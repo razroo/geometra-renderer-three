@@ -369,6 +369,9 @@ export function renderGeometraThreeWebGLWithSceneBasicsFrame(
  * `onThreeFrame` after teardown (avoids rendering after WebGL dispose). `undefined` and other return values
  * still render.
  *
+ * If `onFrame` **throws**, the error propagates and `renderer.render` is not called — same ordering as browser
+ * hosts, which run the frame callback before `render`.
+ *
  * Use in headless GL, tests, or agent loops when you want {@link THREE.Clock} timing parity with those hosts
  * without duplicating the loop body. Omit the callback to match a tick that only advances the clock and renders.
  */

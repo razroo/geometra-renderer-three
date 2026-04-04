@@ -14,7 +14,8 @@
  * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
- * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render`),
+ * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render`, and
+ * `onFrame` throwing so `render` is skipped),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
  * `toPlainGeometraSplitHostLayoutOptions`, `toPlainGeometraStackedHostLayoutOptions`,
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
@@ -620,6 +621,28 @@ function testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
   assert.deepEqual(log, ['onFrame'])
 }
 
+function testTickGeometraThreeWebGLWithSceneBasicsFrameOnFrameThrowSkipsRender() {
+  const clock = new THREE.Clock()
+  const scene = {}
+  const camera = {}
+  let renderCalls = 0
+  const renderer = {
+    render() {
+      renderCalls += 1
+    },
+  }
+  const bundle = { renderer, scene, camera, clock }
+
+  assert.throws(
+    () =>
+      tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, () => {
+        throw new Error('boom')
+      }),
+    /boom/,
+  )
+  assert.equal(renderCalls, 0)
+}
+
 function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize() {
   const log = []
   const renderer = {
@@ -818,6 +841,7 @@ testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions()
 testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose()
 testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender()
 testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
+testTickGeometraThreeWebGLWithSceneBasicsFrameOnFrameThrowSkipsRender()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
 testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne()
