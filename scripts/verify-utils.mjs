@@ -28,7 +28,8 @@
  * `toPlainGeometraThreeSplitHostSnapshot`, `toPlainGeometraThreeSplitHostSnapshotHeadless`,
  * `toPlainGeometraThreeStackedHostSnapshot`, `toPlainGeometraThreeStackedHostSnapshotHeadless`
  * (composite snapshots include `geometraHybridHostKind`: `'split'` | `'stacked'`; `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`, `GEOMETRA_HYBRID_HOST_KINDS`)
- * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
+ * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` /
+ * `createGeometraThreeWebGLWithSceneBasicsFromPlain` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
  * Node `three` (no WebGL).

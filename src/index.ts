@@ -3,7 +3,7 @@
  * ({@link resizeGeometraThreePerspectiveView}, {@link toPlainGeometraThreeViewSizingState}, drawing-buffer paths, DPR capping, {@link GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO}, {@link resolveHeadlessHostDevicePixelRatio}, {@link createGeometraThreePerspectiveResizeHandlerHeadless}), shared scene defaults
  * ({@link createGeometraThreeSceneBasics}, {@link resolveGeometraThreeSceneBasicsOptions}, {@link toPlainGeometraThreeSceneBasicsOptions},
  * {@link createGeometraThreeSceneBasicsFromPlain},
- * {@link createGeometraThreeWebGLWithSceneBasics},
+ * {@link createGeometraThreeWebGLWithSceneBasics}, {@link createGeometraThreeWebGLWithSceneBasicsFromPlain},
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView}, {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless},
  * {@link resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing},
  * {@link toPlainGeometraThreeViewSizingStateHeadless},
@@ -66,6 +66,7 @@ export {
   toPlainGeometraThreeHostSnapshotFromViewSizing,
   createGeometraThreeWebGLRenderer,
   createGeometraThreeWebGLWithSceneBasics,
+  createGeometraThreeWebGLWithSceneBasicsFromPlain,
   disposeGeometraThreeWebGLWithSceneBasics,
   isPlainGeometraThreeHostSnapshot,
   renderGeometraThreeWebGLWithSceneBasicsFrame,

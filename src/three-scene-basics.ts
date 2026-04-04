@@ -359,6 +359,23 @@ export function createGeometraThreeWebGLWithSceneBasics(
 }
 
 /**
+ * Same host-aligned renderer + scene bundle as {@link createGeometraThreeWebGLWithSceneBasics}, but scene and
+ * camera are built from {@link PlainGeometraThreeSceneBasicsOptions} (for example `JSON.parse` of logs, tests,
+ * or agent payloads) via {@link createGeometraThreeSceneBasicsFromPlain}, so invalid fields get the same coercion
+ * as split/stacked hosts without manually mapping `threeBackgroundHex` into {@link GeometraThreeSceneBasicsOptions}.
+ *
+ * Requires a WebGL-capable environment (same as `new WebGLRenderer(...)`).
+ */
+export function createGeometraThreeWebGLWithSceneBasicsFromPlain(
+  canvas: NonNullable<WebGLRendererParameters['canvas']>,
+  plain: PlainGeometraThreeSceneBasicsOptions,
+): GeometraThreeWebGLWithSceneBasics {
+  const renderer = createGeometraThreeWebGLRenderer(canvas)
+  const { scene, camera, clock } = createGeometraThreeSceneBasicsFromPlain(plain)
+  return { renderer, scene, camera, clock }
+}
+
+/**
  * Tear down the {@link THREE.WebGLRenderer} from {@link createGeometraThreeWebGLWithSceneBasics}
  * (or any bundle that shares the same `renderer` reference).
  *
