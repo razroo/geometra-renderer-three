@@ -36,6 +36,35 @@ export const GEOMETRA_THREE_HOST_SCENE_DEFAULTS: Required<GeometraThreeSceneBasi
   cameraPosition: [0, 0, 5],
 }
 
+function coerceGeometraThreeSceneBasicsCamera(
+  merged: Required<GeometraThreeSceneBasicsOptions>,
+): Required<Pick<GeometraThreeSceneBasicsOptions, 'cameraFov' | 'cameraNear' | 'cameraFar' | 'cameraPosition'>> {
+  const d = GEOMETRA_THREE_HOST_SCENE_DEFAULTS
+
+  const cameraFov =
+    Number.isFinite(merged.cameraFov) && merged.cameraFov > 0 && merged.cameraFov < 180
+      ? merged.cameraFov
+      : d.cameraFov
+
+  let cameraNear =
+    Number.isFinite(merged.cameraNear) && merged.cameraNear > 0 ? merged.cameraNear : d.cameraNear
+
+  let cameraFar = merged.cameraFar
+  if (!Number.isFinite(cameraFar) || cameraFar <= cameraNear) {
+    cameraFar = d.cameraFar > cameraNear ? d.cameraFar : cameraNear * 2
+  }
+
+  const [px, py, pz] = merged.cameraPosition
+  const [dx, dy, dz] = d.cameraPosition
+  const cameraPosition: THREE.Vector3Tuple = [
+    Number.isFinite(px) ? px : dx!,
+    Number.isFinite(py) ? py : dy!,
+    Number.isFinite(pz) ? pz : dz!,
+  ]
+
+  return { cameraFov, cameraNear, cameraFar, cameraPosition }
+}
+
 /**
  * `WebGLRenderer` constructor options (excluding `canvas`) used by
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
@@ -85,18 +114,17 @@ export function createGeometraThreeWebGLRenderer(
  * Use this when you want Three.js state aligned with those hosts but manage your own
  * `WebGLRenderer` (for example headless GL, offscreen canvas, or custom render targets).
  *
+ * Non-finite or invalid perspective settings fall back to {@link GEOMETRA_THREE_HOST_SCENE_DEFAULTS}
+ * (or `far = max(default far, near × 2)` when the default far is not past a coerced near plane).
+ *
  * @returns A {@link GeometraThreeSceneBasics} value aligned with split/stacked host defaults.
  */
 export function createGeometraThreeSceneBasics(
   options: GeometraThreeSceneBasicsOptions = {},
 ): GeometraThreeSceneBasics {
-  const {
-    threeBackground,
-    cameraFov,
-    cameraNear,
-    cameraFar,
-    cameraPosition,
-  } = { ...GEOMETRA_THREE_HOST_SCENE_DEFAULTS, ...options }
+  const merged = { ...GEOMETRA_THREE_HOST_SCENE_DEFAULTS, ...options }
+  const { threeBackground } = merged
+  const { cameraFov, cameraNear, cameraFar, cameraPosition } = coerceGeometraThreeSceneBasicsCamera(merged)
 
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(threeBackground)

@@ -7,7 +7,7 @@
  * `geometraHostPerspectiveAspectFromCss`,
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
- * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`,
+ * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics` (including invalid camera coercion),
  * `disposeGeometraThreeWebGLWithSceneBasics`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
@@ -344,6 +344,32 @@ function testCreateGeometraThreeSceneBasicsCustomOptions() {
   assert.equal(camera.position.z, 3)
 }
 
+function testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions() {
+  const d = GEOMETRA_THREE_HOST_SCENE_DEFAULTS
+
+  const nanFov = createGeometraThreeSceneBasics({ cameraFov: Number.NaN }).camera
+  assert.equal(nanFov.fov, d.cameraFov)
+
+  const badNear = createGeometraThreeSceneBasics({ cameraNear: -1, cameraFar: 100 }).camera
+  assert.equal(badNear.near, d.cameraNear)
+  assert.equal(badNear.far, 100)
+
+  const invertedClip = createGeometraThreeSceneBasics({ cameraNear: 1, cameraFar: 0.5 }).camera
+  assert.equal(invertedClip.near, 1)
+  assert.equal(invertedClip.far, d.cameraFar)
+
+  const hugeNear = createGeometraThreeSceneBasics({ cameraNear: 1e10, cameraFar: 1 }).camera
+  assert.equal(hugeNear.near, 1e10)
+  assert.equal(hugeNear.far, 2e10)
+
+  const badPos = createGeometraThreeSceneBasics({
+    cameraPosition: [Number.NaN, 2, Number.POSITIVE_INFINITY],
+  }).camera
+  assert.equal(badPos.position.x, d.cameraPosition[0])
+  assert.equal(badPos.position.y, 2)
+  assert.equal(badPos.position.z, d.cameraPosition[2])
+}
+
 function testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose() {
   let disposed = 0
   const renderer = {
@@ -372,6 +398,7 @@ testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
+testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions()
 testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose()
 
 console.log('verify-utils: ok')
