@@ -40,6 +40,7 @@ const expectedFunctions = [
   'geometraHostPerspectiveAspectFromCss',
   'isGeometraHybridHostKind',
   'isPlainGeometraThreeHostSnapshot',
+  'isPlainGeometraThreeSceneBasicsOptions',
   'isPlainGeometraThreeSplitHostSnapshot',
   'isPlainGeometraThreeStackedHostSnapshot',
   'isPlainGeometraThreeViewSizingState',

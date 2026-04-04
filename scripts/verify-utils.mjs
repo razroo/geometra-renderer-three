@@ -12,7 +12,7 @@
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `createGeometraThreeSceneBasicsFromPlain`,
  * `resolveGeometraThreeSceneBasicsOptions`,
- * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `isPlainGeometraThreeHostSnapshot`,
+ * `toPlainGeometraThreeSceneBasicsOptions`, `isPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `isPlainGeometraThreeHostSnapshot`,
  * `toPlainGeometraThreeHostSnapshotHeadless`,
  * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`,
  * `toPlainGeometraThreeViewSizingStateHeadless`, `isPlainGeometraThreeViewSizingState`
@@ -62,6 +62,7 @@ const {
   disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
   isPlainGeometraThreeHostSnapshot,
+  isPlainGeometraThreeSceneBasicsOptions,
   isPlainGeometraThreeViewSizingState,
   renderGeometraThreeWebGLWithSceneBasicsFrame,
   tickGeometraThreeWebGLWithSceneBasicsFrame,
@@ -488,6 +489,29 @@ function testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers() {
   assert.equal(isPlainGeometraThreeHostSnapshot(null), false)
   const badFov = { ...roundTrip, cameraFov: 200 }
   assert.equal(isPlainGeometraThreeHostSnapshot(badFov), false)
+}
+
+function testIsPlainGeometraThreeSceneBasicsOptionsAlignsWithHostSnapshotSceneSlice() {
+  const plain = toPlainGeometraThreeSceneBasicsOptions({ cameraFov: 40 })
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions(plain), true)
+  const parsed = JSON.parse(JSON.stringify(plain))
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions(parsed), true)
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions(null), false)
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions(undefined), false)
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions('x'), false)
+
+  const viewOnly = toPlainGeometraThreeViewSizingState(100, 100, 1)
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions(viewOnly), false)
+
+  const full = toPlainGeometraThreeHostSnapshot(100, 100, 1)
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions(full), true)
+  assert.equal(isPlainGeometraThreeHostSnapshot(full), true)
+
+  const badFov = { ...plain, cameraFov: 200 }
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions(badFov), false)
+
+  const badNearFar = { ...plain, cameraNear: 10, cameraFar: 5 }
+  assert.equal(isPlainGeometraThreeSceneBasicsOptions(badNearFar), false)
 }
 
 function testToPlainGeometraThreeHostSnapshotHeadlessMatchesRawOne() {
@@ -1258,6 +1282,7 @@ testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
 testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate()
 testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers()
+testIsPlainGeometraThreeSceneBasicsOptionsAlignsWithHostSnapshotSceneSlice()
 testToPlainGeometraThreeHostSnapshotHeadlessMatchesRawOne()
 testToPlainGeometraThreeHostSnapshotFromViewSizingMatchesMergeAndFullSnapshot()
 testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable()

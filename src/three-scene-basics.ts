@@ -166,15 +166,7 @@ function isPlainCameraPosition(value: unknown): value is THREE.Vector3Tuple {
   )
 }
 
-/**
- * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeHostSnapshot} when the object matches
- * the shape from {@link toPlainGeometraThreeHostSnapshot} / {@link toPlainGeometraThreeHostSnapshotHeadless} /
- * {@link toPlainGeometraThreeHostSnapshotFromViewSizing}. Extra keys (e.g. hybrid layout fields) are allowed.
- * Composite payloads use {@link isPlainGeometraThreeSplitHostSnapshot} / {@link isPlainGeometraThreeStackedHostSnapshot}.
- */
-export function isPlainGeometraThreeHostSnapshot(value: unknown): value is PlainGeometraThreeHostSnapshot {
-  if (!isPlainGeometraThreeViewSizingState(value)) return false
-  const o = value as unknown as Record<string, unknown>
+function isPlainGeometraThreeSceneBasicsOptionsRecord(o: Record<string, unknown>): boolean {
   if (typeof o.threeBackgroundHex !== 'number' || !Number.isFinite(o.threeBackgroundHex)) {
     return false
   }
@@ -187,6 +179,30 @@ export function isPlainGeometraThreeHostSnapshot(value: unknown): value is Plain
   if (typeof near !== 'number' || !Number.isFinite(near) || near <= 0) return false
   if (typeof far !== 'number' || !Number.isFinite(far) || far <= near) return false
   return isPlainCameraPosition(o.cameraPosition)
+}
+
+/**
+ * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeSceneBasicsOptions} — the scene/camera
+ * fields from {@link toPlainGeometraThreeSceneBasicsOptions} without viewport sizing. Extra keys are allowed.
+ * Pair with {@link isPlainGeometraThreeViewSizingState} when you need both slices before merging or calling
+ * {@link createGeometraThreeSceneBasicsFromPlain}.
+ */
+export function isPlainGeometraThreeSceneBasicsOptions(
+  value: unknown,
+): value is PlainGeometraThreeSceneBasicsOptions {
+  if (value === null || typeof value !== 'object') return false
+  return isPlainGeometraThreeSceneBasicsOptionsRecord(value as Record<string, unknown>)
+}
+
+/**
+ * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeHostSnapshot} when the object matches
+ * the shape from {@link toPlainGeometraThreeHostSnapshot} / {@link toPlainGeometraThreeHostSnapshotHeadless} /
+ * {@link toPlainGeometraThreeHostSnapshotFromViewSizing}. Extra keys (e.g. hybrid layout fields) are allowed.
+ * Composite payloads use {@link isPlainGeometraThreeSplitHostSnapshot} / {@link isPlainGeometraThreeStackedHostSnapshot}.
+ */
+export function isPlainGeometraThreeHostSnapshot(value: unknown): value is PlainGeometraThreeHostSnapshot {
+  if (!isPlainGeometraThreeViewSizingState(value)) return false
+  return isPlainGeometraThreeSceneBasicsOptionsRecord(value as unknown as Record<string, unknown>)
 }
 
 /**
