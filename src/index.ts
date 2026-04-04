@@ -5,6 +5,7 @@
  * {@link createGeometraThreeSceneBasicsFromPlain},
  * {@link createGeometraThreeWebGLWithSceneBasics},
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView}, {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless},
+ * {@link toPlainGeometraThreeViewSizingStateHeadless},
  * {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
  * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} (`onFrame` may return `false` to skip `render` and make the tick return `false`, or throw to skip), {@link disposeGeometraThreeWebGLWithSceneBasics} (optional `clock` stops timing after dispose),
  * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless},
@@ -45,6 +46,7 @@ export {
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
   toPlainGeometraThreeViewSizingState,
+  toPlainGeometraThreeViewSizingStateHeadless,
   type PlainGeometraThreeViewSizingState,
 } from './utils.js'
 export {

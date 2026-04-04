@@ -12,7 +12,8 @@
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `createGeometraThreeSceneBasicsFromPlain`,
  * `resolveGeometraThreeSceneBasicsOptions`,
  * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeHostSnapshotHeadless`,
- * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`
+ * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`,
+ * `toPlainGeometraThreeViewSizingStateHeadless`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics` (optional `clock` → `Clock#stop` before `renderer.dispose`),
  * `renderGeometraThreeWebGLWithSceneBasicsFrame`,
@@ -63,6 +64,7 @@ const {
   toPlainGeometraThreeHostSnapshotHeadless,
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeViewSizingState,
+  toPlainGeometraThreeViewSizingStateHeadless,
   GEOMETRA_HYBRID_HOST_KINDS,
   GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS,
   GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS,
@@ -119,6 +121,12 @@ function testToPlainGeometraThreeViewSizingStateMatchesHostPath() {
   const roundTrip = JSON.parse(JSON.stringify(toPlainGeometraThreeViewSizingState(320, 240, 1.5)))
   assert.equal(roundTrip.layoutWidth, 320)
   assert.equal(roundTrip.effectiveDevicePixelRatio, 1.5)
+}
+
+function testToPlainGeometraThreeViewSizingStateHeadlessMatchesRawOne() {
+  const headless = toPlainGeometraThreeViewSizingStateHeadless(640, 360, 2)
+  const explicit = toPlainGeometraThreeViewSizingState(640, 360, 1, 2)
+  assert.deepEqual(headless, explicit)
 }
 
 function testResolveHostDevicePixelRatio() {
@@ -908,6 +916,7 @@ function testCreateGeometraThreePerspectiveResizeHandlerHeadlessMatchesRawOne() 
 testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
 testToPlainGeometraThreeViewSizingStateMatchesHostPath()
+testToPlainGeometraThreeViewSizingStateHeadlessMatchesRawOne()
 testResolveHostDevicePixelRatio()
 testResolveHeadlessHostDevicePixelRatio()
 testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize()

@@ -45,6 +45,7 @@ const expectedFunctions = [
   'toPlainGeometraThreeHostSnapshotFromViewSizing',
   'toPlainGeometraThreeSceneBasicsOptions',
   'toPlainGeometraThreeViewSizingState',
+  'toPlainGeometraThreeViewSizingStateHeadless',
   'toPlainGeometraSplitHostLayoutOptions',
   'toPlainGeometraStackedHostLayoutOptions',
   'toPlainGeometraThreeSplitHostSnapshot',

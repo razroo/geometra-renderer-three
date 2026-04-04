@@ -140,6 +140,22 @@ export function toPlainGeometraThreeViewSizingState(
 }
 
 /**
+ * Same plain viewport sizing as {@link toPlainGeometraThreeViewSizingState} with raw device pixel ratio
+ * fixed at **1** — parity with {@link resolveHeadlessHostDevicePixelRatio},
+ * {@link toPlainGeometraThreeHostSnapshotHeadless}, and {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless}
+ * for headless GL, Node, tests, or agent payloads without a browser `window`.
+ *
+ * Equivalent to `toPlainGeometraThreeViewSizingState(cssWidth, cssHeight, 1, maxDevicePixelRatio)`.
+ */
+export function toPlainGeometraThreeViewSizingStateHeadless(
+  cssWidth: number,
+  cssHeight: number,
+  maxDevicePixelRatio?: number,
+): PlainGeometraThreeViewSizingState {
+  return toPlainGeometraThreeViewSizingState(cssWidth, cssHeight, 1, maxDevicePixelRatio)
+}
+
+/**
  * Resize drawing buffer to match CSS pixel size × device pixel ratio.
  * Use when you manage your own canvas layout (no `renderer.setSize`).
  * Non-finite CSS sizes or products fall back to 1; non-finite or non-positive `pixelRatio` becomes 1.
@@ -234,7 +250,7 @@ export function createGeometraThreePerspectiveResizeHandler(
 /**
  * Same as {@link createGeometraThreePerspectiveResizeHandler} with raw device pixel ratio fixed at **1** —
  * parity with {@link resolveHeadlessHostDevicePixelRatio}, {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless},
- * and {@link toPlainGeometraThreeHostSnapshotHeadless} for headless GL, Node, tests, or agent loops without a browser
+ * {@link toPlainGeometraThreeViewSizingStateHeadless}, and {@link toPlainGeometraThreeHostSnapshotHeadless} for headless GL, Node, tests, or agent loops without a browser
  * `window`.
  *
  * Equivalent to `createGeometraThreePerspectiveResizeHandler(renderer, camera, () => 1, maxDevicePixelRatio)`.

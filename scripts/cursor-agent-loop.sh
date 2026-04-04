@@ -26,7 +26,7 @@ fi
 #     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
-#     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeHostSnapshot /
+#     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeViewSizingStateHeadless / toPlainGeometraThreeHostSnapshot /
 #     toPlainGeometraThreeHostSnapshotHeadless / toPlainGeometraThreeHostSnapshotFromViewSizing /
 #     createGeometraThreePerspectiveResizeHandler / createGeometraThreePerspectiveResizeHandlerHeadless / scene-basics /
 #     createGeometraThreeSceneBasicsFromPlain (plain JSON → scene basics; verify-utils) /
