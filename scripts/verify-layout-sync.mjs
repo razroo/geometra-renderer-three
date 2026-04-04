@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * Post-build checks for `createGeometraHostLayoutSyncRaf` (split/stacked resize coalescing):
- * rAF coalescing, optional synthetic Geometra `resize`, cancel/destroy semantics.
+ * rAF coalescing, optional synthetic Geometra `resize`, cancel/destroy semantics
+ * (including cancel before the scheduled frame runs — no `syncLayout` / dispatch).
  * Imports `dist/layout-sync.js` (not a public export). Run after `npm run build`.
  */
 import assert from 'node:assert/strict'
@@ -136,6 +137,46 @@ function testMixedNotifyCoalescesToSingleDispatch() {
   assert.equal(dispatchCount, 1)
 }
 
+/** Host teardown can cancel a pending coalesced frame before it runs (no Three resize, no synthetic `resize`). */
+function testCancelBeforeFlushSkipsSync() {
+  const win = createMockWindow()
+  let syncCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => false,
+    syncLayout: () => {
+      syncCount += 1
+    },
+    dispatchGeometraResize: () => {
+      assert.fail('dispatch should not run')
+    },
+  })
+
+  layoutSync.schedule(false)
+  layoutSync.cancel()
+  win.flushAnimationFrame()
+  assert.equal(syncCount, 0)
+}
+
+/** Same cancel-before-flush idea when a Geometra notify was requested — cancel clears pending notify too. */
+function testCancelBeforeFlushSkipsSyncWithPendingNotify() {
+  const win = createMockWindow()
+  let syncCount = 0
+  const layoutSync = createGeometraHostLayoutSyncRaf(win, {
+    isDestroyed: () => false,
+    syncLayout: () => {
+      syncCount += 1
+    },
+    dispatchGeometraResize: () => {
+      assert.fail('dispatch should not run')
+    },
+  })
+
+  layoutSync.schedule(true)
+  layoutSync.cancel()
+  win.flushAnimationFrame()
+  assert.equal(syncCount, 0)
+}
+
 /** After cancel, a new scheduled frame with notify can still dispatch (pending flag was cleared). */
 function testNotifyAfterCancel() {
   const win = createMockWindow()
@@ -160,6 +201,8 @@ testCancelClearsPendingGeometraNotify()
 testDestroyedSkipsWorkInRaf()
 testCoalescesRafWithoutNotify()
 testMixedNotifyCoalescesToSingleDispatch()
+testCancelBeforeFlushSkipsSync()
+testCancelBeforeFlushSkipsSyncWithPendingNotify()
 testNotifyAfterCancel()
 
 console.log('verify-layout-sync: ok')
