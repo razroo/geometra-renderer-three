@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreeDrawingBufferView`,
- * `resizeGeometraThreePerspectiveView` (including non-finite `pixelRatio` and negative CSS sizes),
- * `setWebGLDrawingBufferSize`,
+ * `resizeGeometraThreePerspectiveView` (including non-finite / non-positive `pixelRatio` and negative CSS sizes),
+ * `setWebGLDrawingBufferSize` (including non-positive `pixelRatio`),
  * `syncGeometraThreePerspectiveFromBuffer`, `createGeometraThreePerspectiveResizeHandler`,
  * `geometraHostPerspectiveAspectFromCss`,
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
- * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics` (including invalid camera coercion),
+ * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics` (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
@@ -213,6 +213,15 @@ function testResizeGeometraThreePerspectiveViewSanitizesNonFinitePixelRatio() {
     ['updateProjectionMatrix'],
     ['setSize', 640, 480, false],
   ])
+
+  log.length = 0
+  resizeGeometraThreePerspectiveView(renderer, camera, 320, 240, -1)
+
+  assert.deepEqual(log, [
+    ['setPixelRatio', 1],
+    ['updateProjectionMatrix'],
+    ['setSize', 320, 240, false],
+  ])
 }
 
 function testSyncGeometraThreePerspectiveFromBuffer() {
@@ -253,6 +262,14 @@ function testSetWebGLDrawingBufferSize() {
   log.length = 0
   setWebGLDrawingBufferSize(renderer, Number.NaN, 50, Number.NaN)
   assert.deepEqual(log, [['setDrawingBufferSize', 1, 50, 1]])
+
+  log.length = 0
+  setWebGLDrawingBufferSize(renderer, 10, 10, 0)
+  assert.deepEqual(log, [['setDrawingBufferSize', 10, 10, 1]])
+
+  log.length = 0
+  setWebGLDrawingBufferSize(renderer, 10, 10, -2)
+  assert.deepEqual(log, [['setDrawingBufferSize', 10, 10, 1]])
 }
 
 function testResizeGeometraThreeDrawingBufferView() {
@@ -368,6 +385,10 @@ function testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions() {
   assert.equal(badPos.position.x, d.cameraPosition[0])
   assert.equal(badPos.position.y, 2)
   assert.equal(badPos.position.z, d.cameraPosition[2])
+
+  for (const fov of [0, -10, 180, 360]) {
+    assert.equal(createGeometraThreeSceneBasics({ cameraFov: fov }).camera.fov, d.cameraFov)
+  }
 }
 
 function testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose() {
