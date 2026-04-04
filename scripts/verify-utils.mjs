@@ -9,7 +9,8 @@
  * `geometraHostPerspectiveAspectFromCss`,
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
- * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`,
+ * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `createGeometraThreeSceneBasicsFromPlain`,
+ * `resolveGeometraThreeSceneBasicsOptions`,
  * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeHostSnapshotHeadless`,
  * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
@@ -48,6 +49,7 @@ const {
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
   createGeometraThreeSceneBasics,
+  createGeometraThreeSceneBasicsFromPlain,
   resolveGeometraThreeSceneBasicsOptions,
   disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
@@ -461,6 +463,57 @@ function testToPlainGeometraThreeHostSnapshotFromViewSizingMatchesMergeAndFullSn
   assert.equal(roundTrip.threeBackgroundHex, merged.threeBackgroundHex)
 }
 
+function testCreateGeometraThreeSceneBasicsFromPlainMatchesDirectCreateAndCoercion() {
+  const opts = {
+    threeBackground: '#00ff88',
+    cameraFov: 40,
+    cameraNear: 0.2,
+    cameraFar: 500,
+    cameraPosition: /** @type {const} */ ([1, 2, 3]),
+  }
+  const plain = toPlainGeometraThreeSceneBasicsOptions(opts)
+  const fromPlain = createGeometraThreeSceneBasicsFromPlain(plain)
+  const direct = createGeometraThreeSceneBasics(opts)
+  assert.equal(fromPlain.scene.background.getHex(), direct.scene.background.getHex())
+  assert.equal(fromPlain.camera.fov, direct.camera.fov)
+  assert.equal(fromPlain.camera.near, direct.camera.near)
+  assert.equal(fromPlain.camera.far, direct.camera.far)
+  assert.deepEqual(
+    [fromPlain.camera.position.x, fromPlain.camera.position.y, fromPlain.camera.position.z],
+    [direct.camera.position.x, direct.camera.position.y, direct.camera.position.z],
+  )
+
+  const parsed = JSON.parse(JSON.stringify(plain))
+  const fromJson = createGeometraThreeSceneBasicsFromPlain(parsed)
+  assert.equal(fromJson.scene.background.getHex(), direct.scene.background.getHex())
+
+  const d = GEOMETRA_THREE_HOST_SCENE_DEFAULTS
+  const badPlain = {
+    threeBackgroundHex: 0xff0000,
+    cameraFov: Number.NaN,
+    cameraNear: -1,
+    cameraFar: 100,
+    cameraPosition: /** @type {const} */ ([Number.NaN, 2, Number.POSITIVE_INFINITY]),
+  }
+  const fromBadPlain = createGeometraThreeSceneBasicsFromPlain(badPlain)
+  const fromBadOpts = createGeometraThreeSceneBasics({
+    threeBackground: badPlain.threeBackgroundHex,
+    cameraFov: badPlain.cameraFov,
+    cameraNear: badPlain.cameraNear,
+    cameraFar: badPlain.cameraFar,
+    cameraPosition: badPlain.cameraPosition,
+  })
+  assert.equal(fromBadPlain.camera.fov, fromBadOpts.camera.fov)
+  assert.equal(fromBadPlain.camera.near, fromBadOpts.camera.near)
+  assert.equal(fromBadPlain.camera.far, fromBadOpts.camera.far)
+  assert.deepEqual(
+    [fromBadPlain.camera.position.x, fromBadPlain.camera.position.y, fromBadPlain.camera.position.z],
+    [fromBadOpts.camera.position.x, fromBadOpts.camera.position.y, fromBadOpts.camera.position.z],
+  )
+  assert.equal(fromBadPlain.scene.background.getHex(), 0xff0000)
+  assert.equal(fromBadPlain.camera.fov, d.cameraFov)
+}
+
 function testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable() {
   const plainDefault = toPlainGeometraThreeSceneBasicsOptions()
   const resolvedDefault = resolveGeometraThreeSceneBasicsOptions()
@@ -858,6 +911,7 @@ testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers()
 testToPlainGeometraThreeHostSnapshotHeadlessMatchesRawOne()
 testToPlainGeometraThreeHostSnapshotFromViewSizingMatchesMergeAndFullSnapshot()
 testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable()
+testCreateGeometraThreeSceneBasicsFromPlainMatchesDirectCreateAndCoercion()
 testResolveGeometraThreeSceneBasicsOptionsMatchesCoercedCreate()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()

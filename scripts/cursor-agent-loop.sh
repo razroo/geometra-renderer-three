@@ -29,6 +29,7 @@ fi
 #     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeHostSnapshot /
 #     toPlainGeometraThreeHostSnapshotHeadless / toPlainGeometraThreeHostSnapshotFromViewSizing /
 #     createGeometraThreePerspectiveResizeHandler / createGeometraThreePerspectiveResizeHandlerHeadless / scene-basics /
+#     createGeometraThreeSceneBasicsFromPlain (plain JSON → scene basics; verify-utils) /
 #     GEOMETRA_SPLIT_HOST_LAYOUT_DEFAULTS / GEOMETRA_STACKED_HOST_LAYOUT_DEFAULTS /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
 #     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer /

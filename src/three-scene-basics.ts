@@ -126,6 +126,25 @@ export function toPlainGeometraThreeSceneBasicsOptions(
 }
 
 /**
+ * Build {@link GeometraThreeSceneBasics} from {@link PlainGeometraThreeSceneBasicsOptions} (for example
+ * `JSON.parse` of logs, tests, or agent payloads). Maps `threeBackgroundHex` to {@link GeometraThreeSceneBasicsOptions.threeBackground}
+ * and forwards camera fields through {@link createGeometraThreeSceneBasics}, so invalid numbers get the same
+ * coercion as split/stacked hosts and {@link toPlainGeometraThreeSceneBasicsOptions} output round-trips when
+ * re-applied here.
+ */
+export function createGeometraThreeSceneBasicsFromPlain(
+  plain: PlainGeometraThreeSceneBasicsOptions,
+): GeometraThreeSceneBasics {
+  return createGeometraThreeSceneBasics({
+    threeBackground: plain.threeBackgroundHex,
+    cameraFov: plain.cameraFov,
+    cameraNear: plain.cameraNear,
+    cameraFar: plain.cameraFar,
+    cameraPosition: [...plain.cameraPosition] as THREE.Vector3Tuple,
+  })
+}
+
+/**
  * Single JSON-friendly object combining {@link PlainGeometraThreeViewSizingState} and
  * {@link PlainGeometraThreeSceneBasicsOptions} with the same coercion rules as
  * {@link toPlainGeometraThreeViewSizingState} and {@link toPlainGeometraThreeSceneBasicsOptions}.
