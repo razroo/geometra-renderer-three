@@ -7,7 +7,7 @@
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView}, {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless},
  * {@link toPlainGeometraThreeViewSizingStateHeadless},
  * {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
- * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} (`onFrame` may return `false` to skip `render` and make the tick return `false`, or throw to skip), {@link disposeGeometraThreeWebGLWithSceneBasics} (optional `clock` stops timing after dispose),
+ * {@link tickGeometraThreeWebGLWithSceneBasicsFrame} (`onFrame` may return `false` to skip `render` and make the tick return `false`; if `onFrame` throws, the error propagates and `render` is not called, matching split/stacked {@link ThreeGeometraSplitHostOptions.onThreeFrame} ordering), {@link disposeGeometraThreeWebGLWithSceneBasics} (optional `clock` stops timing after dispose),
  * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless},
  * {@link toPlainGeometraThreeHostSnapshotFromViewSizing},
  * {@link toPlainGeometraSplitHostLayoutOptions} / {@link toPlainGeometraStackedHostLayoutOptions},
