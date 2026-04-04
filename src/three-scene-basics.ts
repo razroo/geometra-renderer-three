@@ -364,6 +364,11 @@ export function renderGeometraThreeWebGLWithSceneBasicsFrame(
  * Same per-frame ordering as {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}:
  * `clock.getDelta()` / `elapsedTime`, optional callback, then `renderer.render`.
  *
+ * If `onFrame` returns **`false`**, `renderer.render` is skipped — parity with calling
+ * {@link ThreeRuntimeContext.destroy} from {@link ThreeGeometraSplitHostOptions.onThreeFrame} / stacked host
+ * `onThreeFrame` after teardown (avoids rendering after WebGL dispose). `undefined` and other return values
+ * still render.
+ *
  * Use in headless GL, tests, or agent loops when you want {@link THREE.Clock} timing parity with those hosts
  * without duplicating the loop body. Omit the callback to match a tick that only advances the clock and renders.
  */
@@ -378,11 +383,13 @@ export interface GeometraThreeWebGLWithSceneBasicsTickContext {
 
 export function tickGeometraThreeWebGLWithSceneBasicsFrame(
   bundle: GeometraThreeWebGLWithSceneBasics,
-  onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void,
+  onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
 ): void {
   const { renderer, scene, camera, clock } = bundle
   const delta = clock.getDelta()
   const elapsed = clock.elapsedTime
-  onFrame?.({ renderer, scene, camera, clock, delta, elapsed })
+  if (onFrame?.({ renderer, scene, camera, clock, delta, elapsed }) === false) {
+    return
+  }
   renderer.render(scene, camera)
 }

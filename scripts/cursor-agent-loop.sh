@@ -33,7 +33,8 @@ fi
 #     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer /
 #     createGeometraThreeWebGLWithSceneBasics / resolveGeometraThreeSceneBasicsOptions /
 #     resizeGeometraThreeWebGLWithSceneBasicsView / resizeGeometraThreeWebGLWithSceneBasicsViewHeadless /
-#     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame /
+#     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame
+#     (onFrame returning false skips render, parity with host onThreeFrame after teardown) /
 #     disposeGeometraThreeWebGLWithSceneBasics /
 #     host sizing helpers /
 #     layout-sync behavior change.

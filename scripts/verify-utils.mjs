@@ -14,7 +14,7 @@
  * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
- * `tickGeometraThreeWebGLWithSceneBasicsFrame`,
+ * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render`),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
@@ -600,6 +600,13 @@ function testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
     log.push('onFrame')
   })
   assert.deepEqual(log, ['onFrame', ['render', scene, camera]])
+
+  log.length = 0
+  tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, () => {
+    log.push('onFrame')
+    return false
+  })
+  assert.deepEqual(log, ['onFrame'])
 }
 
 function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize() {
