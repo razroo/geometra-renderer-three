@@ -23,7 +23,9 @@ fi
 #   - npm run release:gate runs tsc --noEmit, build, verify-exports.mjs, verify-utils.mjs,
 #     verify-layout-sync.mjs (post-sync isDestroyed skips synthetic Geometra resize; syncLayout throw retains pending notify),
 #     verify-host-css-coerce.mjs (dist/host-css-coerce.js; coerceHostNonNegativeCssPx,
-#     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts).
+#     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts),
+#     verify-host-layout-plain.mjs (dist/host-layout-plain.js; plain split/stacked layout, composite snapshots,
+#     geometraHybridHostKind / GEOMETRA_HYBRID_HOST_KINDS / isGeometraHybridHostKind / coerceGeometraHybridHostKind).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
 #     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeViewSizingStateHeadless / toPlainGeometraThreeHostSnapshot /

@@ -37,7 +37,8 @@
     "verify:utils": "node scripts/verify-utils.mjs",
     "verify:layout-sync": "node scripts/verify-layout-sync.mjs",
     "verify:host-css-coerce": "node scripts/verify-host-css-coerce.mjs",
-    "release:gate": "npm run check && npm run build && npm run verify:exports && npm run verify:utils && npm run verify:layout-sync && npm run verify:host-css-coerce",
+    "verify:host-layout-plain": "node scripts/verify-host-layout-plain.mjs",
+    "release:gate": "npm run check && npm run build && npm run verify:exports && npm run verify:utils && npm run verify:layout-sync && npm run verify:host-css-coerce && npm run verify:host-layout-plain",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build"
   },
