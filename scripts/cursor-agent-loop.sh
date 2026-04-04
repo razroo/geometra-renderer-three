@@ -46,9 +46,10 @@ fi
 #     resizeGeometraThreeWebGLWithSceneBasicsView / resizeGeometraThreeWebGLWithSceneBasicsViewHeadless /
 #     resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing (viewport plain JSON → resize; verify-utils) /
 #     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame
-#     (onFrame false skips render and tick returns false; tick returns true when render runs; onFrame throw skips render;
+#     (onFrame false skips render and tick returns false; disposeGeometraThreeWebGLWithSceneBasics inside onFrame
+#     skips render without return false; tick returns true when render runs; onFrame throw skips render;
 #     parity with host onThreeFrame ordering) /
-#     disposeGeometraThreeWebGLWithSceneBasics (optional clock → Clock#stop before renderer.dispose) /
+#     disposeGeometraThreeWebGLWithSceneBasics (optional clock → Clock#stop before renderer.dispose; registers renderer for tick skip-after-dispose) /
 #     resizeTickGeometraThreeWebGLWithSceneBasics / resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing / resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainHostSnapshot / resizeTickGeometraThreeWebGLWithSceneBasicsHeadless (resize then tick; plain-sizing variant matches sequential resize-from-plain + tick; plain-host-snapshot delegates to plain-sizing; headless variant delegates with raw DPR 1; same as sequential resize + tickGeometraThreeWebGLWithSceneBasicsFrame) /
 #     toPlainGeometraSplitHostLayoutOptions / toPlainGeometraStackedHostLayoutOptions /
 #     toPlainGeometraThreeSplitHostSnapshot / Headless / toPlainGeometraThreeStackedHostSnapshot / Headless /

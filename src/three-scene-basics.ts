@@ -10,6 +10,8 @@ import {
   type PlainGeometraThreeViewSizingState,
 } from './utils.js'
 
+const geometraDisposedWebGLRenderers = new WeakSet<object>()
+
 /** Scene, camera, and clock bundle returned by {@link createGeometraThreeSceneBasics}. */
 export interface GeometraThreeSceneBasics {
   scene: THREE.Scene
@@ -387,12 +389,16 @@ export function createGeometraThreeWebGLWithSceneBasicsFromPlain(
  *
  * Calls {@link THREE.WebGLRenderer.dispose}; it does not traverse the scene or dispose meshes,
  * materials, or textures — keep that cleanup in app code or a future helper if you need it.
+ *
+ * Registers the renderer so {@link tickGeometraThreeWebGLWithSceneBasicsFrame} skips a subsequent
+ * `render` when teardown runs inside `onFrame`, matching split/stacked hosts after {@link ThreeRuntimeContext.destroy}.
  */
 export function disposeGeometraThreeWebGLWithSceneBasics(
   bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer'> &
     Partial<Pick<GeometraThreeWebGLWithSceneBasics, 'clock'>>,
 ): void {
   bundle.clock?.stop()
+  geometraDisposedWebGLRenderers.add(bundle.renderer)
   bundle.renderer.dispose()
 }
 
@@ -501,10 +507,11 @@ export interface GeometraThreeWebGLWithSceneBasicsTickContext {
  * `clock.getDelta()` / `elapsedTime`, optional callback, then `renderer.render`.
  *
  * If `onFrame` returns **`false`**, `renderer.render` is skipped and this function returns **`false`** —
- * parity with {@link ThreeGeometraSplitHostOptions.onThreeFrame} / stacked host `onThreeFrame` returning `false`,
- * or with calling {@link ThreeRuntimeContext.destroy} from those callbacks (teardown also skips `render` and
- * avoids drawing after WebGL dispose). `undefined` and other return values still render, and the function returns
- * **`true`** when `render` runs.
+ * parity with {@link ThreeGeometraSplitHostOptions.onThreeFrame} / stacked host `onThreeFrame` returning `false`.
+ * If `onFrame` calls {@link disposeGeometraThreeWebGLWithSceneBasics} on the same bundle (same idea as
+ * {@link ThreeRuntimeContext.destroy} in browser hosts), `render` is skipped and this returns **`false`** even when
+ * the callback does not return `false`. `undefined` and other return values still render when the renderer was not
+ * disposed through that helper, and the function returns **`true`** when `render` runs.
  *
  * If `onFrame` **throws**, the error propagates and `renderer.render` is not called — same ordering as browser
  * hosts, which run the frame callback before `render`.
@@ -522,6 +529,9 @@ export function tickGeometraThreeWebGLWithSceneBasicsFrame(
   const delta = clock.getDelta()
   const elapsed = clock.elapsedTime
   if (onFrame?.({ renderer, scene, camera, clock, delta, elapsed }) === false) {
+    return false
+  }
+  if (geometraDisposedWebGLRenderers.has(renderer)) {
     return false
   }
   renderer.render(scene, camera)

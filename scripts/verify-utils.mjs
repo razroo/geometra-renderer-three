@@ -20,7 +20,8 @@
  * `disposeGeometraThreeWebGLWithSceneBasics` (optional `clock` → `Clock#stop` before `renderer.dispose`),
  * `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame` (including `onFrame` returning `false` to skip `render` and yield
- * `false`, successful ticks returning `true`, and `onFrame` throwing so `render` is skipped),
+ * `false`, `disposeGeometraThreeWebGLWithSceneBasics` inside `onFrame` skipping `render` and yielding `false`
+ * without requiring `return false`, successful ticks returning `true`, and `onFrame` throwing so `render` is skipped),
  * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`,
  * `resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing` (matches explicit resize from `toPlainGeometraThreeViewSizingState`),
  * `resizeTickGeometraThreeWebGLWithSceneBasics` / `resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing` / `resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainHostSnapshot` / `resizeTickGeometraThreeWebGLWithSceneBasicsHeadless` (resize then tick; plain-sizing variant matches sequential `resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing` + tick; plain-host-snapshot delegates to plain-sizing with full `PlainGeometraThreeHostSnapshot`; headless delegates with raw DPR 1; return `false` when `onFrame` returns `false`),
@@ -796,6 +797,29 @@ function testTickGeometraThreeWebGLWithSceneBasicsFrameOnFrameThrowSkipsRender()
   assert.equal(renderCalls, 0)
 }
 
+function testTickGeometraThreeWebGLWithSceneBasicsFrameDisposeInOnFrameSkipsRender() {
+  const clock = new THREE.Clock()
+  const scene = {}
+  const camera = {}
+  let renderCalls = 0
+  const renderer = {
+    render() {
+      renderCalls += 1
+    },
+    dispose() {},
+  }
+  const bundle = { renderer, scene, camera, clock }
+
+  assert.equal(
+    tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, (ctx) => {
+      disposeGeometraThreeWebGLWithSceneBasics({ renderer: ctx.renderer, clock: ctx.clock })
+    }),
+    false,
+  )
+  assert.equal(renderCalls, 0)
+  assert.equal(clock.running, false)
+}
+
 function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize() {
   const log = []
   const renderer = {
@@ -1296,6 +1320,7 @@ testDisposeGeometraThreeWebGLWithSceneBasicsStopsClockWhenProvided()
 testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender()
 testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
 testTickGeometraThreeWebGLWithSceneBasicsFrameOnFrameThrowSkipsRender()
+testTickGeometraThreeWebGLWithSceneBasicsFrameDisposeInOnFrameSkipsRender()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 testResizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizingMatchesExplicitResize()
 testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
