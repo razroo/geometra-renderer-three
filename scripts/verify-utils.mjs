@@ -11,6 +11,7 @@
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
+ * `tickGeometraThreeWebGLWithSceneBasicsFrame`,
  * `resizeGeometraThreeWebGLWithSceneBasicsView`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
@@ -42,6 +43,7 @@ const {
   disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
   renderGeometraThreeWebGLWithSceneBasicsFrame,
+  tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
 } = await import(indexHref)
 
@@ -470,6 +472,34 @@ function testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender() {
   assert.deepEqual(log, [['render', scene, camera]])
 }
 
+function testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders() {
+  const log = []
+  const clock = new THREE.Clock()
+  const scene = {}
+  const camera = {}
+  const renderer = {
+    render(s, c) {
+      log.push(['render', s, c])
+    },
+  }
+  const bundle = { renderer, scene, camera, clock }
+
+  tickGeometraThreeWebGLWithSceneBasicsFrame(bundle)
+  assert.deepEqual(log, [['render', scene, camera]])
+
+  log.length = 0
+  tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, (ctx) => {
+    assert.equal(ctx.clock, clock)
+    assert.equal(ctx.renderer, renderer)
+    assert.equal(ctx.scene, scene)
+    assert.equal(ctx.camera, camera)
+    assert.ok(Number.isFinite(ctx.delta))
+    assert.ok(Number.isFinite(ctx.elapsed))
+    log.push('onFrame')
+  })
+  assert.deepEqual(log, ['onFrame', ['render', scene, camera]])
+}
+
 function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize() {
   const log = []
   const renderer = {
@@ -521,6 +551,7 @@ testCreateGeometraThreeSceneBasicsCustomOptions()
 testCreateGeometraThreeSceneBasicsCoercesInvalidCameraOptions()
 testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose()
 testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender()
+testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
 
 console.log('verify-utils: ok')

@@ -29,7 +29,8 @@ fi
 #     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer /
 #     createGeometraThreeWebGLWithSceneBasics / resolveGeometraThreeSceneBasicsOptions /
 #     resizeGeometraThreeWebGLWithSceneBasicsView /
-#     renderGeometraThreeWebGLWithSceneBasicsFrame / disposeGeometraThreeWebGLWithSceneBasics /
+#     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame /
+#     disposeGeometraThreeWebGLWithSceneBasics /
 #     host sizing helpers /
 #     layout-sync behavior change.
 #
