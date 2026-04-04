@@ -29,10 +29,11 @@ fi
 #     toPlainGeometraStackedHudRect, composite snapshots, geometraHybridHostKind / GEOMETRA_HYBRID_HOST_KINDS /
 #     isGeometraHybridHostKind / coerceGeometraHybridHostKind; isPlainGeometraThreeSplitHostSnapshot /
 #     isPlainGeometraThreeStackedHostSnapshot with layout numbers ≥ 0 (same idea as coerceHostNonNegativeCssPx);
-#     isPlainGeometraThreeHostSnapshot from dist/three-scene-basics.js for base viewport+scene JSON guards).
+#     isPlainGeometraThreeHostSnapshot from dist/three-scene-basics.js for base viewport+scene JSON guards;
+#     isPlainGeometraThreeViewSizingState from dist/utils.js for viewport-only JSON guards).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
-#     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeViewSizingStateHeadless / toPlainGeometraThreeHostSnapshot /
+#     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeViewSizingStateHeadless / isPlainGeometraThreeViewSizingState / toPlainGeometraThreeHostSnapshot /
 #     toPlainGeometraThreeHostSnapshotHeadless / toPlainGeometraThreeHostSnapshotFromViewSizing /
 #     createGeometraThreePerspectiveResizeHandler / createGeometraThreePerspectiveResizeHandlerHeadless / scene-basics /
 #     createGeometraThreeSceneBasicsFromPlain (plain JSON → scene basics; verify-utils) /

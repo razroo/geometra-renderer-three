@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import type { WebGLRendererParameters } from 'three'
 import {
   GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO,
+  isPlainGeometraThreeViewSizingState,
   resizeGeometraThreePerspectiveView,
   resolveHostDevicePixelRatio,
   toPlainGeometraThreeViewSizingState,
@@ -157,10 +158,6 @@ export function createGeometraThreeSceneBasicsFromPlain(
 export type PlainGeometraThreeHostSnapshot = PlainGeometraThreeViewSizingState &
   PlainGeometraThreeSceneBasicsOptions
 
-function isFinitePositiveNumber(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value) && value > 0
-}
-
 function isPlainCameraPosition(value: unknown): value is THREE.Vector3Tuple {
   return (
     Array.isArray(value) &&
@@ -176,19 +173,8 @@ function isPlainCameraPosition(value: unknown): value is THREE.Vector3Tuple {
  * Composite payloads use {@link isPlainGeometraThreeSplitHostSnapshot} / {@link isPlainGeometraThreeStackedHostSnapshot}.
  */
 export function isPlainGeometraThreeHostSnapshot(value: unknown): value is PlainGeometraThreeHostSnapshot {
-  if (value === null || typeof value !== 'object') return false
-  const o = value as Record<string, unknown>
-  if (
-    !isFinitePositiveNumber(o.layoutWidth) ||
-    !isFinitePositiveNumber(o.layoutHeight) ||
-    !isFinitePositiveNumber(o.perspectiveAspect) ||
-    !isFinitePositiveNumber(o.sanitizedRawDevicePixelRatio) ||
-    !isFinitePositiveNumber(o.effectiveDevicePixelRatio) ||
-    !isFinitePositiveNumber(o.drawingBufferWidth) ||
-    !isFinitePositiveNumber(o.drawingBufferHeight)
-  ) {
-    return false
-  }
+  if (!isPlainGeometraThreeViewSizingState(value)) return false
+  const o = value as unknown as Record<string, unknown>
   if (typeof o.threeBackgroundHex !== 'number' || !Number.isFinite(o.threeBackgroundHex)) {
     return false
   }

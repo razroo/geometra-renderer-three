@@ -15,7 +15,7 @@
  * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `isPlainGeometraThreeHostSnapshot`,
  * `toPlainGeometraThreeHostSnapshotHeadless`,
  * `toPlainGeometraThreeHostSnapshotFromViewSizing`, `toPlainGeometraThreeViewSizingState`,
- * `toPlainGeometraThreeViewSizingStateHeadless`
+ * `toPlainGeometraThreeViewSizingStateHeadless`, `isPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics` (optional `clock` → `Clock#stop` before `renderer.dispose`),
  * `renderGeometraThreeWebGLWithSceneBasicsFrame`,
@@ -62,6 +62,7 @@ const {
   disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
   isPlainGeometraThreeHostSnapshot,
+  isPlainGeometraThreeViewSizingState,
   renderGeometraThreeWebGLWithSceneBasicsFrame,
   tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
@@ -140,6 +141,23 @@ function testToPlainGeometraThreeViewSizingStateHeadlessMatchesRawOne() {
   const headless = toPlainGeometraThreeViewSizingStateHeadless(640, 360, 2)
   const explicit = toPlainGeometraThreeViewSizingState(640, 360, 1, 2)
   assert.deepEqual(headless, explicit)
+}
+
+function testIsPlainGeometraThreeViewSizingStateMatchesHelpersAndSubsetOfHostSnapshot() {
+  const sizing = toPlainGeometraThreeViewSizingState(800, 400, 2)
+  assert.equal(isPlainGeometraThreeViewSizingState(sizing), true)
+  const parsed = JSON.parse(JSON.stringify(sizing))
+  assert.equal(isPlainGeometraThreeViewSizingState(parsed), true)
+  assert.equal(isPlainGeometraThreeViewSizingState(null), false)
+  assert.equal(isPlainGeometraThreeViewSizingState({ ...parsed, layoutWidth: 0 }), false)
+
+  const full = toPlainGeometraThreeHostSnapshot(100, 100, 1)
+  assert.equal(isPlainGeometraThreeViewSizingState(full), true)
+  assert.equal(isPlainGeometraThreeHostSnapshot(full), true)
+
+  const viewOnly = { ...parsed }
+  assert.equal(isPlainGeometraThreeViewSizingState(viewOnly), true)
+  assert.equal(isPlainGeometraThreeHostSnapshot(viewOnly), false)
 }
 
 function testResolveHostDevicePixelRatio() {
@@ -1222,6 +1240,7 @@ testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
 testToPlainGeometraThreeViewSizingStateMatchesHostPath()
 testToPlainGeometraThreeViewSizingStateHeadlessMatchesRawOne()
+testIsPlainGeometraThreeViewSizingStateMatchesHelpersAndSubsetOfHostSnapshot()
 testResolveHostDevicePixelRatio()
 testResolveHeadlessHostDevicePixelRatio()
 testGeometraHeadlessRawDevicePixelRatioExport()

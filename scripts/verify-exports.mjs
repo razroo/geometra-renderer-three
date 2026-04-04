@@ -42,6 +42,7 @@ const expectedFunctions = [
   'isPlainGeometraThreeHostSnapshot',
   'isPlainGeometraThreeSplitHostSnapshot',
   'isPlainGeometraThreeStackedHostSnapshot',
+  'isPlainGeometraThreeViewSizingState',
   'normalizeGeometraLayoutPixels',
   'resizeGeometraThreeDrawingBufferView',
   'resizeGeometraThreePerspectiveView',

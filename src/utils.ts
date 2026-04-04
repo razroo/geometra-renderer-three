@@ -171,6 +171,31 @@ export function toPlainGeometraThreeViewSizingStateHeadless(
   )
 }
 
+function isFinitePositiveNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0
+}
+
+/**
+ * Narrow `unknown` (e.g. `JSON.parse`) to {@link PlainGeometraThreeViewSizingState} when the object has the
+ * viewport fields produced by {@link toPlainGeometraThreeViewSizingState} and
+ * {@link toPlainGeometraThreeViewSizingStateHeadless}. Extra keys are allowed. Objects that also include scene
+ * fields may satisfy this guard; for the full viewport + scene shape use `isPlainGeometraThreeHostSnapshot`
+ * from this package’s entry (re-exported next to the host snapshot helpers).
+ */
+export function isPlainGeometraThreeViewSizingState(value: unknown): value is PlainGeometraThreeViewSizingState {
+  if (value === null || typeof value !== 'object') return false
+  const o = value as Record<string, unknown>
+  return (
+    isFinitePositiveNumber(o.layoutWidth) &&
+    isFinitePositiveNumber(o.layoutHeight) &&
+    isFinitePositiveNumber(o.perspectiveAspect) &&
+    isFinitePositiveNumber(o.sanitizedRawDevicePixelRatio) &&
+    isFinitePositiveNumber(o.effectiveDevicePixelRatio) &&
+    isFinitePositiveNumber(o.drawingBufferWidth) &&
+    isFinitePositiveNumber(o.drawingBufferHeight)
+  )
+}
+
 /**
  * Resize drawing buffer to match CSS pixel size × device pixel ratio.
  * Use when you manage your own canvas layout (no `renderer.setSize`).
