@@ -1,6 +1,11 @@
 import * as THREE from 'three'
 import type { WebGLRendererParameters } from 'three'
-import { resizeGeometraThreePerspectiveView, resolveHostDevicePixelRatio } from './utils.js'
+import {
+  resizeGeometraThreePerspectiveView,
+  resolveHostDevicePixelRatio,
+  toPlainGeometraThreeViewSizingState,
+  type PlainGeometraThreeViewSizingState,
+} from './utils.js'
 
 /** Scene, camera, and clock bundle returned by {@link createGeometraThreeSceneBasics}. */
 export interface GeometraThreeSceneBasics {
@@ -117,6 +122,35 @@ export function toPlainGeometraThreeSceneBasicsOptions(
     cameraNear: resolved.cameraNear,
     cameraFar: resolved.cameraFar,
     cameraPosition: [...resolved.cameraPosition] as THREE.Vector3Tuple,
+  }
+}
+
+/**
+ * Single JSON-friendly object combining {@link PlainGeometraThreeViewSizingState} and
+ * {@link PlainGeometraThreeSceneBasicsOptions} with the same coercion rules as
+ * {@link toPlainGeometraThreeViewSizingState} and {@link toPlainGeometraThreeSceneBasicsOptions}.
+ *
+ * Use for logs, tests, or agent-side payloads when you want viewport + scene numbers in one
+ * `JSON.stringify` without calling both helpers separately.
+ */
+export type PlainGeometraThreeHostSnapshot = PlainGeometraThreeViewSizingState &
+  PlainGeometraThreeSceneBasicsOptions
+
+/**
+ * Merge host-aligned viewport sizing and scene/camera plain fields for stable JSON.
+ *
+ * @see PlainGeometraThreeHostSnapshot
+ */
+export function toPlainGeometraThreeHostSnapshot(
+  cssWidth: number,
+  cssHeight: number,
+  rawDevicePixelRatio: number,
+  maxDevicePixelRatio?: number,
+  sceneBasicsOptions: GeometraThreeSceneBasicsOptions = {},
+): PlainGeometraThreeHostSnapshot {
+  return {
+    ...toPlainGeometraThreeViewSizingState(cssWidth, cssHeight, rawDevicePixelRatio, maxDevicePixelRatio),
+    ...toPlainGeometraThreeSceneBasicsOptions(sceneBasicsOptions),
   }
 }
 

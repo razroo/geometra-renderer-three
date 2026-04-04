@@ -9,7 +9,7 @@
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`, `resolveGeometraThreeSceneBasicsOptions`,
- * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeViewSizingState`
+ * `toPlainGeometraThreeSceneBasicsOptions`, `toPlainGeometraThreeHostSnapshot`, `toPlainGeometraThreeViewSizingState`
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame`,
@@ -46,6 +46,7 @@ const {
   renderGeometraThreeWebGLWithSceneBasicsFrame,
   tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
+  toPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeViewSizingState,
 } = await import(indexHref)
@@ -398,6 +399,22 @@ function testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate() {
   assert.deepEqual([...resolved.cameraPosition], [camera.position.x, camera.position.y, camera.position.z])
 }
 
+function testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers() {
+  const w = 800
+  const h = 400
+  const dpr = 2
+  const cap = 1.5
+  const sceneOpts = { threeBackground: '#00ff88', cameraFov: 40 }
+  const merged = toPlainGeometraThreeHostSnapshot(w, h, dpr, cap, sceneOpts)
+  const view = toPlainGeometraThreeViewSizingState(w, h, dpr, cap)
+  const scene = toPlainGeometraThreeSceneBasicsOptions(sceneOpts)
+  assert.deepEqual(merged, { ...view, ...scene })
+  const roundTrip = JSON.parse(JSON.stringify(merged))
+  assert.equal(roundTrip.layoutWidth, view.layoutWidth)
+  assert.equal(roundTrip.threeBackgroundHex, scene.threeBackgroundHex)
+  assert.equal(roundTrip.cameraFov, scene.cameraFov)
+}
+
 function testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable() {
   const plainDefault = toPlainGeometraThreeSceneBasicsOptions()
   const resolvedDefault = resolveGeometraThreeSceneBasicsOptions()
@@ -600,6 +617,7 @@ testGeometraHostWebglRendererOptions()
 testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
 testResolveGeometraThreeSceneBasicsOptionsMatchesDefaultsAndCreate()
+testToPlainGeometraThreeHostSnapshotMatchesMergedPlainHelpers()
 testToPlainGeometraThreeSceneBasicsOptionsMatchesResolvedAndJsonStable()
 testResolveGeometraThreeSceneBasicsOptionsMatchesCoercedCreate()
 testCreateGeometraThreeSceneBasicsDefaults()

@@ -4,7 +4,8 @@
  * ({@link createGeometraThreeSceneBasics}, {@link resolveGeometraThreeSceneBasicsOptions}, {@link toPlainGeometraThreeSceneBasicsOptions},
  * {@link createGeometraThreeWebGLWithSceneBasics},
  * {@link resizeGeometraThreeWebGLWithSceneBasicsView}, {@link renderGeometraThreeWebGLWithSceneBasicsFrame},
- * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}, {@link disposeGeometraThreeWebGLWithSceneBasics}), and
+ * {@link tickGeometraThreeWebGLWithSceneBasicsFrame}, {@link disposeGeometraThreeWebGLWithSceneBasics},
+ * {@link toPlainGeometraThreeHostSnapshot}), and
  * {@link createGeometraHostLayoutSyncRaf} for custom hybrid layouts, and {@link coerceHostStackingZIndexCss}
  * for stacked-overlay `z-index` rules.
  */
@@ -43,6 +44,7 @@ export {
   createGeometraThreeSceneBasics,
   resolveGeometraThreeSceneBasicsOptions,
   toPlainGeometraThreeSceneBasicsOptions,
+  toPlainGeometraThreeHostSnapshot,
   createGeometraThreeWebGLRenderer,
   createGeometraThreeWebGLWithSceneBasics,
   disposeGeometraThreeWebGLWithSceneBasics,
@@ -52,6 +54,7 @@ export {
   type GeometraThreeSceneBasics,
   type GeometraThreeSceneBasicsOptions,
   type PlainGeometraThreeSceneBasicsOptions,
+  type PlainGeometraThreeHostSnapshot,
   type GeometraThreeWebGLWithSceneBasics,
   type GeometraThreeWebGLWithSceneBasicsTickContext,
 } from './three-scene-basics.js'
