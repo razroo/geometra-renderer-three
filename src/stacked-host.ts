@@ -9,9 +9,8 @@ import type {
   ThreeRuntimeContext,
 } from './split-host.js'
 import {
-  GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
-  createGeometraThreeSceneBasics,
+  createGeometraThreeWebGLWithSceneBasics,
   type GeometraThreeSceneBasicsOptions,
 } from './three-scene-basics.js'
 import { createGeometraHostLayoutSyncRaf } from './layout-sync.js'
@@ -252,17 +251,16 @@ export function createThreeGeometraStackedHost(
   fullSizeCanvas(geometraCanvas)
   geometraHud.appendChild(geometraCanvas)
 
-  const glRenderer = new THREE.WebGLRenderer({
-    canvas: threeCanvas,
-    ...GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
-  })
-  const { scene, camera, clock } = createGeometraThreeSceneBasics({
-    threeBackground,
-    cameraFov,
-    cameraNear,
-    cameraFar,
-    cameraPosition,
-  })
+  const { renderer: glRenderer, scene, camera, clock } = createGeometraThreeWebGLWithSceneBasics(
+    threeCanvas,
+    {
+      threeBackground,
+      cameraFov,
+      cameraNear,
+      cameraFar,
+      cameraPosition,
+    },
+  )
 
   const resizeThree = () => {
     resizeGeometraThreePerspectiveView(
