@@ -7,7 +7,8 @@
  * `geometraHostPerspectiveAspectFromCss`,
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
- * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`
+ * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`,
+ * `disposeGeometraThreeWebGLWithSceneBasics`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -33,6 +34,7 @@ const {
   setWebGLDrawingBufferSize,
   syncGeometraThreePerspectiveFromBuffer,
   createGeometraThreeSceneBasics,
+  disposeGeometraThreeWebGLWithSceneBasics,
   geometraHostPerspectiveAspectFromCss,
 } = await import(indexHref)
 
@@ -342,6 +344,17 @@ function testCreateGeometraThreeSceneBasicsCustomOptions() {
   assert.equal(camera.position.z, 3)
 }
 
+function testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose() {
+  let disposed = 0
+  const renderer = {
+    dispose() {
+      disposed += 1
+    },
+  }
+  disposeGeometraThreeWebGLWithSceneBasics({ renderer })
+  assert.equal(disposed, 1)
+}
+
 testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
 testResolveHostDevicePixelRatio()
@@ -359,5 +372,6 @@ testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
 testCreateGeometraThreeSceneBasicsDefaults()
 testCreateGeometraThreeSceneBasicsCustomOptions()
+testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose()
 
 console.log('verify-utils: ok')

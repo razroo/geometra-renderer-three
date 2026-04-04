@@ -133,3 +133,16 @@ export function createGeometraThreeWebGLWithSceneBasics(
   const { scene, camera, clock } = createGeometraThreeSceneBasics(options)
   return { renderer, scene, camera, clock }
 }
+
+/**
+ * Tear down the {@link THREE.WebGLRenderer} from {@link createGeometraThreeWebGLWithSceneBasics}
+ * (or any bundle that shares the same `renderer` reference).
+ *
+ * Calls {@link THREE.WebGLRenderer.dispose}; it does not traverse the scene or dispose meshes,
+ * materials, or textures — keep that cleanup in app code or a future helper if you need it.
+ */
+export function disposeGeometraThreeWebGLWithSceneBasics(
+  bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer'>,
+): void {
+  bundle.renderer.dispose()
+}
