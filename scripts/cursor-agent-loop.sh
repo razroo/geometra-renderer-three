@@ -33,7 +33,7 @@ fi
 #     coerceGeometraHudPointerEvents, coerceGeometraHudPlacement; re-exported from dist/index.js for custom layouts),
 #     verify-host-layout-plain.mjs (dist/host-layout-plain.js; plain split/stacked layout, stacked HUD rect
 #     toPlainGeometraStackedHudRect, composite snapshots, geometraHybridHostKind / GEOMETRA_HYBRID_HOST_KINDS /
-#     isGeometraHybridHostKind / coerceGeometraHybridHostKind; isPlainGeometraSplitHostLayoutOptions /
+#     isGeometraHybridHostKind / isPlainGeometraHybridHostKind / coerceGeometraHybridHostKind; isPlainGeometraSplitHostLayoutOptions /
 #     isPlainGeometraStackedHostLayoutOptions (layout-only JSON; stacked placement exact literals);
 #     isPlainGeometraThreeSplitHostSnapshot / isPlainGeometraThreeStackedHostSnapshot with layout numbers ≥ 0 (same idea as coerceHostNonNegativeCssPx);
 #     isPlainGeometraThreeHostSnapshot / isPlainGeometraThreeSceneBasicsOptions from dist/three-scene-basics.js for

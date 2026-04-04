@@ -182,6 +182,16 @@ export function isGeometraHybridHostKind(value: unknown): value is GeometraHybri
 }
 
 /**
+ * Narrow `unknown` to {@link GeometraHybridHostKind} using the same trim + case-insensitive literals as
+ * {@link coerceGeometraHybridHostKind} and {@link isPlainGeometraThreeSplitHostSnapshot} /
+ * {@link isPlainGeometraThreeStackedHostSnapshot}. Use when agent or log JSON may carry whitespace or mixed case;
+ * prefer {@link isGeometraHybridHostKind} when the value is already normalized.
+ */
+export function isPlainGeometraHybridHostKind(value: unknown): value is GeometraHybridHostKind {
+  return parseGeometraHybridHostKindLiteral(value) !== undefined
+}
+
+/**
  * Normalize {@link GeometraHybridHostKind} from runtime values (e.g. agent JSON or untyped config).
  * Literal `'split'` and `'stacked'` pass through. Strings are trimmed and matched **case-insensitively**;
  * unknown or empty strings use `fallback` (same normalization idea as {@link coerceGeometraHudPlacement}).

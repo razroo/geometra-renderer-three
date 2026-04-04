@@ -2,7 +2,7 @@
 /**
  * Post-build checks for `dist/host-layout-plain.js`: split/stacked plain layout helpers,
  * stacked HUD rect (`toPlainGeometraStackedHudRect`), composite snapshots (`geometraHybridHostKind`),
- * `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `coerceGeometraHybridHostKind`,
+ * `GEOMETRA_HYBRID_HOST_KINDS`, `isGeometraHybridHostKind`, `isPlainGeometraHybridHostKind`, `coerceGeometraHybridHostKind`,
  * `isPlainGeometraSplitHostLayoutOptions`, `isPlainGeometraStackedHostLayoutOptions` (layout-only JSON;
  *   stacked placement exact literals like composite guard), `isPlainGeometraThreeSplitHostSnapshot`, `isPlainGeometraThreeStackedHostSnapshot` (split column and HUD
  *   width/height/margin finite and ≥ 0, matching `coerceHostNonNegativeCssPx`; `geometraHybridHostKind` trim +
@@ -24,6 +24,7 @@ const {
   GEOMETRA_HYBRID_HOST_KINDS,
   coerceGeometraHybridHostKind,
   isGeometraHybridHostKind,
+  isPlainGeometraHybridHostKind,
   isPlainGeometraSplitHostLayoutOptions,
   isPlainGeometraStackedHostLayoutOptions,
   isPlainGeometraThreeSplitHostSnapshot,
@@ -50,6 +51,11 @@ function testHybridHostKindHelpers() {
   assert.equal(isGeometraHybridHostKind('stacked'), true)
   assert.equal(isGeometraHybridHostKind('SPLIT'), false)
   assert.equal(isGeometraHybridHostKind(null), false)
+  assert.equal(isPlainGeometraHybridHostKind('split'), true)
+  assert.equal(isPlainGeometraHybridHostKind('  StAcKeD  '), true)
+  assert.equal(isPlainGeometraHybridHostKind('SPLIT'), true)
+  assert.equal(isPlainGeometraHybridHostKind('unknown'), false)
+  assert.equal(isPlainGeometraHybridHostKind(''), false)
   assert.equal(coerceGeometraHybridHostKind('  StAcKeD  ', 'split'), 'stacked')
   assert.equal(coerceGeometraHybridHostKind('unknown', 'split'), 'split')
   assert.equal(coerceGeometraHybridHostKind('', 'stacked'), 'stacked')

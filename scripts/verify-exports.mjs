@@ -41,6 +41,7 @@ const expectedFunctions = [
   'isGeometraHybridHostKind',
   'isPlainGeometraSplitHostLayoutOptions',
   'isPlainGeometraStackedHostLayoutOptions',
+  'isPlainGeometraHybridHostKind',
   'isPlainGeometraThreeHostSnapshot',
   'isPlainGeometraThreeSceneBasicsOptions',
   'isPlainGeometraThreeSplitHostSnapshot',
