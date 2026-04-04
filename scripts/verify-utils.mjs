@@ -3,7 +3,8 @@
  * Post-build checks for `resolveHostDevicePixelRatio`, `resizeGeometraThreeDrawingBufferView`,
  * `resizeGeometraThreePerspectiveView` (including non-finite `pixelRatio` and negative CSS sizes),
  * `setWebGLDrawingBufferSize`,
- * `syncGeometraThreePerspectiveFromBuffer`, `geometraHostPerspectiveAspectFromCss`,
+ * `syncGeometraThreePerspectiveFromBuffer`, `createGeometraThreePerspectiveResizeHandler`,
+ * `geometraHostPerspectiveAspectFromCss`,
  * `normalizeGeometraLayoutPixels`,
  * `GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS`, `GEOMETRA_THREE_HOST_SCENE_DEFAULTS`, and
  * `createGeometraHostWebGLRendererParams`, `createGeometraThreeSceneBasics`
@@ -23,6 +24,7 @@ const {
   GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS,
   GEOMETRA_THREE_HOST_SCENE_DEFAULTS,
   createGeometraHostWebGLRendererParams,
+  createGeometraThreePerspectiveResizeHandler,
   normalizeGeometraLayoutPixels,
   resizeGeometraThreeDrawingBufferView,
   resizeGeometraThreePerspectiveView,
@@ -60,6 +62,40 @@ function testResolveHostDevicePixelRatio() {
   assert.equal(resolveHostDevicePixelRatio(Number.POSITIVE_INFINITY, undefined), 1)
   // Non-finite cap is ignored (same branch as undefined cap).
   assert.equal(resolveHostDevicePixelRatio(2, Number.POSITIVE_INFINITY), 2)
+}
+
+function testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize() {
+  const log = []
+  const renderer = {
+    setPixelRatio(pr) {
+      log.push(['setPixelRatio', pr])
+    },
+    setSize(w, h, updateStyle) {
+      log.push(['setSize', w, h, updateStyle])
+    },
+  }
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+
+  const handler = createGeometraThreePerspectiveResizeHandler(renderer, camera, () => 2, 2)
+  handler(800, 400)
+
+  assert.deepEqual(log, [
+    ['setPixelRatio', 2],
+    ['updateProjectionMatrix'],
+    ['setSize', 800, 400, false],
+  ])
+  assert.equal(camera.aspect, 2)
+
+  log.length = 0
+  const capped = createGeometraThreePerspectiveResizeHandler(renderer, camera, () => 3, 2)
+  capped(640, 480)
+  assert.deepEqual(log[0], ['setPixelRatio', 2])
+  assert.equal(camera.aspect, 640 / 480)
 }
 
 function testResizeGeometraThreePerspectiveView() {
@@ -308,6 +344,7 @@ function testCreateGeometraThreeSceneBasicsCustomOptions() {
 testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
 testResolveHostDevicePixelRatio()
+testCreateGeometraThreePerspectiveResizeHandlerMatchesDirectResize()
 testResizeGeometraThreePerspectiveView()
 testResizeGeometraThreePerspectiveViewFloorsCssAndGuardsMinSize()
 testResizeGeometraThreePerspectiveViewSanitizesNonFiniteInputs()

@@ -13,6 +13,7 @@ export {
   type ThreeGeometraStackedHostOptions,
 } from './stacked-host.js'
 export {
+  createGeometraThreePerspectiveResizeHandler,
   geometraHostPerspectiveAspectFromCss,
   normalizeGeometraLayoutPixels,
   resizeGeometraThreeDrawingBufferView,

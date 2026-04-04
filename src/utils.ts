@@ -134,6 +134,33 @@ export function resizeGeometraThreePerspectiveView(
 }
 
 /**
+ * Build a resize callback that applies the same CSS layout → DPR → `setPixelRatio` / `setSize` path as
+ * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
+ *
+ * Use in headless GL, offscreen canvas, tests, or custom hosts where you resize on a timer or explicit
+ * layout pass instead of the built-in `ResizeObserver`, but want {@link resolveHostDevicePixelRatio}
+ * capping and layout-pixel normalization without duplicating that wiring at every call site.
+ *
+ * @param getRawDevicePixelRatio - e.g. `() => win.devicePixelRatio || 1` or `() => 1` when no `window`.
+ */
+export function createGeometraThreePerspectiveResizeHandler(
+  renderer: WebGLRenderer,
+  camera: PerspectiveCamera,
+  getRawDevicePixelRatio: () => number,
+  maxDevicePixelRatio?: number,
+): (cssWidth: number, cssHeight: number) => void {
+  return (cssWidth: number, cssHeight: number) => {
+    resizeGeometraThreePerspectiveView(
+      renderer,
+      camera,
+      cssWidth,
+      cssHeight,
+      resolveHostDevicePixelRatio(getRawDevicePixelRatio(), maxDevicePixelRatio),
+    )
+  }
+}
+
+/**
  * Update perspective projection from **drawing-buffer** pixel dimensions (physical pixels), not CSS size.
  *
  * Use when you size WebGL with {@link setWebGLDrawingBufferSize} or `renderer.setDrawingBufferSize` directly

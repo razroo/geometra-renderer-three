@@ -24,7 +24,7 @@ fi
 #     is also re-exported from dist/index.js for custom layouts).
 #     Update those scripts if exports or
 #     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
-#     geometraHostPerspectiveAspectFromCss / scene-basics /
+#     geometraHostPerspectiveAspectFromCss / createGeometraThreePerspectiveResizeHandler / scene-basics /
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
 #     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer / host sizing helpers /
 #     layout-sync behavior change.
