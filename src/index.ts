@@ -106,8 +106,12 @@ export {
 } from './host-layout-plain.js'
 
 /**
- * Data channel name for tracker snapshot JSON on the GEOM WebSocket (from `@geometra/client`).
- * Use in `onData` handlers passed through {@link createThreeGeometraSplitHost} /
- * {@link createThreeGeometraStackedHost} so channel comparisons stay aligned with the thin client.
+ * WebSocket **data channel** id for tracker snapshot JSON on the GEOM socket (re-exported from
+ * `@geometra/client`). Use in `onData` handlers passed through {@link createThreeGeometraSplitHost} /
+ * {@link createThreeGeometraStackedHost} so comparisons stay aligned with the thin client and agent
+ * payloads without importing `@geometra/client` only for this string.
+ *
+ * The runtime value is **`geom.tracker.snapshot`**; `npm run release:gate` asserts it still matches
+ * the installed `@geometra/client` package.
  */
 export { GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT } from '@geometra/client'

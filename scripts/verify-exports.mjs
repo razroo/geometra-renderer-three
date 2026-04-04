@@ -82,6 +82,13 @@ if (missingStr.length) {
   process.exit(1)
 }
 
+if (mod.GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT !== 'geom.tracker.snapshot') {
+  console.error(
+    'verify-exports: GEOM_DATA_CHANNEL_TRACKER_SNAPSHOT must match @geometra/client (expected geom.tracker.snapshot)',
+  )
+  process.exit(1)
+}
+
 const expected = [...expectedFunctions, ...expectedObjects, ...expectedStrings]
 const extra = Object.keys(mod).filter((k) => !expected.includes(k))
 if (extra.length) {

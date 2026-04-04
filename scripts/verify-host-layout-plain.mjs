@@ -37,6 +37,9 @@ function testHybridHostKindHelpers() {
   assert.equal(isGeometraHybridHostKind(null), false)
   assert.equal(coerceGeometraHybridHostKind('  StAcKeD  ', 'split'), 'stacked')
   assert.equal(coerceGeometraHybridHostKind('unknown', 'split'), 'split')
+  assert.equal(coerceGeometraHybridHostKind('', 'stacked'), 'stacked')
+  assert.equal(coerceGeometraHybridHostKind('   ', 'split'), 'split')
+  assert.equal(coerceGeometraHybridHostKind('split', 'stacked'), 'split')
 }
 
 function testSplitPlainLayoutMatchesDefaults() {
