@@ -116,6 +116,9 @@ function fullSizeCanvas(canvas: HTMLCanvasElement): void {
  * This is the recommended **hybrid** layout: 3D stays in Three; chrome and data panes stay in Geometra’s protocol.
  * Geometra’s client still uses `resizeTarget: window` by default; when only the Geometra column changes size,
  * a `ResizeObserver` schedules a synthetic `resize` on `window` so layout width/height track the panel.
+ * The host `root` and both flex panes are observed (same idea as {@link createThreeGeometraStackedHost} observing
+ * its `root`) so container-driven root box changes still coalesce into the same rAF pass even if a panel callback
+ * ordering quirk would otherwise miss a tick.
  * Panel-driven updates coalesce to at most **one** animation frame per burst: a single `requestAnimationFrame`
  * pass runs the Three.js buffer resize and (when needed) that synthetic `resize`, so both flex panes firing
  * in the same frame do not call `renderer.setSize` twice.
@@ -250,6 +253,7 @@ export function createThreeGeometraSplitHost(
   const roContainer = new ResizeObserver(() => {
     layoutSync.schedule(true)
   })
+  roContainer.observe(root)
   roContainer.observe(threePanel)
   roContainer.observe(geometraPanel)
 
