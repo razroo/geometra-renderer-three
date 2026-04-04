@@ -607,3 +607,22 @@ export function resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing(
   resizeGeometraThreeWebGLWithSceneBasicsViewFromPlainViewSizing(bundle, sizing)
   return tickGeometraThreeWebGLWithSceneBasicsFrame(bundle, onFrame)
 }
+
+/**
+ * Same as {@link resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing} but takes a full
+ * {@link PlainGeometraThreeHostSnapshot} (viewport + scene plain fields) — for example from
+ * {@link toPlainGeometraThreeHostSnapshot}, {@link toPlainGeometraThreeHostSnapshotHeadless},
+ * {@link toPlainGeometraThreeHostSnapshotFromViewSizing}, or composite split/stacked snapshots that
+ * include those keys. Only the {@link PlainGeometraThreeViewSizingState} slice is read for resize;
+ * extra fields (scene/camera hex, hybrid layout) are ignored here but often live on the same object
+ * you already validated with {@link isPlainGeometraThreeHostSnapshot}.
+ *
+ * @returns Same boolean as {@link tickGeometraThreeWebGLWithSceneBasicsFrame}.
+ */
+export function resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainHostSnapshot(
+  bundle: GeometraThreeWebGLWithSceneBasics,
+  snapshot: PlainGeometraThreeHostSnapshot,
+  onFrame?: (ctx: GeometraThreeWebGLWithSceneBasicsTickContext) => void | boolean,
+): boolean {
+  return resizeTickGeometraThreeWebGLWithSceneBasicsFromPlainViewSizing(bundle, snapshot, onFrame)
+}
