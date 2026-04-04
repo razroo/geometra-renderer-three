@@ -48,6 +48,7 @@ const expectedFunctions = [
   'isPlainGeometraThreeViewSizingState',
   'normalizeGeometraLayoutPixels',
   'resizeGeometraThreeDrawingBufferView',
+  'resizeGeometraThreeDrawingBufferViewHeadless',
   'resizeGeometraThreePerspectiveView',
   'resolveHeadlessHostDevicePixelRatio',
   'resolveHostDevicePixelRatio',

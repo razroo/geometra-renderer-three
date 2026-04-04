@@ -40,7 +40,7 @@ fi
 #     base viewport+scene vs scene-only JSON guards;
 #     isPlainGeometraThreeViewSizingState from dist/utils.js for viewport-only JSON guards).
 #     Update those scripts if exports or
-#     resize / drawing-buffer view / buffer-sync / DPR / layout-pixel normalization /
+#     resize / drawing-buffer view (resizeGeometraThreeDrawingBufferView / Headless) / buffer-sync / DPR / layout-pixel normalization /
 #     geometraHostPerspectiveAspectFromCss / toPlainGeometraThreeViewSizingState / toPlainGeometraThreeViewSizingStateHeadless / isPlainGeometraThreeViewSizingState / isPlainGeometraThreeSceneBasicsOptions / toPlainGeometraThreeHostSnapshot /
 #     toPlainGeometraThreeHostSnapshotHeadless / toPlainGeometraThreeHostSnapshotFromViewSizing /
 #     createGeometraThreePerspectiveResizeHandler / createGeometraThreePerspectiveResizeHandlerHeadless / scene-basics /

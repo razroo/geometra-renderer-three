@@ -237,6 +237,33 @@ export function resizeGeometraThreeDrawingBufferView(
 }
 
 /**
+ * Same as {@link resizeGeometraThreeDrawingBufferView} with pixel ratio from
+ * {@link resolveHeadlessHostDevicePixelRatio} — raw ratio **1** and the same optional
+ * `maxDevicePixelRatio` cap as split/stacked hosts.
+ *
+ * Parity with {@link resizeGeometraThreeWebGLWithSceneBasicsViewHeadless} for the
+ * {@link setWebGLDrawingBufferSize} / drawing-buffer path (headless GL, offscreen canvas, Node tests).
+ *
+ * Equivalent to calling {@link resizeGeometraThreeDrawingBufferView} with
+ * `resolveHeadlessHostDevicePixelRatio(maxDevicePixelRatio)` as the pixel ratio argument.
+ */
+export function resizeGeometraThreeDrawingBufferViewHeadless(
+  renderer: WebGLRenderer,
+  camera: PerspectiveCamera,
+  cssWidth: number,
+  cssHeight: number,
+  maxDevicePixelRatio?: number,
+): void {
+  resizeGeometraThreeDrawingBufferView(
+    renderer,
+    camera,
+    cssWidth,
+    cssHeight,
+    resolveHeadlessHostDevicePixelRatio(maxDevicePixelRatio),
+  )
+}
+
+/**
  * Apply the same CSS-size → aspect ratio → WebGL buffer sizing path as
  * {@link createThreeGeometraSplitHost} and {@link createThreeGeometraStackedHost}.
  *

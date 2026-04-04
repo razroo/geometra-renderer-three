@@ -2,7 +2,7 @@
 /**
  * Post-build checks for `resolveHostDevicePixelRatio`, `GEOMETRA_HEADLESS_RAW_DEVICE_PIXEL_RATIO`,
  * `resolveHeadlessHostDevicePixelRatio`,
- * `resizeGeometraThreeDrawingBufferView`,
+ * `resizeGeometraThreeDrawingBufferView`, `resizeGeometraThreeDrawingBufferViewHeadless`,
  * `resizeGeometraThreePerspectiveView` (including non-finite / non-positive `pixelRatio` and negative CSS sizes),
  * `setWebGLDrawingBufferSize` (including non-positive `pixelRatio`),
  * `syncGeometraThreePerspectiveFromBuffer`, `createGeometraThreePerspectiveResizeHandler`,
@@ -52,6 +52,7 @@ const {
   createGeometraThreePerspectiveResizeHandlerHeadless,
   normalizeGeometraLayoutPixels,
   resizeGeometraThreeDrawingBufferView,
+  resizeGeometraThreeDrawingBufferViewHeadless,
   resizeGeometraThreePerspectiveView,
   resolveHeadlessHostDevicePixelRatio,
   resolveHostDevicePixelRatio,
@@ -423,6 +424,34 @@ function testResizeGeometraThreeDrawingBufferView() {
     ['setDrawingBufferSize', 200, 100, 2],
     ['updateProjectionMatrix'],
   ])
+  assert.equal(camera.aspect, 2)
+}
+
+function testResizeGeometraThreeDrawingBufferViewHeadlessMatchesRawOne() {
+  const dom = { width: 0, height: 0 }
+  const log = []
+  const renderer = {
+    domElement: dom,
+    setDrawingBufferSize(w, h, pr) {
+      log.push(['setDrawingBufferSize', w, h, pr])
+      dom.width = w
+      dom.height = h
+    },
+  }
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+
+  resizeGeometraThreeDrawingBufferViewHeadless(renderer, camera, 100, 50, 2)
+  const headlessLog = [...log]
+
+  log.length = 0
+  resizeGeometraThreeDrawingBufferView(renderer, camera, 100, 50, 1)
+
+  assert.deepEqual(headlessLog, log)
   assert.equal(camera.aspect, 2)
 }
 
@@ -1307,6 +1336,7 @@ testResizeGeometraThreePerspectiveViewSanitizesNonFinitePixelRatio()
 testSyncGeometraThreePerspectiveFromBuffer()
 testSetWebGLDrawingBufferSize()
 testResizeGeometraThreeDrawingBufferView()
+testResizeGeometraThreeDrawingBufferViewHeadlessMatchesRawOne()
 testGeometraHostWebglRendererOptions()
 testCreateGeometraHostWebGLRendererParams()
 testGeometraThreeHostSceneDefaultsMatchBasics()
