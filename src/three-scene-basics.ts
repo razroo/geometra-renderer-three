@@ -309,6 +309,26 @@ export function resizeGeometraThreeWebGLWithSceneBasicsView(
 }
 
 /**
+ * Same as {@link resizeGeometraThreeWebGLWithSceneBasicsView} with raw device pixel ratio fixed at **1** —
+ * parity with {@link resolveHeadlessHostDevicePixelRatio} and {@link toPlainGeometraThreeHostSnapshotHeadless}
+ * for headless GL, Node, tests, or agent loops without a browser `window`.
+ */
+export function resizeGeometraThreeWebGLWithSceneBasicsViewHeadless(
+  bundle: Pick<GeometraThreeWebGLWithSceneBasics, 'renderer' | 'camera'>,
+  cssWidth: number,
+  cssHeight: number,
+  maxDevicePixelRatio?: number,
+): void {
+  resizeGeometraThreeWebGLWithSceneBasicsView(
+    bundle,
+    cssWidth,
+    cssHeight,
+    1,
+    maxDevicePixelRatio,
+  )
+}
+
+/**
  * One `renderer.render(scene, camera)` pass for a {@link GeometraThreeWebGLWithSceneBasics} bundle.
  *
  * Use in headless GL, tests, or agent-style loops after

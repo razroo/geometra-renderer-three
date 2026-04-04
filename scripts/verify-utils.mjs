@@ -13,7 +13,7 @@
  * (including invalid camera coercion and out-of-range FOV),
  * `disposeGeometraThreeWebGLWithSceneBasics`, `renderGeometraThreeWebGLWithSceneBasicsFrame`,
  * `tickGeometraThreeWebGLWithSceneBasicsFrame`,
- * `resizeGeometraThreeWebGLWithSceneBasicsView`
+ * `resizeGeometraThreeWebGLWithSceneBasicsView`, `resizeGeometraThreeWebGLWithSceneBasicsViewHeadless`
  * (`createGeometraThreeWebGLRenderer` / `createGeometraThreeWebGLWithSceneBasics` need a real GL context;
  * export shape is checked in verify-exports only)
  * using lightweight mocks /
@@ -46,6 +46,7 @@ const {
   renderGeometraThreeWebGLWithSceneBasicsFrame,
   tickGeometraThreeWebGLWithSceneBasicsFrame,
   resizeGeometraThreeWebGLWithSceneBasicsView,
+  resizeGeometraThreeWebGLWithSceneBasicsViewHeadless,
   toPlainGeometraThreeHostSnapshot,
   toPlainGeometraThreeHostSnapshotHeadless,
   toPlainGeometraThreeSceneBasicsOptions,
@@ -607,6 +608,33 @@ function testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize
   assert.equal(camera.aspect, 2)
 }
 
+function testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne() {
+  const log = []
+  const renderer = {
+    setPixelRatio(pr) {
+      log.push(['setPixelRatio', pr])
+    },
+    setSize(w, h, updateStyle) {
+      log.push(['setSize', w, h, updateStyle])
+    },
+  }
+  const camera = {
+    aspect: 1,
+    updateProjectionMatrix() {
+      log.push(['updateProjectionMatrix'])
+    },
+  }
+  const bundle = { renderer, camera }
+
+  resizeGeometraThreeWebGLWithSceneBasicsViewHeadless(bundle, 640, 360, 2)
+  const headlessLog = [...log]
+
+  log.length = 0
+  resizeGeometraThreeWebGLWithSceneBasicsView(bundle, 640, 360, 1, 2)
+
+  assert.deepEqual(headlessLog, log)
+}
+
 testNormalizeGeometraLayoutPixels()
 testGeometraHostPerspectiveAspectFromCss()
 testToPlainGeometraThreeViewSizingStateMatchesHostPath()
@@ -636,5 +664,6 @@ testDisposeGeometraThreeWebGLWithSceneBasicsCallsRendererDispose()
 testRenderGeometraThreeWebGLWithSceneBasicsFrameCallsRender()
 testTickGeometraThreeWebGLWithSceneBasicsFrameAdvancesClockAndRenders()
 testResizeGeometraThreeWebGLWithSceneBasicsViewMatchesPerspectiveResize()
+testResizeGeometraThreeWebGLWithSceneBasicsViewHeadlessMatchesRawOne()
 
 console.log('verify-utils: ok')

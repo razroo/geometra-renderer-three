@@ -30,7 +30,7 @@ fi
 #     GEOMETRA_THREE_HOST_SCENE_DEFAULTS / GEOMETRA_HOST_WEBGL_RENDERER_OPTIONS /
 #     createGeometraHostWebGLRendererParams / createGeometraThreeWebGLRenderer /
 #     createGeometraThreeWebGLWithSceneBasics / resolveGeometraThreeSceneBasicsOptions /
-#     resizeGeometraThreeWebGLWithSceneBasicsView /
+#     resizeGeometraThreeWebGLWithSceneBasicsView / resizeGeometraThreeWebGLWithSceneBasicsViewHeadless /
 #     renderGeometraThreeWebGLWithSceneBasicsFrame / tickGeometraThreeWebGLWithSceneBasicsFrame /
 #     disposeGeometraThreeWebGLWithSceneBasics /
 #     host sizing helpers /
